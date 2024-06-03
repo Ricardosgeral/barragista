@@ -25,12 +25,12 @@ export default function LogoApp({
           alt="Barragista Logo"
           width={1}
           height={1}
-          className="w-3/4 min-w-[200px] py-1 sm:w-1/3 sm:py-2"
+          className="w-3/4 min-w-[200px] py-1 sm:w-1/3"
           priority
         />
       ) : (
         <Link href="/" className="cursor-pointer" passHref legacyBehavior>
-          <div className="flex flex-col items-center text-center text-xl font-bold font-[Poppins] text-shadow-xl text-yellow-500  hover:text-slate-800 hover:font-extrabold">
+          <div className="text-shadow-xl flex flex-col items-center text-center font-[Poppins] text-xl font-bold text-yellow-500 hover:font-extrabold hover:text-slate-800">
             <Image
               priority
               src="/logos/logos_Page 2.svg"

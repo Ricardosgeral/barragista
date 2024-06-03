@@ -4,7 +4,7 @@ import SearchInput from "./search-input";
 interface HeaderBoxProps {
   type?: "title" | "greeting";
   title: string;
-  subtext: string;
+  subtext?: string;
   user?: string;
 }
 
@@ -15,8 +15,8 @@ const HeaderBox = ({
   user,
 }: HeaderBoxProps) => {
   return (
-    <div className="flex items-stretch justify-between">
-      <div className="flex flex-row items-baseline justify-between gap-x-3 gap-y-1 md:flex-col">
+    <div className="flex items-center justify-between">
+      <div className="flex flex-row md:flex-col">
         <h1 className="text-xl font-semibold text-foreground/90 md:text-xl">
           {title}
           {type === "greeting" && (

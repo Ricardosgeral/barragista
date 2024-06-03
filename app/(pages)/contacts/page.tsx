@@ -8,15 +8,52 @@ export default async function Contacts() {
   if (!user) redirect("/auth/login"); //middleware should avoid this but
   return (
     <section className="no-scrollbar flex w-full flex-row max-xl:max-h-screen">
-      <div className="no-scrollbar flex w-full flex-1 flex-col md:py-5 md:px-8 py-4 px-2 xl:max-h-screen">
-        <header className="flex flex-col justify-between gap-8">
+      <div className="no-scrollbar flex w-full flex-1 flex-col p-3 md:p-5 xl:max-h-screen">
+        <header className="flex flex-col justify-between pb-2">
           <HeaderBox
             type="title"
             title="Contacts"
-            subtext="Any question or suggestion?"
+            //subtext="Any question or suggestion?"s
           ></HeaderBox>
         </header>
-        <div></div>
+        <div className="pt-2">
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+          <h1>dsadad</h1>
+        </div>
       </div>
     </section>
   );

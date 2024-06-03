@@ -8,7 +8,7 @@ export default function NavLinks() {
   //console.log(pathname);
 
   return (
-    <div className="flex flex-col items-center justify-center space-y-2 pr-1">
+    <div className="flex flex-col items-start justify-center space-y-2 pr-3">
       {sidebarLinks.map((item) => {
         const isActive =
           pathname === item.route || pathname.startsWith(`${item.route}/`);

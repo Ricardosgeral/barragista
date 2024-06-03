@@ -8,7 +8,7 @@ export const Sidebar = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <section className="sticky left-0 top-0 flex h-screen flex-col flex-wrap items-center justify-between border-r border-gray-300 py-4 text-black dark:dark:text-slate-200 max-md:hidden">
+    <section className="fixed left-0 top-0 flex h-full w-[140px] flex-col flex-wrap items-center justify-between border-r border-gray-300 py-4 text-black dark:dark:text-slate-200 max-md:hidden">
       <LogoApp square={true} />
       <NavLinks />
       <ModeToggle />
