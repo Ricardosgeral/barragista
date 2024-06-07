@@ -52,7 +52,7 @@ export function UserAvatar({
     >
       {justPhoto ? (
         <div>
-          <Avatar className="ring-1 ring-foreground/80 hover:ring-2 hover:ring-yellow-500 hover:ring-offset-2">
+          <Avatar className="hover:ring-2 hover:ring-yellow-500 hover:ring-offset-2">
             <AvatarImage className="object-cover" src={avatarUrl} />
             <AvatarFallback className="bg-yellow-500 text-white shadow-xl">
               {!user?.name ? (
@@ -77,7 +77,7 @@ export function UserAvatar({
           <DropdownMenu>
             <DropdownMenuTrigger>
               <div>
-                <Avatar className="ring-1 ring-foreground/80 hover:ring-2 hover:ring-yellow-500 hover:ring-offset-2">
+                <Avatar className="hover:ring-2 hover:ring-yellow-500 hover:ring-offset-2">
                   <AvatarImage className="object-cover" src={avatarUrl} />
                   <AvatarFallback className="bg-yellow-500 text-white shadow-xl hover:bg-yellow-500/80">
                     {!user?.name ? (

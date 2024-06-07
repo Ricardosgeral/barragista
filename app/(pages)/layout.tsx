@@ -18,11 +18,11 @@ export default async function PagesLayout({ children }: PagesLayoutProps) {
       <Sidebar />
 
       <div className="ml-0 flex flex-grow flex-col md:ml-[140px]">
-        <div className="flex h-16 items-center justify-between md:hidden">
-          <div className="h-16 w-16">
+        <div className="flex h-12 items-center justify-between pr-3 md:hidden">
+          <div className="flex h-12 w-36 items-center pl-2 md:w-16">
             <LogoApp />
           </div>
-          <div>
+          <div className="flex items-center">
             <MobileNav />
           </div>
         </div>

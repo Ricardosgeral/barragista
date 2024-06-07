@@ -17,7 +17,7 @@ export default function NavLinks() {
           <Link className="w-full" href={item.route} key={item.label}>
             <div
               className={cn(
-                "flex w-full items-center justify-end space-x-2 rounded-r-full p-2 font-semibold hover:text-yellow-500 xl:justify-end",
+                "flex w-full items-center justify-end space-x-2 rounded-r-xl p-2 font-semibold hover:text-yellow-500 xl:justify-end",
                 { "bg-black text-white dark:bg-yellow-500": isActive },
               )}
             >
@@ -28,7 +28,7 @@ export default function NavLinks() {
                 {
                   <item.icon
                     className={cn({
-                      "invert-0": isActive,
+                      "dark:text-foreground/80": isActive,
                     })}
                     height={20}
                     width={20}

@@ -17,7 +17,7 @@ const Footer = ({ user, type = "desktop" }: FooterProps) => {
   };
 
   return (
-    <footer className="flex overflow-hidden cursor-pointer items-center justify-between space-x-2">
+    <footer className="flex cursor-pointer items-center justify-between space-x-2 overflow-hidden">
       <div
         className={
           type === "mobile"
@@ -33,11 +33,11 @@ const Footer = ({ user, type = "desktop" }: FooterProps) => {
       <div
         className={
           type === "mobile"
-            ? "flex flex-1 flex-col overflow-hidden justify-start"
-            : "flex flex-1 flex-col overflow-hidden justify-start max-xl:hidden"
+            ? "flex flex-1 flex-col justify-start overflow-hidden"
+            : "flex flex-1 flex-col justify-start overflow-hidden max-xl:hidden"
         }
       >
-        <h1 className="text-sm truncate overflow-ellipsis whitespace-nowrap text-gray-700 font-semibold">
+        <h1 className="truncate overflow-ellipsis whitespace-nowrap text-sm font-semibold text-background/30">
           {user?.name}
         </h1>
         {/* <p className="text-sm truncate  font-normal text-gray-600">
@@ -45,7 +45,7 @@ const Footer = ({ user, type = "desktop" }: FooterProps) => {
         </p> */}
       </div>
       <div
-        className="relative max-xl:w-full max-xl:flex max-xl:justify-center max-xl:items-center"
+        className="relative max-xl:flex max-xl:w-full max-xl:items-center max-xl:justify-center"
         onClick={handleLogOut}
       >
         <IconLogout className="hover:opacity-50" fill="none" stroke="black" />

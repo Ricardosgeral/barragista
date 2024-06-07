@@ -22,14 +22,14 @@ export default function LogoApp({
       {!square ? (
         <Image
           src={negative ? "/logos/logos_Page 5.svg" : "/logos/logos_Page 3.svg"}
-          alt="Barragista Logo"
-          width={1}
-          height={1}
-          className="w-3/4 min-w-[200px] py-1 sm:w-1/3"
+          alt="Barragista logo"
+          width={60}
+          height={60}
+          className="w-full"
           priority
         />
       ) : (
-        <Link href="/" className="cursor-pointer" passHref legacyBehavior>
+        <Link href="/" passHref legacyBehavior>
           <div className="text-shadow-xl flex flex-col items-center text-center font-[Poppins] text-xl font-bold text-yellow-500 hover:font-extrabold hover:text-slate-800">
             <Image
               priority
@@ -37,8 +37,9 @@ export default function LogoApp({
               width={70}
               height={70}
               alt="Barragista logo"
+              className="cursor-pointer"
             />
-            <h1>Barragista</h1>
+            <h1 className="cursor-pointer">Barragista</h1>
           </div>
         </Link>
       )}

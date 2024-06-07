@@ -32,7 +32,7 @@ export default async function RootLayout({
   const session = await auth();
   return (
     <SessionProvider session={session}>
-      <html className="h-screen" lang="en">
+      <html suppressHydrationWarning className="h-screen" lang="en">
         <body>
           <NextSSRPlugin
             /**
@@ -49,7 +49,9 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <section className="flex-grow">{children}</section>
+            <section className="flex flex-grow items-center justify-center">
+              {children}
+            </section>
           </ThemeProvider>
           <Toaster />
         </body>
