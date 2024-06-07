@@ -9,7 +9,7 @@ export default function BannerMainPage() {
         <Button
           variant="primary"
           size="lg"
-          className="hover:animate-colorChange h-9 font-semibold text-foreground dark:bg-foreground dark:text-background dark:hover:bg-foreground/80"
+          className="h-9 font-semibold text-foreground hover:animate-colorChange dark:bg-foreground dark:text-background dark:hover:bg-foreground/80"
         >
           Login
         </Button>
@@ -22,7 +22,6 @@ export default function BannerMainPage() {
       <div className="animate-spin-slow text-lg text-background dark:animate-pulse">
         <ModeToggle />
       </div>
-      <Button className="h-5 w-5"></Button>
     </div>
   );
 }

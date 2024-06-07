@@ -35,7 +35,7 @@ export default function CardMainPage({
           </p>
         </div>
         <Link href={href}>
-          <Button variant="default" size="sm" className="h-8 w-1/3">
+          <Button variant="default" size="sm" className="h-8 w-1/3 hover:w-1/2">
             Go
           </Button>
         </Link>
