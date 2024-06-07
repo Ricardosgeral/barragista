@@ -172,7 +172,7 @@ export default function AccountSettings() {
     <section className="flex h-full w-full flex-col gap-y-3">
       <Card className="p-2">
         <CardHeader>
-          <p className="text-md text-center font-semibold">👷🏼‍♂️ Profile</p>
+          <p className="text-md text-center font-semibold">👤 Profile</p>
         </CardHeader>
         <CardContent className="flex items-center">
           <p className="pr-2 text-xs font-semibold">id</p>
@@ -197,7 +197,7 @@ export default function AccountSettings() {
                     name="image"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Profile image</FormLabel>
+                        <FormLabel>Image</FormLabel>
                         <FormControl>
                           <div className="flex w-full justify-center">
                             {image ? (
@@ -205,9 +205,8 @@ export default function AccountSettings() {
                                 <Image
                                   src={image}
                                   sizes="(max-width: 200px) 100vw, (max-width: 400px) 50vw, 33vw"
-                                  alt="profile image"
-                                  fill
-                                  objectFit="cover"
+                                  fill={true}
+                                  alt="Profile image"
                                   className="rounded-full border-2 object-cover"
                                 />
                                 <Button
@@ -218,7 +217,7 @@ export default function AccountSettings() {
                                   className="absolute bottom-0 left-[-10px] rounded-full"
                                 >
                                   {imageIsDeleting ? (
-                                    <LuLoader2 />
+                                    <LuLoader2 className="animate-spin" />
                                   ) : (
                                     <LuTrash2 className="text-red-500" />
                                   )}
@@ -226,7 +225,7 @@ export default function AccountSettings() {
                               </div>
                             ) : (
                               <>
-                                <div className="flex h-52 w-52 justify-center rounded-full border border-slate-200 pt-6">
+                                <div className="flex h-52 w-52 justify-center rounded-full border border-slate-200 bg-slate-50 pt-6 shadow-lg">
                                   <UploadButton
                                     content={{
                                       button({ ready, isUploading }) {
@@ -249,6 +248,9 @@ export default function AccountSettings() {
                                       const imageUrl = res[0].url;
                                       setImage(imageUrl);
 
+                                      // Update the form value
+                                      field.onChange(imageUrl);
+
                                       // Save the image URL to the server
                                       setName({
                                         ...formName.getValues(),
@@ -260,8 +262,7 @@ export default function AccountSettings() {
                                           } else {
                                             toast({
                                               variant: "success",
-                                              description:
-                                                "Image uploaded. Save it.",
+                                              description: "Image uploaded",
                                             });
                                           }
                                         })

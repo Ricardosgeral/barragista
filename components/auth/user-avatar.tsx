@@ -116,7 +116,16 @@ export function UserAvatar({
             </DropdownMenuContent>
           </DropdownMenu>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogContent className="scrollbar-hide h-screen overflow-y-auto sm:max-w-md">
+            <DialogContent
+              onCloseAutoFocus={(e) => {
+                console.log();
+
+                setTimeout(() => {
+                  router.refresh();
+                }, 1); // Delay of 100ms
+              }}
+              className="scrollbar-hide h-screen overflow-y-auto sm:max-w-md"
+            >
               <DialogHeader>
                 <DialogTitle>Account settings</DialogTitle>
                 <DialogDescription>
