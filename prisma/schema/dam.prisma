@@ -1,0 +1,108 @@
+enum DamMaterial {
+    CONCRETE
+    EARTHFILL
+    MASONRY
+    MIXED
+    OTHER
+}
+
+enum DamClass {
+    I
+    II
+    III
+    OTHER
+}
+
+enum DamPurpose {
+    WaterSupply
+    Hydroelectric
+    FloodControl
+    Irrigation
+    Recreational
+    Navigation
+    EnvironmentalControl
+    DebrisControl
+    Multipurpose
+}
+
+model Dam {
+    //general data
+    id                   String       @id @default(cuid())
+    name                 String       @unique
+    class                DamClass?
+    material             DamMaterial?
+    structure            String? //gravity , rockfill, arch, zoned earthfill... 
+    description          String?
+    usage                String?
+    owner                String?
+    promotor             String?
+    builder              String?
+    designer             String?
+    project_year         String?
+    completion_year      String?
+    database_creation    DateTime?    @default(now())
+    //localization
+    country              String?
+    state                String?
+    city                 String?
+    local                String?
+    hydro_basin          String?
+    water_line           String?
+    latitude             Float?
+    longitude            Float?
+    //HydroFeatures
+    watershed_area       BigInt?
+    average_annual_prec  Int?
+    flood_flow           Int?
+    average_annual_flow  BigInt?
+    return_period        Int?
+    //Reservoir Features
+    flood_area           BigInt?
+    total_capacity       BigInt?
+    useful_capacity      BigInt?
+    dead_volume          BigInt?
+    fsl                  Int?
+    mfl                  Int?
+    mol                  Int?
+    // Dam Features
+    height_to_foundation Int?
+    height_to_natural    Int?
+    crest_elevation      Float?
+    crest_length         Int?
+    crest_width          Float?
+    embankment_volume    BigInt?
+    concrete_volume      BigInt?
+    foundation_type      String?
+
+    notes   String?
+    //ecological circuit
+    ecoFlow Boolean? @default(true)
+
+    // files
+    files       File[]
+    cover_image Int    @default(0) //image that will show in the initial view. by default will be File[0]
+
+    //user that creates the dam
+    user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+    userId String? @map("user_id")
+
+    @@index([name, structure, userId])
+    @@map("dams")
+}
+
+enum FileType {
+    TECHDRAW
+    IMAGE
+    OTHER
+}
+
+model File {
+    id    String   @id @default(cuid())
+    type  FileType
+    label String //Description, like: plant, cros section, spillway, ....
+    dam   Dam      @relation(fields: [damId], references: [id])
+    damId String
+
+    @@index([damId])
+    @@map("files")
+}

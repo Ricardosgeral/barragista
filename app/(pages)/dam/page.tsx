@@ -1,5 +1,4 @@
 import HeaderBox from "@/components/header-box";
-import SearchInput from "@/components/search-input";
 import { currentUser } from "@/lib/auth";
 import { redirect } from "next/navigation";
 

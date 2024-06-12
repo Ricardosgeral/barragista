@@ -22,7 +22,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen w-full min-w-[350px] max-w-4xl flex-col items-center justify-center">
       <header className="flex w-full flex-col items-center">
-        <div className="flex w-full justify-center">
+        <div className="flex w-1/3 justify-center">
           <LogoApp />
         </div>
         <div className="w-full">
@@ -40,7 +40,7 @@ export default function Home() {
         <CardMainPage
           title="Dams regulation"
           subtitle="Get information about legislation on dam safety"
-          src="/images/regulations_ia.jpg"
+          src="/images/regulations_ia1.jpg"
           href="/regulations"
         />
       </section>

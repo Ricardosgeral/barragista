@@ -17,9 +17,9 @@ export default async function PagesLayout({ children }: PagesLayoutProps) {
     <main className="font-inter flex h-screen w-full">
       <Sidebar />
 
-      <div className="ml-0 flex flex-grow flex-col md:ml-[140px]">
+      <div className="ml-0 flex flex-grow flex-col p-2 md:ml-[140px]">
         <div className="flex h-12 items-center justify-between pr-3 md:hidden">
-          <div className="flex h-12 w-36 items-center pl-2 md:w-16">
+          <div className="flex h-12 w-44 items-center p-2 md:w-16">
             <LogoApp />
           </div>
           <div className="flex items-center">
