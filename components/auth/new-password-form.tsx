@@ -74,7 +74,7 @@ export function NewPasswordForm() {
                       type="password"
                     ></Input>
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-sm" />
                 </FormItem>
               )}
             />

@@ -1,50 +1,38 @@
 enum DamMaterial {
-    CONCRETE
-    EARTHFILL
-    MASONRY
-    MIXED
-    OTHER
+    Concrete
+    Earthfill
+    Masonary
+    Mixed
+    Other
 }
 
 enum DamClass {
     I
     II
     III
-    OTHER
-}
-
-enum DamPurpose {
-    WaterSupply
-    Hydroelectric
-    FloodControl
-    Irrigation
-    Recreational
-    Navigation
-    EnvironmentalControl
-    DebrisControl
-    Multipurpose
+    Other
 }
 
 model Dam {
     //general data
-    id                   String       @id @default(cuid())
-    name                 String       @unique
+    id                   String      @id @default(cuid())
+    name                 String      @unique
     class                DamClass?
-    material             DamMaterial?
-    structure            String? //gravity , rockfill, arch, zoned earthfill... 
+    material             DamMaterial
+    structure            String //gravity , rockfill, arch, zoned earthfill... 
     description          String?
-    usage                String?
+    usages               String[]
     owner                String?
     promotor             String?
     builder              String?
     designer             String?
     project_year         String?
     completion_year      String?
-    database_creation    DateTime?    @default(now())
+    database_creation    DateTime    @default(now())
     //localization
-    country              String?
-    state                String?
-    city                 String?
+    country              String
+    state                String
+    city                 String
     local                String?
     hydro_basin          String?
     water_line           String?
@@ -72,15 +60,54 @@ model Dam {
     crest_width          Float?
     embankment_volume    BigInt?
     concrete_volume      BigInt?
-    foundation_type      String?
 
-    notes   String?
+    //Geology and foundation treatment
+    foundation_geology   String?
+    foundation_treatment String?
+
+    //BottomDischarge
+    has_btd        Boolean @default(true)
+    btd_number     Int?
+    btd_local      String?
+    btd_type       String?
+    btd_section    String?
+    btd_diameter   Float?
+    btd_maxflow    Float?
+    btd_upstream   String?
+    btd_downstream String?
+    btd_energy     String?
+    btd_more       String?
+
+    //Spillway
+    has_spillway            Boolean @default(true)
+    spillway_number         Int?
+    spillway_local          String?
+    spillway_type           String?
+    spillway_floodgates     String?
+    spillway_sill_elevation Float?
+    spillway_sill_length    Float?
+    spillway_maxflow        Int?
+    spillway_energy         String?
+    spillway_more           String?
+
+    //Hydroeletrical central
+    has_hydropower  Boolean @default(false)
+    hp_local        String?
+    hp_group_type   String?
+    hp_power        Int?
+    hp_anual_energy Int?
+    hp_more         String?
+
     //ecological circuit
-    ecoFlow Boolean? @default(true)
+    has_eco_circuit Boolean @default(true)
+    ecocirc_flow    Int?
+    ecocirc_more    String?
+
+    notes String?
 
     // files
-    files       File[]
-    cover_image Int    @default(0) //image that will show in the initial view. by default will be File[0]
+    damFiles    DamFile[]
+    cover_image Int       @default(0) //image that will show in the initial view. by default will be File[0]
 
     //user that creates the dam
     user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -91,12 +118,12 @@ model Dam {
 }
 
 enum FileType {
-    TECHDRAW
-    IMAGE
-    OTHER
+    Draw
+    Image
+    Other
 }
 
-model File {
+model DamFile {
     id    String   @id @default(cuid())
     type  FileType
     label String //Description, like: plant, cros section, spillway, ....
@@ -104,5 +131,5 @@ model File {
     damId String
 
     @@index([damId])
-    @@map("files")
+    @@map("damFiles")
 }

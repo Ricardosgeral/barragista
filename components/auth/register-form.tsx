@@ -70,7 +70,7 @@ export function RegisterForm() {
                       placeholder="name"
                     ></Input>
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-sm" />
                 </FormItem>
               )}
             />
@@ -89,7 +89,7 @@ export function RegisterForm() {
                       type="email"
                     ></Input>
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-sm" />
                 </FormItem>
               )}
             />
@@ -108,7 +108,7 @@ export function RegisterForm() {
                       type="password"
                     ></Input>
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-sm" />
                 </FormItem>
               )}
             />

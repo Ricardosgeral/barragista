@@ -286,7 +286,7 @@ export default function AccountSettings() {
                             )}
                           </div>
                         </FormControl>
-                        <FormMessage />
+                        <FormMessage className="text-sm" />
                       </FormItem>
                     )}
                   />
@@ -305,7 +305,7 @@ export default function AccountSettings() {
                           disabled={isPending}
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-sm" />
                     </FormItem>
                   )}
                 />
@@ -333,7 +333,7 @@ export default function AccountSettings() {
                           <SelectItem value={UserRole.USER}>User</SelectItem>
                         </SelectContent>
                       </Select>
-                      <FormMessage />
+                      <FormMessage className="text-sm" />
                     </FormItem>
                   )}
                 />
@@ -376,7 +376,7 @@ export default function AccountSettings() {
                                 disabled={isPending}
                               />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-sm" />
                           </FormItem>
                         )}
                       />
@@ -394,7 +394,7 @@ export default function AccountSettings() {
                                 disabled={isPending}
                               />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-sm" />
                           </FormItem>
                         )}
                       />
@@ -414,7 +414,7 @@ export default function AccountSettings() {
                                 disabled={isPending}
                               />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-sm" />
                           </FormItem>
                         )}
                       />
@@ -437,7 +437,7 @@ export default function AccountSettings() {
                                 onCheckedChange={field.onChange}
                               />
                             </FormControl>
-                            <FormMessage />
+                            <FormMessage className="text-sm" />
                           </FormItem>
                         )}
                       />
@@ -501,7 +501,7 @@ export default function AccountSettings() {
                           className="bg-white"
                         />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-sm" />
                     </FormItem>
                   )}
                 />

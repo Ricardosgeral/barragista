@@ -4,7 +4,7 @@ export const getDamById = async (damId: string) => {
   try {
     const dam = await db.dam.findUnique({
       where: { id: damId },
-      include: { files: true },
+      include: { damFiles: true },
     });
 
     if (!dam) return null;

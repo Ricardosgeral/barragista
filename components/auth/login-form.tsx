@@ -97,7 +97,7 @@ export function LoginForm() {
                           placeholder="email"
                         ></Input>
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-sm" />
                     </FormItem>
                   )}
                 />
@@ -124,7 +124,7 @@ export function LoginForm() {
                       >
                         <Link href="/auth/reset">Forgot password?</Link>
                       </Button>
-                      <FormMessage />
+                      <FormMessage className="text-sm" />
                     </FormItem>
                   )}
                 />
@@ -145,7 +145,7 @@ export function LoginForm() {
                           placeholder="6 digit code"
                         ></Input>
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-sm" />
                     </FormItem>
                   )}
                 />

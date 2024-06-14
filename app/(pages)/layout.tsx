@@ -14,7 +14,7 @@ export default async function PagesLayout({ children }: PagesLayoutProps) {
   if (!user) redirect("/auth/login"); //middleware should avoid this, but...
 
   return (
-    <main className="font-inter flex h-screen w-full">
+    <main className="font-inter flex h-full w-full">
       <Sidebar />
 
       <div className="ml-0 flex flex-grow flex-col p-2 md:ml-[140px]">

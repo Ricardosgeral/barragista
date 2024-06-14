@@ -70,7 +70,7 @@ export function ResetForm() {
                       placeholder="email"
                     ></Input>
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="text-sm" />
                 </FormItem>
               )}
             />
