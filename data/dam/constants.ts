@@ -6,8 +6,8 @@ export const usages = [
     label: "Water supply",
   },
   {
-    id: "hydroeletric",
-    label: "Hydropower generation",
+    id: "hydrodropower",
+    label: "Hydropower",
   },
   {
     id: "irrigation",
@@ -19,7 +19,7 @@ export const usages = [
   },
   {
     id: "recreational",
-    label: "Recreational activities",
+    label: "Recreational",
   },
   {
     id: "navigation",
@@ -34,8 +34,8 @@ export const usages = [
     label: "Debris control",
   },
   {
-    id: "industrial",
-    label: "Industrial",
+    id: "groundwater",
+    label: "Groundwater recharge",
   },
   {
     id: "aquaculture",
@@ -46,8 +46,8 @@ export const usages = [
     label: "Tailings retention",
   },
   {
-    id: "groundwater",
-    label: "Groundwater Recharge",
+    id: "industrial",
+    label: "Industrial",
   },
   {
     id: "erosion",
