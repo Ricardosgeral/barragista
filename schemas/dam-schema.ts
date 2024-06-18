@@ -4,7 +4,7 @@ import { z } from "zod";
 export const DamSchema = z.object({
   name: z
     .string()
-    .min(3, "Minimum of 3 caracters required")
+    .min(2, "Minimum of 2 caracters required")
     .max(30, "Maximum of 30 caracters"),
   class: z.nativeEnum(DamClass),
   material: z.nativeEnum(DamMaterial),
@@ -13,7 +13,10 @@ export const DamSchema = z.object({
 
   usages: z.array(z.string()).min(1, "Select at least one"),
 
-  owner: z.string().max(30, "Maximum of 30 caracters"),
+  owner: z
+    .string()
+    .min(2, "Minimum of 2 caracters required")
+    .max(30, "Maximum of 30 caracters"),
   promotor: z.string().max(30, "Maximum of 30 caracters").optional(),
   builder: z.string().max(30, "Maximum of 30 caracters").optional(),
   designer: z.string().max(30, "Maximum of 30 caracters"),
