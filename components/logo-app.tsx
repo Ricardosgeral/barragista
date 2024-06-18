@@ -30,7 +30,7 @@ export default function LogoApp({
         />
       ) : (
         <Link href="/" passHref legacyBehavior>
-          <div className="text-shadow-xl flex flex-col items-center text-center font-[Poppins] text-xl font-bold text-yellow-500 hover:font-extrabold hover:text-slate-800">
+          <div className="flex flex-col items-center text-center font-[Poppins] text-lg font-bold text-foreground/90 hover:text-foreground/70">
             <Image
               priority
               src="/logos/logos_Page 2.svg"

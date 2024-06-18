@@ -10,100 +10,115 @@ enum DamClass {
     I
     II
     III
+    Unknown
     Other
 }
 
 model Dam {
     //general data
-    id                   String      @id @default(cuid())
-    name                 String      @unique
-    class                DamClass?
-    material             DamMaterial
-    structure            String //gravity , rockfill, arch, zoned earthfill... 
-    description          String?
-    usages               String[]
-    owner                String?
-    promotor             String?
-    builder              String?
-    designer             String?
-    project_year         String?
-    completion_year      String?
-    database_creation    DateTime    @default(now())
+    id          String      @id @default(cuid())
+    name        String      @unique
+    class       DamClass    @default(Unknown)
+    material    DamMaterial @default(Other)
+    profile     String      @default("") //gravity , rockfill, arch, zoned earthfill... 
+    description String?     @default("")
+
+    //usages
+    usages String[] @default([])
+
+    // project and construction
+    owner           String
+    promotor        String? @default("")
+    builder         String? @default("")
+    designer        String? @default("")
+    project_year    String  @default("")
+    completion_year String  @default("")
+
+    database_creation DateTime @default(now())
+
     //localization
-    country              String
-    state                String
-    city                 String
-    local                String?
-    hydro_basin          String?
-    water_line           String?
-    latitude             Float?
-    longitude            Float?
+    country     String  @default("PT")
+    state       String  @default("")
+    city        String? @default("")
+    local       String? @default("")
+    hydro_basin String? @default("")
+    water_line  String? @default("")
+    latitude    Float?  @default(0)
+    longitude   Float?  @default(0)
+
     //HydroFeatures
-    watershed_area       BigInt?
-    average_annual_prec  Int?
-    flood_flow           Int?
-    average_annual_flow  BigInt?
-    return_period        Int?
+    watershed_area      BigInt? @default(0)
+    average_annual_prec Int?    @default(0)
+    flood_flow          Int?    @default(0)
+    average_annual_flow BigInt? @default(0)
+    return_period       Int?    @default(0)
+
     //Reservoir Features
-    flood_area           BigInt?
-    total_capacity       BigInt?
-    useful_capacity      BigInt?
-    dead_volume          BigInt?
-    fsl                  Int?
-    mfl                  Int?
-    mol                  Int?
+    flood_area      BigInt? @default(0)
+    total_capacity  BigInt? @default(0)
+    useful_capacity BigInt? @default(0)
+    dead_volume     BigInt? @default(0)
+    fsl             Int?    @default(0)
+    mfl             Int?    @default(0)
+    mol             Int?    @default(0)
+
     // Dam Features
-    height_to_foundation Int?
-    height_to_natural    Int?
-    crest_elevation      Float?
-    crest_length         Int?
-    crest_width          Float?
-    embankment_volume    BigInt?
-    concrete_volume      BigInt?
+    height_to_foundation Int
+    height_to_natural    Int?    @default(0)
+    crest_elevation      Float
+    crest_length         Int
+    crest_width          Float?  @default(0)
+    embankment_volume    BigInt? @default(0)
+    concrete_volume      BigInt? @default(0)
 
     //Geology and foundation treatment
-    foundation_geology   String?
-    foundation_treatment String?
+    foundation_geology   String? @default("")
+    foundation_treatment String? @default("")
 
     //BottomDischarge
-    has_btd        Boolean @default(true)
-    btd_number     Int?
-    btd_local      String?
-    btd_type       String?
-    btd_section    String?
-    btd_diameter   Float?
-    btd_maxflow    Float?
-    btd_upstream   String?
-    btd_downstream String?
-    btd_energy     String?
-    btd_more       String?
+    has_btd        Boolean @default(false)
+    btd_local      String? @default("")
+    btd_type       String? @default("")
+    btd_number     Int?    @default(0)
+    btd_section    String? @default("")
+    btd_diameter   Float?  @default(0)
+    btd_maxflow    Float?  @default(0)
+    btd_upstream   String? @default("")
+    btd_downstream String? @default("")
+    btd_energy     String? @default("")
+    btd_more       String? @default("")
 
     //Spillway
-    has_spillway            Boolean @default(true)
-    spillway_number         Int?
-    spillway_local          String?
-    spillway_type           String?
-    spillway_floodgates     String?
-    spillway_sill_elevation Float?
-    spillway_sill_length    Float?
-    spillway_maxflow        Int?
-    spillway_energy         String?
-    spillway_more           String?
+    has_spillway            Boolean @default(false)
+    spillway_local          String? @default("")
+    spillway_type           String? @default("")
+    spillway_number         Int?    @default(0)
+    spillway_floodgates     String? @default("")
+    spillway_sill_elevation Float?  @default(0)
+    spillway_sill_length    Float?  @default(0)
+    spillway_maxflow        Int?    @default(0)
+    spillway_energy         String? @default("")
+    spillway_more           String? @default("")
 
     //Hydroeletrical central
-    has_hydropower  Boolean @default(false)
-    hp_local        String?
-    hp_group_type   String?
-    hp_power        Int?
-    hp_anual_energy Int?
-    hp_more         String?
+    has_hydropower   Boolean @default(false)
+    hp_local         String? @default("")
+    hp_number_groups Int?    @default(0)
+    hp_groups_type   String? @default("")
+    hp_power         Int?    @default(0)
+    hp_annual_energy Int?    @default(0)
+    hp_more          String? @default("")
 
-    //ecological circuit
-    has_eco_circuit Boolean @default(true)
-    ecocirc_flow    Int?
-    ecocirc_more    String?
+    //Environmental circuit
+    has_environ_circuit  Boolean @default(false)
+    environ_local        String? @default("")
+    environ_type_control String? @default("")
+    environ_max_flow     Float?  @default(0)
+    environ_ref_flow     Float?  @default(0)
+    environ_more         String? @default("")
 
-    notes String?
+    //Overall notes on dam
+    notes String? @default("")
 
     // files
     damFiles    DamFile[]
@@ -113,7 +128,7 @@ model Dam {
     user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
     userId String? @map("user_id")
 
-    @@index([name, structure, userId])
+    @@index([name, material, profile, height_to_foundation, country, state, city, hydro_basin, userId])
     @@map("dams")
 }
 
