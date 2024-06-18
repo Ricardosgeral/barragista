@@ -58,6 +58,7 @@ import {
   LuLoader2,
   LuPencil,
   LuPencilLine,
+  LuRefreshCcw,
 } from "react-icons/lu";
 import { toast } from "@/components/ui/use-toast";
 import { Textarea } from "@/components/ui/textarea";
@@ -116,6 +117,10 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
 
   const { getAllCountries, getCountryStates, getStateCities } = useLocation();
   const countries = getAllCountries;
+
+  const handleResetform = () => {
+    form.reset();
+  };
 
   const form = useForm<z.infer<typeof DamSchema>>({
     resolver: zodResolver(DamSchema),
@@ -2287,6 +2292,16 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
               )}
             </div>
           </div>
+          {/* reset form button */}
+          <Button
+            type="button"
+            variant="outline"
+            disabled={isLoading}
+            onClick={() => handleResetform()}
+          >
+            <LuRefreshCcw className="mr-2" />
+            Reset
+          </Button>
         </div>
       </form>
     </Form>
