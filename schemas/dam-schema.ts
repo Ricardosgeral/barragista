@@ -4,38 +4,26 @@ import { z } from "zod";
 export const DamSchema = z.object({
   name: z
     .string()
-    .min(3, { message: "Minimum of 3 caracters required" })
-    .max(30, { message: "Maximum of 30 caracters" }),
+    .min(3, "Minimum of 3 caracters required")
+    .max(30, "Maximum of 30 caracters"),
   class: z.nativeEnum(DamClass),
   material: z.nativeEnum(DamMaterial),
-  profile: z.string().min(3).max(30),
-  description: z
-    .string()
-    .max(150, { message: "Maximum of 150 characters" })
-    .optional(),
+  profile: z.string().min(3, "Minimum of 3 caracters required").max(30),
+  description: z.string().max(150, "Maximum of 150 characters").optional(),
 
-  usages: z.array(z.string()).min(1, { message: "Select at least one" }),
+  usages: z.array(z.string()).min(1, "Select at least one"),
 
-  owner: z.string().max(30, { message: "Maximum of 30 caracters" }),
-  promotor: z
-    .string()
-    .max(30, { message: "Maximum of 30 caracters" })
-    .optional(),
-  builder: z
-    .string()
-    .max(30, { message: "Maximum of 30 caracters" })
-    .optional(),
-  designer: z.string().max(30, { message: "Maximum of 30 caracters" }),
-  project_year: z.string().regex(/^\d{4}$/),
-  completion_year: z
-    .string()
-    .regex(/^\d{4}$/)
-    .optional(),
+  owner: z.string().max(30, "Maximum of 30 caracters"),
+  promotor: z.string().max(30, "Maximum of 30 caracters").optional(),
+  builder: z.string().max(30, "Maximum of 30 caracters").optional(),
+  designer: z.string().max(30, "Maximum of 30 caracters"),
+  project_year: z.string().regex(/^\d{4}$/, "YYYY required"),
+  completion_year: z.string().regex(/^\d{4}$/, "YYYY required"),
   //localization
   country: z.string(),
   state: z.string(),
   city: z.string().optional(),
-  local: z.string().max(30, { message: "Maximum of 30 caracters" }).optional(),
+  local: z.string().max(30, "Maximum of 30 caracters").optional(),
   hydro_basin: z.string().optional(),
   water_line: z.string().optional(),
   latitude: z.coerce.number().min(-90).max(90).optional(),

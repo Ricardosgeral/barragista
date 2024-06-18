@@ -833,7 +833,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                     name="city"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Town*</FormLabel>
+                        <FormLabel>Town</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
