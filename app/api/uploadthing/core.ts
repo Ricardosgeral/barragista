@@ -1,7 +1,6 @@
 import { currentUser } from "@/lib/auth";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 import { UploadThingError } from "uploadthing/server";
-import { db } from "@/lib/db";
 import { setName } from "@/actions/set-name";
 
 const f = createUploadthing();

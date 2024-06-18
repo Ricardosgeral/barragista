@@ -9,7 +9,7 @@ export const DamSchema = z.object({
   class: z.nativeEnum(DamClass),
   material: z.nativeEnum(DamMaterial),
   profile: z.string().min(3, "Minimum of 3 caracters required").max(30),
-  description: z.string().max(150, "Maximum of 150 characters").optional(),
+  description: z.string().max(200, "Maximum of 150 characters").optional(),
 
   usages: z.array(z.string()).min(1, "Select at least one"),
 
@@ -55,21 +55,21 @@ export const DamSchema = z.object({
   concrete_volume: z.coerce.number().nonnegative().optional(),
 
   //foundation and treatment
-  foundation_geology: z.string().max(60).optional(),
-  foundation_treatment: z.string().max(60).optional(),
+  foundation_geology: z.string().max(200).optional(),
+  foundation_treatment: z.string().max(200).optional(),
 
   //BottomDischarge
   has_btd: z.boolean(),
   btd_number: z.coerce.number().nonnegative().optional(),
-  btd_local: z.string().max(30).optional(),
-  btd_type: z.string().max(30).optional(),
-  btd_section: z.string().max(30).optional(),
+  btd_local: z.string().max(60).optional(),
+  btd_type: z.string().max(60).optional(),
+  btd_section: z.string().max(60).optional(),
   btd_diameter: z.coerce.number().nonnegative().optional(),
   btd_maxflow: z.coerce.number().nonnegative().optional(),
-  btd_upstream: z.string().max(30).optional(),
-  btd_downstream: z.string().max(30).optional(),
-  btd_energy: z.string().max(30).optional(),
-  btd_more: z.string().max(60).optional(),
+  btd_upstream: z.string().max(60).optional(),
+  btd_downstream: z.string().max(60).optional(),
+  btd_energy: z.string().max(60).optional(),
+  btd_more: z.string().max(100).optional(),
 
   //Spillway
   has_spillway: z.boolean(),
@@ -81,7 +81,7 @@ export const DamSchema = z.object({
   spillway_sill_length: z.coerce.number().nonnegative().optional(),
   spillway_maxflow: z.coerce.number().nonnegative().optional(),
   spillway_energy: z.string().max(30).optional(),
-  spillway_more: z.string().max(60).optional(),
+  spillway_more: z.string().max(100).optional(),
 
   //hydropower
   has_hydropower: z.boolean(),
@@ -90,7 +90,7 @@ export const DamSchema = z.object({
   hp_groups_type: z.string().max(30).optional(),
   hp_power: z.coerce.number().nonnegative().optional(),
   hp_annual_energy: z.coerce.number().nonnegative().optional(),
-  hp_more: z.string().max(60).optional(),
+  hp_more: z.string().max(100).optional(),
 
   // Ecological circuit
   has_environ_circuit: z.boolean(),
@@ -98,8 +98,8 @@ export const DamSchema = z.object({
   environ_type_control: z.string().max(30).optional(),
   environ_max_flow: z.coerce.number().nonnegative().optional(),
   environ_ref_flow: z.coerce.number().nonnegative().optional(),
-  environ_more: z.string().max(30).optional(),
+  environ_more: z.string().max(50).optional(),
 
   //Final Notes
-  notes: z.string().max(50).optional(),
+  notes: z.string().max(200).optional(),
 });

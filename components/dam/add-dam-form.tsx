@@ -74,6 +74,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { usages, hydrologicalBasinPT } from "@/data/dam/constants";
+import { useRouter } from "next/navigation";
 
 //to use the enum defined in dam.prisma
 const damClassArray = Object.entries(DamClass).map(([key, value]) => ({
@@ -96,19 +97,6 @@ export type DamWithAllFeatures = Dam & {
   //TODO: include other features from other tables of db related to dams model
 };
 
-const onSubmit = (data: z.infer<typeof DamSchema>) => {
-  //TODO
-  //console.log(data);
-  toast({
-    title: "You submitted the following values:",
-    description: (
-      <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-        <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-      </pre>
-    ),
-  });
-};
-
 export default function AddDamForm({ dam }: AddDamFormProps) {
   const [states, setStates] = useState<IState[]>([]);
   const [cities, setCities] = useState<ICity[]>([]);
@@ -117,6 +105,44 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
 
   const { getAllCountries, getCountryStates, getStateCities } = useLocation();
   const countries = getAllCountries;
+  const router = useRouter();
+
+  const onSubmit = (data: z.infer<typeof DamSchema>) => {
+    setIsLoading(true);
+    if (dam) {
+      // update logic here
+    } else {
+      // create (NOTE this fetch chain could be replaced by a server action...)
+      fetch("/api/dam", {
+        method: "POST",
+        cache: "no-store",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json;charset=UTF-8",
+        },
+        body: JSON.stringify(data),
+      })
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error(`HTTP status ${res.status}`);
+          }
+          return res.json();
+        })
+        .then((data) => {
+          toast({ variant: "success", description: "Dam created!" });
+          //console.log("Post request successful. Response", data);
+          router.push(`/dam/${data.id}`);
+        })
+        .catch((error) => {
+          //console.error("Error during fetch:", error);
+          toast({
+            variant: "destructive",
+            description: `Something went wrong! ${error}`,
+          });
+        })
+        .finally(() => setIsLoading(false));
+    }
+  };
 
   const handleResetform = () => {
     form.reset();
@@ -125,6 +151,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
   const form = useForm<z.infer<typeof DamSchema>>({
     resolver: zodResolver(DamSchema),
     defaultValues: (dam || {
+      //if dam exists populate fields with that dam data otherwise use the following
       name: "",
       class: DamClass.Unknown,
       material: DamMaterial.Other,
