@@ -21,6 +21,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import {
   Form,
@@ -72,6 +73,7 @@ import {
   LuPencil,
   LuPencilLine,
   LuRefreshCcw,
+  LuTerminal,
   LuTrash2,
   LuView,
 } from "react-icons/lu";
@@ -107,7 +109,7 @@ const damMaterialArray = Object.entries(DamMaterial).map(([key, value]) => ({
 }));
 
 interface AddDamFormProps {
-  dam: Dam | null; //if null will create a dam
+  dam: DamWithAllFeatures | null; //if null will create a dam
 }
 
 export type DamWithAllFeatures = Dam & {
@@ -126,6 +128,8 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
   const { getAllCountries, getCountryStates, getStateCities } = useLocation();
   const countries = getAllCountries;
   const router = useRouter();
+
+  console.log(dam?.files?.length);
 
   const onSubmit = (values: z.infer<typeof DamSchema>) => {
     setIsLoading(true);
@@ -432,1322 +436,1554 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
   }, [form.watch("country")]);
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="flex w-full flex-col items-center justify-center space-y-6 py-6">
-          <div className="flex w-full flex-col items-stretch justify-center gap-6 sm:flex-row sm:flex-wrap">
-            {/* General data */}
-            <Card className="w-full drop-shadow-lg sm:w-[400px]">
-              <CardHeader>
-                <CardTitle>
-                  <div className="flex items-center justify-start space-x-2">
-                    <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      1
-                    </div>
-                    <div className="text-yellow-500">
-                      General identification
-                    </div>
-                  </div>
-                </CardTitle>
-                <CardDescription>Overall data</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex w-full gap-4">
-                  {/* Name of dam */}
-                  <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem className="w-2/3">
-                        <FormLabel>Name*</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  {/* Risk SClass of dam */}
-                  <FormField
-                    control={form.control}
-                    name="class"
-                    render={({ field }) => (
-                      <FormItem className="w-1/3">
-                        <div className="flex flex-col gap-2.5 py-2">
-                          <FormLabel>Class*</FormLabel>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <Button
-                                  variant="outline"
-                                  role="combobox"
-                                  className={cn(
-                                    "justify-between",
-                                    !field.value && "text-muted-foreground",
-                                  )}
-                                >
-                                  {field.value
-                                    ? damClassArray.find(
-                                        (damClassArray) =>
-                                          damClassArray.value === field.value,
-                                      )?.label
-                                    : "Select"}
-                                  <LuChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                </Button>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-[150px] p-0">
-                              <PopoverClose asChild>
-                                <Command>
-                                  <CommandInput placeholder="Choose" />
-                                  <CommandEmpty>No class found</CommandEmpty>
-                                  <CommandGroup>
-                                    <CommandList>
-                                      {damClassArray.map(
-                                        (damClassArray, index) => (
-                                          <CommandItem
-                                            value={damClassArray.label}
-                                            key={index}
-                                            onSelect={() => {
-                                              form.setValue(
-                                                "class",
-                                                damClassArray.value,
-                                              );
-                                            }}
-                                          >
-                                            <LuCheck
-                                              className={cn(
-                                                "mr-2 h-4 w-4",
-                                                damClassArray.value ===
-                                                  field.value
-                                                  ? "opacity-100"
-                                                  : "opacity-0",
-                                              )}
-                                            />
-                                            {damClassArray.label}
-                                          </CommandItem>
-                                        ),
-                                      )}
-                                    </CommandList>
-                                  </CommandGroup>
-                                </Command>
-                              </PopoverClose>
-                            </PopoverContent>
-                          </Popover>
-
-                          <FormMessage className="text-xs" />
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div className="flex w-full gap-4">
-                  {/* Material of dam */}
-                  <FormField
-                    control={form.control}
-                    name="material"
-                    render={({ field }) => (
-                      <FormItem className="flex w-1/3 flex-col">
-                        <div className="flex flex-col gap-2.5 py-2">
-                          <FormLabel>Material*</FormLabel>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <Button
-                                  variant="outline"
-                                  role="combobox"
-                                  className={cn(
-                                    "justify-between",
-                                    !field.value && "text-muted-foreground",
-                                  )}
-                                >
-                                  {field.value
-                                    ? damMaterialArray.find(
-                                        (damMaterialArray) =>
-                                          damMaterialArray.value ===
-                                          field.value,
-                                      )?.label
-                                    : "Select"}
-                                  <LuChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                </Button>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-[150px] p-0">
-                              <PopoverClose asChild>
-                                <Command>
-                                  <CommandInput placeholder="Choose" />
-                                  <CommandEmpty>
-                                    No Material found.
-                                  </CommandEmpty>
-                                  <CommandGroup>
-                                    <CommandList>
-                                      {damMaterialArray.map(
-                                        (damMaterialArray, index) => (
-                                          <CommandItem
-                                            value={damMaterialArray.label}
-                                            key={index}
-                                            onSelect={() => {
-                                              form.setValue(
-                                                "material",
-                                                damMaterialArray.value,
-                                              );
-                                            }}
-                                          >
-                                            <LuCheck
-                                              className={cn(
-                                                "mr-2 h-4 w-4",
-                                                damMaterialArray.value ===
-                                                  field.value
-                                                  ? "opacity-100"
-                                                  : "opacity-0",
-                                              )}
-                                            />
-                                            {damMaterialArray.label}
-                                          </CommandItem>
-                                        ),
-                                      )}
-                                    </CommandList>
-                                  </CommandGroup>
-                                </Command>
-                              </PopoverClose>
-                            </PopoverContent>
-                          </Popover>
-
-                          <FormMessage className="text-xs" />
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-                  {/* Structure type */}
-                  <FormField
-                    control={form.control}
-                    name="profile"
-                    render={({ field }) => (
-                      <FormItem className="w-2/3">
-                        <FormLabel>Profile/structure type</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            placeholder="e.g. Arch, Zoned,..."
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Description */}
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} />
-                      </FormControl>
-
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
-
-            {/* Usages */}
-            <Card className="w-full drop-shadow-lg sm:w-[400px]">
-              <CardHeader>
-                <CardTitle>
-                  <div className="flex items-center justify-start space-x-2">
-                    <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      2
-                    </div>
-                    <div className="text-yellow-500">Purpose</div>
-                  </div>
-                </CardTitle>
-                <CardDescription>Select the dam usages*</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <FormField
-                  control={form.control}
-                  name="usages"
-                  render={() => (
-                    <FormItem className="w-full">
-                      <div className="grid grid-cols-2 gap-4">
-                        {/* Add grid container */}
-                        {usages.map((usage) => (
-                          <FormField
-                            key={usage.id}
-                            control={form.control}
-                            name="usages"
-                            render={({ field }) => {
-                              return (
-                                <FormItem
-                                  key={usage.id}
-                                  className="flex flex-row items-center justify-start space-x-3 space-y-0"
-                                >
-                                  <FormControl>
-                                    <Checkbox
-                                      checked={field.value?.includes(usage.id)}
-                                      onCheckedChange={(checked) => {
-                                        return checked
-                                          ? field.onChange([
-                                              ...field.value,
-                                              usage.id,
-                                            ])
-                                          : field.onChange(
-                                              field.value?.filter(
-                                                (value) => value !== usage.id,
-                                              ),
-                                            );
-                                      }}
-                                    />
-                                  </FormControl>
-                                  <FormLabel className="text-sm font-normal">
-                                    {usage.label}
-                                  </FormLabel>
-                                </FormItem>
-                              );
-                            }}
-                          />
-                        ))}
+    <div className="flex flex-col items-center justify-center gap-y-6">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="flex w-full flex-col items-center justify-center space-y-6">
+            <div className="flex w-full flex-col items-stretch justify-center gap-6 sm:flex-row sm:flex-wrap">
+              {/* General data */}
+              <Card className="w-full drop-shadow-lg sm:w-[400px]">
+                <CardHeader>
+                  <CardTitle>
+                    <div className="flex items-center justify-start space-x-2">
+                      <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
+                        1
                       </div>
-                      <FormMessage className="py-2 text-xs" />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
+                      <div className="text-yellow-500">
+                        General identification
+                      </div>
+                    </div>
+                  </CardTitle>
+                  <CardDescription>Overall data</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex w-full gap-4">
+                    {/* Name of dam */}
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem className="w-2/3">
+                          <FormLabel>Name*</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    {/* Risk SClass of dam */}
+                    <FormField
+                      control={form.control}
+                      name="class"
+                      render={({ field }) => (
+                        <FormItem className="w-1/3">
+                          <div className="flex flex-col gap-2.5 py-2">
+                            <FormLabel>Class*</FormLabel>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant="outline"
+                                    role="combobox"
+                                    className={cn(
+                                      "justify-between",
+                                      !field.value && "text-muted-foreground",
+                                    )}
+                                  >
+                                    {field.value
+                                      ? damClassArray.find(
+                                          (damClassArray) =>
+                                            damClassArray.value === field.value,
+                                        )?.label
+                                      : "Select"}
+                                    <LuChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-[150px] p-0">
+                                <PopoverClose asChild>
+                                  <Command>
+                                    <CommandInput placeholder="Choose" />
+                                    <CommandEmpty>No class found</CommandEmpty>
+                                    <CommandGroup>
+                                      <CommandList>
+                                        {damClassArray.map(
+                                          (damClassArray, index) => (
+                                            <CommandItem
+                                              value={damClassArray.label}
+                                              key={index}
+                                              onSelect={() => {
+                                                form.setValue(
+                                                  "class",
+                                                  damClassArray.value,
+                                                );
+                                              }}
+                                            >
+                                              <LuCheck
+                                                className={cn(
+                                                  "mr-2 h-4 w-4",
+                                                  damClassArray.value ===
+                                                    field.value
+                                                    ? "opacity-100"
+                                                    : "opacity-0",
+                                                )}
+                                              />
+                                              {damClassArray.label}
+                                            </CommandItem>
+                                          ),
+                                        )}
+                                      </CommandList>
+                                    </CommandGroup>
+                                  </Command>
+                                </PopoverClose>
+                              </PopoverContent>
+                            </Popover>
 
-            {/* Project and construction info */}
-            <Card className="w-full drop-shadow-lg sm:w-[400px]">
-              <CardHeader>
-                <CardTitle>
-                  <div className="flex items-center justify-start space-x-2">
-                    <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      3
-                    </div>
-                    <div className="text-yellow-500">
-                      Project and construction
-                    </div>
+                            <FormMessage className="text-xs" />
+                          </div>
+                        </FormItem>
+                      )}
+                    />
                   </div>
-                </CardTitle>
-                <CardDescription>Entities and relevant dates</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid w-full grid-cols-2 gap-4">
-                  {/* Owner */}
-                  <FormField
-                    control={form.control}
-                    name="owner"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Dam owner*</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  {/* Promotor */}
-                  <FormField
-                    control={form.control}
-                    name="promotor"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Dam promotor</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  {/* Building company */}
-                  <FormField
-                    control={form.control}
-                    name="builder"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Building company</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  {/* Designing company */}
-                  <FormField
-                    control={form.control}
-                    name="designer"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Designer company</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  {/* project year */}
-                  <FormField
-                    control={form.control}
-                    name="project_year"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Project year*</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  {/* Compleation year */}
-                  <FormField
-                    control={form.control}
-                    name="completion_year"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Completion year*</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+                  <div className="flex w-full gap-4">
+                    {/* Material of dam */}
+                    <FormField
+                      control={form.control}
+                      name="material"
+                      render={({ field }) => (
+                        <FormItem className="flex w-1/3 flex-col">
+                          <div className="flex flex-col gap-2.5 py-2">
+                            <FormLabel>Material*</FormLabel>
+                            <Popover>
+                              <PopoverTrigger asChild>
+                                <FormControl>
+                                  <Button
+                                    variant="outline"
+                                    role="combobox"
+                                    className={cn(
+                                      "justify-between",
+                                      !field.value && "text-muted-foreground",
+                                    )}
+                                  >
+                                    {field.value
+                                      ? damMaterialArray.find(
+                                          (damMaterialArray) =>
+                                            damMaterialArray.value ===
+                                            field.value,
+                                        )?.label
+                                      : "Select"}
+                                    <LuChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                  </Button>
+                                </FormControl>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-[150px] p-0">
+                                <PopoverClose asChild>
+                                  <Command>
+                                    <CommandInput placeholder="Choose" />
+                                    <CommandEmpty>
+                                      No Material found.
+                                    </CommandEmpty>
+                                    <CommandGroup>
+                                      <CommandList>
+                                        {damMaterialArray.map(
+                                          (damMaterialArray, index) => (
+                                            <CommandItem
+                                              value={damMaterialArray.label}
+                                              key={index}
+                                              onSelect={() => {
+                                                form.setValue(
+                                                  "material",
+                                                  damMaterialArray.value,
+                                                );
+                                              }}
+                                            >
+                                              <LuCheck
+                                                className={cn(
+                                                  "mr-2 h-4 w-4",
+                                                  damMaterialArray.value ===
+                                                    field.value
+                                                    ? "opacity-100"
+                                                    : "opacity-0",
+                                                )}
+                                              />
+                                              {damMaterialArray.label}
+                                            </CommandItem>
+                                          ),
+                                        )}
+                                      </CommandList>
+                                    </CommandGroup>
+                                  </Command>
+                                </PopoverClose>
+                              </PopoverContent>
+                            </Popover>
 
-            {/* Localization*/}
-            <Card className="w-full drop-shadow-lg sm:w-[400px]">
-              <CardHeader>
-                <CardTitle>
-                  <div className="flex items-center justify-start space-x-2">
-                    <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      4
-                    </div>
-                    <div className="text-yellow-500">Location</div>
+                            <FormMessage className="text-xs" />
+                          </div>
+                        </FormItem>
+                      )}
+                    />
+                    {/* Structure type */}
+                    <FormField
+                      control={form.control}
+                      name="profile"
+                      render={({ field }) => (
+                        <FormItem className="w-2/3">
+                          <FormLabel>Profile/structure type</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              placeholder="e.g. Arch, Zoned,..."
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
                   </div>
-                </CardTitle>
-                <CardDescription>Geographical information</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid w-full grid-cols-2 gap-4">
+
+                  {/* Description */}
                   <FormField
                     control={form.control}
-                    name="country"
+                    name="description"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Country*</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          value={field.value}
-                          disabled={isLoading}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue
-                                defaultValue={field.value}
-                                placeholder="Select"
-                              />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {countries.map((country) => {
-                              return (
-                                <SelectItem
-                                  key={country.isoCode}
-                                  value={country.isoCode}
-                                  defaultValue="PT"
-                                >
-                                  {country.name}
-                                </SelectItem>
-                              );
-                            })}
-                          </SelectContent>
-                        </Select>
-
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="state"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>District*</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          value={field.value}
-                          disabled={isLoading || states.length < 1}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue
-                                defaultValue={field.value}
-                                placeholder="Select"
-                              />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {states.map((state) => {
-                              return (
-                                <SelectItem
-                                  key={state.isoCode}
-                                  value={state.isoCode}
-                                >
-                                  {state.name}
-                                </SelectItem>
-                              );
-                            })}
-                          </SelectContent>
-                        </Select>
-
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="city"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Town</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          value={field.value}
-                          disabled={isLoading || cities.length < 1}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue
-                                defaultValue={field.value}
-                                placeholder="Select"
-                              />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {cities.map((city) => {
-                              return (
-                                <SelectItem key={city.name} value={city.name}>
-                                  {city.name}
-                                </SelectItem>
-                              );
-                            })}
-                          </SelectContent>
-                        </Select>
-
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="local"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Locality </FormLabel>
+                      <FormItem className="w-full">
+                        <FormLabel>Description</FormLabel>
                         <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
+                          <Textarea {...field} />
                         </FormControl>
+
                         <FormMessage className="text-xs" />
                       </FormItem>
                     )}
                   />
+                </CardContent>
+              </Card>
 
+              {/* Usages */}
+              <Card className="w-full drop-shadow-lg sm:w-[400px]">
+                <CardHeader>
+                  <CardTitle>
+                    <div className="flex items-center justify-start space-x-2">
+                      <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
+                        2
+                      </div>
+                      <div className="text-yellow-500">Purpose</div>
+                    </div>
+                  </CardTitle>
+                  <CardDescription>Select the dam usages*</CardDescription>
+                </CardHeader>
+                <CardContent>
                   <FormField
                     control={form.control}
-                    name="hydro_basin"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Hydrological basin</FormLabel>
+                    name="usages"
+                    render={() => (
+                      <FormItem className="w-full">
+                        <div className="grid grid-cols-2 gap-4">
+                          {/* Add grid container */}
+                          {usages.map((usage) => (
+                            <FormField
+                              key={usage.id}
+                              control={form.control}
+                              name="usages"
+                              render={({ field }) => {
+                                return (
+                                  <FormItem
+                                    key={usage.id}
+                                    className="flex flex-row items-center justify-start space-x-3 space-y-0"
+                                  >
+                                    <FormControl>
+                                      <Checkbox
+                                        checked={field.value?.includes(
+                                          usage.id,
+                                        )}
+                                        onCheckedChange={(checked) => {
+                                          return checked
+                                            ? field.onChange([
+                                                ...field.value,
+                                                usage.id,
+                                              ])
+                                            : field.onChange(
+                                                field.value?.filter(
+                                                  (value) => value !== usage.id,
+                                                ),
+                                              );
+                                        }}
+                                      />
+                                    </FormControl>
+                                    <FormLabel className="text-sm font-normal">
+                                      {usage.label}
+                                    </FormLabel>
+                                  </FormItem>
+                                );
+                              }}
+                            />
+                          ))}
+                        </div>
+                        <FormMessage className="py-2 text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                </CardContent>
+              </Card>
 
-                        {!isCountryPT ? (
+              {/* Project and construction info */}
+              <Card className="w-full drop-shadow-lg sm:w-[400px]">
+                <CardHeader>
+                  <CardTitle>
+                    <div className="flex items-center justify-start space-x-2">
+                      <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
+                        3
+                      </div>
+                      <div className="text-yellow-500">
+                        Project and construction
+                      </div>
+                    </div>
+                  </CardTitle>
+                  <CardDescription>Entities and relevant dates</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid w-full grid-cols-2 gap-4">
+                    {/* Owner */}
+                    <FormField
+                      control={form.control}
+                      name="owner"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Dam owner*</FormLabel>
                           <FormControl>
                             <Input
                               className="w-full rounded border text-base"
                               {...field}
                             />
                           </FormControl>
-                        ) : (
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    {/* Promotor */}
+                    <FormField
+                      control={form.control}
+                      name="promotor"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Dam promotor</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    {/* Building company */}
+                    <FormField
+                      control={form.control}
+                      name="builder"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Building company</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    {/* Designing company */}
+                    <FormField
+                      control={form.control}
+                      name="designer"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Designer company</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    {/* project year */}
+                    <FormField
+                      control={form.control}
+                      name="project_year"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Project year*</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    {/* Compleation year */}
+                    <FormField
+                      control={form.control}
+                      name="completion_year"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Completion year*</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Localization*/}
+              <Card className="w-full drop-shadow-lg sm:w-[400px]">
+                <CardHeader>
+                  <CardTitle>
+                    <div className="flex items-center justify-start space-x-2">
+                      <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
+                        4
+                      </div>
+                      <div className="text-yellow-500">Location</div>
+                    </div>
+                  </CardTitle>
+                  <CardDescription>Geographical information</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid w-full grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="country"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Country*</FormLabel>
                           <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value}
+                            value={field.value}
+                            disabled={isLoading}
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder="Select" />
+                                <SelectValue
+                                  defaultValue={field.value}
+                                  placeholder="Select"
+                                />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectGroup>
-                                <SelectLabel>Hydro Basins</SelectLabel>
-                                {hydrologicalBasinPT.map((basin) => (
+                              {countries.map((country) => {
+                                return (
                                   <SelectItem
-                                    key={basin.toLowerCase()}
-                                    value={basin}
+                                    key={country.isoCode}
+                                    value={country.isoCode}
+                                    defaultValue="PT"
                                   >
-                                    {basin}
+                                    {country.name}
                                   </SelectItem>
-                                ))}
-                              </SelectGroup>
+                                );
+                              })}
                             </SelectContent>
                           </Select>
-                        )}
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
 
-                  <FormField
-                    control={form.control}
-                    name="water_line"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Stream</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="state"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>District*</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            value={field.value}
+                            disabled={isLoading || states.length < 1}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue
+                                  defaultValue={field.value}
+                                  placeholder="Select"
+                                />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {states.map((state) => {
+                                return (
+                                  <SelectItem
+                                    key={state.isoCode}
+                                    value={state.isoCode}
+                                  >
+                                    {state.name}
+                                  </SelectItem>
+                                );
+                              })}
+                            </SelectContent>
+                          </Select>
 
-                  <FormField
-                    control={form.control}
-                    name="latitude"
-                    render={({ field }) => (
-                      <FormItem>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <FormLabel className="inline-flex gap-2">
-                                Latitude* <LuHelpCircle />
-                              </FormLabel>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Decimal degrees (DD) -90 to 90</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
 
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
+                    <FormField
+                      control={form.control}
+                      name="city"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Town</FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            value={field.value}
+                            disabled={isLoading || cities.length < 1}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue
+                                  defaultValue={field.value}
+                                  placeholder="Select"
+                                />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {cities.map((city) => {
+                                return (
+                                  <SelectItem key={city.name} value={city.name}>
+                                    {city.name}
+                                  </SelectItem>
+                                );
+                              })}
+                            </SelectContent>
+                          </Select>
 
-                  <FormField
-                    control={form.control}
-                    name="longitude"
-                    render={({ field }) => (
-                      <FormItem>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <FormLabel className="inline-flex gap-2">
-                                Longitude* <LuHelpCircle />
-                              </FormLabel>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Decimal degrees (DD) -180 to 180</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>{" "}
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
 
-            {/* hydrological features*/}
-            <Card className="w-full drop-shadow-lg sm:w-[400px]">
-              <CardHeader>
-                <CardTitle>
-                  <div className="flex items-center justify-start space-x-2">
-                    <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      5
-                    </div>
-                    <div className="text-yellow-500">Hydrological data</div>
+                    <FormField
+                      control={form.control}
+                      name="local"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Locality </FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="hydro_basin"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Hydrological basin</FormLabel>
+
+                          {!isCountryPT ? (
+                            <FormControl>
+                              <Input
+                                className="w-full rounded border text-base"
+                                {...field}
+                              />
+                            </FormControl>
+                          ) : (
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectGroup>
+                                  <SelectLabel>Hydro Basins</SelectLabel>
+                                  {hydrologicalBasinPT.map((basin) => (
+                                    <SelectItem
+                                      key={basin.toLowerCase()}
+                                      value={basin}
+                                    >
+                                      {basin}
+                                    </SelectItem>
+                                  ))}
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          )}
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="water_line"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Stream</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="latitude"
+                      render={({ field }) => (
+                        <FormItem>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <FormLabel className="inline-flex gap-2">
+                                  Latitude* <LuHelpCircle />
+                                </FormLabel>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Decimal degrees (DD) -90 to 90</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="longitude"
+                      render={({ field }) => (
+                        <FormItem>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <FormLabel className="inline-flex gap-2">
+                                  Longitude* <LuHelpCircle />
+                                </FormLabel>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Decimal degrees (DD) -180 to 180</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>{" "}
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
                   </div>
-                </CardTitle>
-                <CardDescription>Main hydrologic parameters</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid w-full grid-cols-2 items-end gap-4">
-                  <FormField
-                    control={form.control}
-                    name="watershed_area"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Watershed area* (km<sup>2</sup>)
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
+                </CardContent>
+              </Card>
 
-                  <FormField
-                    control={form.control}
-                    name="average_annual_prec"
-                    render={({ field }) => (
-                      <FormItem>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <FormLabel className="inline-flex gap-2">
-                                Precipitation (mm/yr) <LuHelpCircle />
-                              </FormLabel>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Average annual precipitation</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="flood_flow"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Flood flow (m<sup>3</sup>/s)
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="average_annual_flow"
-                    render={({ field }) => (
-                      <FormItem>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <FormLabel className="inline-flex">
-                                Total flow (m<sup>3</sup>/yr){" "}
-                                <LuHelpCircle className="ml-2" />
-                              </FormLabel>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Average annual total flow</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="return_period"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Return period (yrs)</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Reservoir features*/}
-            <Card className="w-full drop-shadow-lg sm:w-[400px]">
-              <CardHeader>
-                <CardTitle>
-                  <div className="flex items-center justify-start space-x-2">
-                    <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      6
+              {/* hydrological features*/}
+              <Card className="w-full drop-shadow-lg sm:w-[400px]">
+                <CardHeader>
+                  <CardTitle>
+                    <div className="flex items-center justify-start space-x-2">
+                      <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
+                        5
+                      </div>
+                      <div className="text-yellow-500">Hydrological data</div>
                     </div>
-                    <div className="text-yellow-500">Reservoir data</div>
+                  </CardTitle>
+                  <CardDescription>Main hydrologic parameters</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid w-full grid-cols-2 items-end gap-4">
+                    <FormField
+                      control={form.control}
+                      name="watershed_area"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            Watershed area* (km<sup>2</sup>)
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="average_annual_prec"
+                      render={({ field }) => (
+                        <FormItem>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <FormLabel className="inline-flex gap-2">
+                                  Precipitation (mm/yr) <LuHelpCircle />
+                                </FormLabel>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Average annual precipitation</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="flood_flow"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            Flood flow (m<sup>3</sup>/s)
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="average_annual_flow"
+                      render={({ field }) => (
+                        <FormItem>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <FormLabel className="inline-flex">
+                                  Total flow (m<sup>3</sup>/yr){" "}
+                                  <LuHelpCircle className="ml-2" />
+                                </FormLabel>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Average annual total flow</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="return_period"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Return period (yrs)</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
                   </div>
-                </CardTitle>
-                <CardDescription>Main hydraulic parameters</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid w-full grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="flood_area"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Flooded area at FSL* (m<sup>2</sup>)
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="total_capacity"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Total capacity (m<sup>3</sup>)
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="useful_capacity"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Useful capacity (m<sup>3</sup>)
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="dead_volume"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Dead volume (m<sup>3</sup>)
-                        </FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                </CardContent>
+              </Card>
 
-                <CardTitle className="pb-2 pt-4 text-sm font-semibold">
-                  Notable levels (m):
-                </CardTitle>
-
-                <div className="grid w-full grid-cols-3 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="fsl"
-                    render={({ field }) => (
-                      <FormItem>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <FormLabel className="inline-flex gap-2">
-                                FSL <LuHelpCircle />
-                              </FormLabel>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Full Storage Level</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="mfl"
-                    render={({ field }) => (
-                      <FormItem>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <FormLabel className="inline-flex gap-2">
-                                MFL <LuHelpCircle />
-                              </FormLabel>{" "}
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Maximum Flood Level</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="mol"
-                    render={({ field }) => (
-                      <FormItem>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <FormLabel className="inline-flex gap-2">
-                                MWL <LuHelpCircle />
-                              </FormLabel>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Minimum Operational Level</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Dam features*/}
-            <Card className="w-full drop-shadow-lg sm:w-[400px]">
-              <CardHeader>
-                <CardTitle>
-                  <div className="flex items-center justify-start space-x-2">
-                    <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      7
+              {/* Reservoir features*/}
+              <Card className="w-full drop-shadow-lg sm:w-[400px]">
+                <CardHeader>
+                  <CardTitle>
+                    <div className="flex items-center justify-start space-x-2">
+                      <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
+                        6
+                      </div>
+                      <div className="text-yellow-500">Reservoir data</div>
                     </div>
-                    <div className="text-yellow-500">Dam body</div>
+                  </CardTitle>
+                  <CardDescription>Main hydraulic parameters</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid w-full grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="flood_area"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            Flooded area at FSL* (m<sup>2</sup>)
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="total_capacity"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            Total capacity (m<sup>3</sup>)
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="useful_capacity"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            Useful capacity (m<sup>3</sup>)
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="dead_volume"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>
+                            Dead volume (m<sup>3</sup>)
+                          </FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
                   </div>
-                </CardTitle>
-                <CardDescription>Geometrical data</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <CardTitle className="pb-2 text-sm font-semibold">
-                  Heigth (m):
-                </CardTitle>
-                <div className="grid w-full grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="height_to_foundation"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>above foundation*</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="height_to_natural"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>above natural ground</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <CardTitle className="pb-2 pt-4 text-sm font-semibold">
-                  Crest parameters (m):
-                </CardTitle>
-                <div className="grid w-full grid-cols-3 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="crest_elevation"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>elevation</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="crest_length"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>length</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="crest_width"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>width</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
 
-                <CardTitle className="pb-2 pt-4 text-sm font-semibold">
-                  Volume of building materials (m<sup>3</sup>):
-                </CardTitle>
-                <div className="grid w-full grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
-                    name="embankment_volume"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>embankments</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="concrete_volume"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>concrete</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </CardContent>
-            </Card>
+                  <CardTitle className="pb-2 pt-4 text-sm font-semibold">
+                    Notable levels (m):
+                  </CardTitle>
 
-            {/* Foundation */}
-            <Card className="w-full drop-shadow-lg sm:w-[400px]">
-              <CardHeader>
-                <CardTitle>
-                  <div className="flex items-center justify-start space-x-2">
-                    <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      8
+                  <div className="grid w-full grid-cols-3 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="fsl"
+                      render={({ field }) => (
+                        <FormItem>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <FormLabel className="inline-flex gap-2">
+                                  FSL <LuHelpCircle />
+                                </FormLabel>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Full Storage Level</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="mfl"
+                      render={({ field }) => (
+                        <FormItem>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <FormLabel className="inline-flex gap-2">
+                                  MFL <LuHelpCircle />
+                                </FormLabel>{" "}
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Maximum Flood Level</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="mol"
+                      render={({ field }) => (
+                        <FormItem>
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <FormLabel className="inline-flex gap-2">
+                                  MWL <LuHelpCircle />
+                                </FormLabel>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>Minimum Operational Level</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Dam features*/}
+              <Card className="w-full drop-shadow-lg sm:w-[400px]">
+                <CardHeader>
+                  <CardTitle>
+                    <div className="flex items-center justify-start space-x-2">
+                      <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
+                        7
+                      </div>
+                      <div className="text-yellow-500">Dam body</div>
                     </div>
-                    <div className="text-yellow-500">Foundation</div>
+                  </CardTitle>
+                  <CardDescription>Geometrical data</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <CardTitle className="pb-2 text-sm font-semibold">
+                    Heigth (m):
+                  </CardTitle>
+                  <div className="grid w-full grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="height_to_foundation"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>above foundation*</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="height_to_natural"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>above natural ground</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
                   </div>
-                </CardTitle>
-                <CardDescription>Geology and treatment </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="w-full space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="foundation_geology"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormLabel>Geology of region/local</FormLabel>
-                        <FormControl>
-                          <Textarea {...field} className="h-32" />
-                        </FormControl>
+                  <CardTitle className="pb-2 pt-4 text-sm font-semibold">
+                    Crest parameters (m):
+                  </CardTitle>
+                  <div className="grid w-full grid-cols-3 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="crest_elevation"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>elevation</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="crest_length"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>length</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="crest_width"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>width</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
 
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="foundation_treatment"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormLabel>Foundation treatment</FormLabel>
-                        <FormControl>
-                          <Textarea {...field} className="h-32" />
-                        </FormControl>
+                  <CardTitle className="pb-2 pt-4 text-sm font-semibold">
+                    Volume of building materials (m<sup>3</sup>):
+                  </CardTitle>
+                  <div className="grid w-full grid-cols-2 gap-4">
+                    <FormField
+                      control={form.control}
+                      name="embankment_volume"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>embankments</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="concrete_volume"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>concrete</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
 
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Bottom discharge */}
-            <Card className="w-full drop-shadow-lg sm:w-[400px]">
-              <CardHeader>
-                <CardTitle>
-                  <div className="flex items-center justify-start space-x-2">
-                    <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      9
+              {/* Foundation */}
+              <Card className="w-full drop-shadow-lg sm:w-[400px]">
+                <CardHeader>
+                  <CardTitle>
+                    <div className="flex items-center justify-start space-x-2">
+                      <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
+                        8
+                      </div>
+                      <div className="text-yellow-500">Foundation</div>
                     </div>
-                    <div className="text-yellow-500">Bottom discharge</div>
+                  </CardTitle>
+                  <CardDescription>Geology and treatment </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="w-full space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="foundation_geology"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel>Geology of region/local</FormLabel>
+                          <FormControl>
+                            <Textarea {...field} className="h-32" />
+                          </FormControl>
+
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="foundation_treatment"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel>Foundation treatment</FormLabel>
+                          <FormControl>
+                            <Textarea {...field} className="h-32" />
+                          </FormControl>
+
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
                   </div>
-                </CardTitle>
-                <CardDescription>
-                  Description of hydraulic circuit
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="w-full space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="has_btd"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-center justify-between space-x-3 pb-3">
-                        <div className="space-y-0.5">
-                          <FormLabel>Bottom discharge circuit?</FormLabel>
+                </CardContent>
+              </Card>
+
+              {/* Bottom discharge */}
+              <Card className="w-full drop-shadow-lg sm:w-[400px]">
+                <CardHeader>
+                  <CardTitle>
+                    <div className="flex items-center justify-start space-x-2">
+                      <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
+                        9
+                      </div>
+                      <div className="text-yellow-500">Bottom discharge</div>
+                    </div>
+                  </CardTitle>
+                  <CardDescription>
+                    Description of hydraulic circuit
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="w-full space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="has_btd"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between space-x-3 pb-3">
+                          <div className="space-y-0.5">
+                            <FormLabel>Bottom discharge circuit?</FormLabel>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    {watchHasBottomDischarge && (
+                      <div className="grid gap-4">
+                        <div className="grid w-full grid-cols-2 gap-4">
+                          <FormField
+                            control={form.control}
+                            name="btd_local"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Localization</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className="w-full rounded border text-base"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs" />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="btd_type"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Type</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className="w-full rounded border text-base"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs" />
+                              </FormItem>
+                            )}
+                          />
                         </div>
-                        <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
+                        <div className="grid w-full grid-cols-2 gap-4">
+                          <FormField
+                            control={form.control}
+                            name="btd_number"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Number of conduits</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className="w-full rounded border text-base"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs" />
+                              </FormItem>
+                            )}
                           />
-                        </FormControl>
-                      </FormItem>
+
+                          <FormField
+                            control={form.control}
+                            name="btd_section"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Section type</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className="w-full rounded border text-base"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs" />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="grid w-full grid-cols-2 gap-4">
+                          <FormField
+                            control={form.control}
+                            name="btd_diameter"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Diameter (mm)</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className="w-full rounded border text-base"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs" />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="btd_maxflow"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>
+                                  Maximum flow (m<sup>3</sup>/s)
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className="w-full rounded border text-base"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs" />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <FormField
+                          control={form.control}
+                          name="btd_upstream"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Upstream control</FormLabel>
+                              <FormControl>
+                                <Input
+                                  className="w-full rounded border text-base"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="btd_downstream"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Downstream control</FormLabel>
+                              <FormControl>
+                                <Input
+                                  className="w-full rounded border text-base"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="btd_energy"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Energy dissipation</FormLabel>
+                              <FormControl>
+                                <Input
+                                  className="w-full rounded border text-base"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="btd_more"
+                          render={({ field }) => (
+                            <FormItem className="w-full">
+                              <FormLabel>More info</FormLabel>
+                              <FormControl>
+                                <Textarea {...field} />
+                              </FormControl>
+
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
                     )}
-                  />
+                  </div>
+                </CardContent>
+              </Card>
 
-                  {watchHasBottomDischarge && (
-                    <div className="grid gap-4">
-                      <div className="grid w-full grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="btd_local"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Localization</FormLabel>
-                              <FormControl>
-                                <Input
-                                  className="w-full rounded border text-base"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="btd_type"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Type</FormLabel>
-                              <FormControl>
-                                <Input
-                                  className="w-full rounded border text-base"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
+              {/* Spillway */}
+              <Card className="w-full drop-shadow-lg sm:w-[400px]">
+                <CardHeader>
+                  <CardTitle>
+                    <div className="flex items-center justify-start space-x-2">
+                      <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
+                        10
                       </div>
-                      <div className="grid w-full grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="btd_number"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Number of conduits</FormLabel>
-                              <FormControl>
-                                <Input
-                                  className="w-full rounded border text-base"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
+                      <div className="text-yellow-500">Spillway</div>
+                    </div>
+                  </CardTitle>{" "}
+                  <CardDescription>
+                    Description of hydraulic features
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="w-full space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="has_spillway"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between space-x-3 pb-3">
+                          <div className="space-y-0.5">
+                            <FormLabel>Spillway?</FormLabel>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
 
-                        <FormField
-                          control={form.control}
-                          name="btd_section"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Section type</FormLabel>
-                              <FormControl>
-                                <Input
-                                  className="w-full rounded border text-base"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      <div className="grid w-full grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="btd_diameter"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Diameter (mm)</FormLabel>
-                              <FormControl>
-                                <Input
-                                  className="w-full rounded border text-base"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
+                    {watchHasSpillway && (
+                      <div className="grid gap-4">
+                        <div className="grid w-full grid-cols-2 gap-4">
+                          <FormField
+                            control={form.control}
+                            name="spillway_local"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Localization</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className="w-full rounded border text-base"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs" />
+                              </FormItem>
+                            )}
+                          />
 
+                          <FormField
+                            control={form.control}
+                            name="spillway_type"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Type</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className="w-full rounded border text-base"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs" />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="grid w-full grid-cols-2 gap-4">
+                          <FormField
+                            control={form.control}
+                            name="spillway_number"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Number of channels</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className="w-full rounded border text-base"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs" />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="spillway_floodgates"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Flood gates</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className="w-full rounded border text-base"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs" />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="grid w-full grid-cols-2 gap-4">
+                          <FormField
+                            control={form.control}
+                            name="spillway_sill_elevation"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Sill elevation (m)</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className="w-full rounded border text-base"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs" />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="spillway_sill_length"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Sill length (m)</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className="w-full rounded border text-base"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs" />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
                         <FormField
                           control={form.control}
-                          name="btd_maxflow"
+                          name="spillway_maxflow"
                           render={({ field }) => (
                             <FormItem>
                               <FormLabel>
-                                Maximum flow (m<sup>3</sup>/s)
+                                Maximum flow discharge (m<sup>3</sup>/s)
                               </FormLabel>
                               <FormControl>
                                 <Input
@@ -1759,729 +1995,514 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                             </FormItem>
                           )}
                         />
+                        <FormField
+                          control={form.control}
+                          name="spillway_energy"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Energy dissipation type</FormLabel>
+                              <FormControl>
+                                <Input
+                                  className="w-full rounded border text-base"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="spillway_more"
+                          render={({ field }) => (
+                            <FormItem className="w-full">
+                              <FormLabel>More info</FormLabel>
+                              <FormControl>
+                                <Textarea className="h-36" {...field} />
+                              </FormControl>
+
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
                       </div>
-                      <FormField
-                        control={form.control}
-                        name="btd_upstream"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Upstream control</FormLabel>
-                            <FormControl>
-                              <Input
-                                className="w-full rounded border text-base"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="btd_downstream"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Downstream control</FormLabel>
-                            <FormControl>
-                              <Input
-                                className="w-full rounded border text-base"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="btd_energy"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Energy dissipation</FormLabel>
-                            <FormControl>
-                              <Input
-                                className="w-full rounded border text-base"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="btd_more"
-                        render={({ field }) => (
-                          <FormItem className="w-full">
-                            <FormLabel>More info</FormLabel>
-                            <FormControl>
-                              <Textarea {...field} />
-                            </FormControl>
-
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Spillway */}
-            <Card className="w-full drop-shadow-lg sm:w-[400px]">
-              <CardHeader>
-                <CardTitle>
-                  <div className="flex items-center justify-start space-x-2">
-                    <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      10
-                    </div>
-                    <div className="text-yellow-500">Spillway</div>
+                    )}
                   </div>
-                </CardTitle>{" "}
-                <CardDescription>
-                  Description of hydraulic features
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="w-full space-y-4">
+                </CardContent>
+              </Card>
+
+              {/* Hydropower plant */}
+              <Card className="w-full drop-shadow-lg sm:w-[400px]">
+                <CardHeader>
+                  <CardTitle>
+                    <div className="flex items-center justify-start space-x-2">
+                      <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
+                        11
+                      </div>
+                      <div className="text-yellow-500">Hydropower</div>
+                    </div>
+                  </CardTitle>{" "}
+                  <CardDescription>
+                    Hydroeletric power plant features
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="w-full space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="has_hydropower"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between space-x-3 pb-3">
+                          <div className="space-y-0.5">
+                            <FormLabel>Hydroeletric power plant?</FormLabel>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+                    {watchHasHydroPower && (
+                      <div className="grid gap-4">
+                        <FormField
+                          control={form.control}
+                          name="hp_local"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Localization/Type</FormLabel>
+                              <FormControl>
+                                <Input
+                                  className="w-full rounded border text-base"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
+                        <div className="grid w-full grid-cols-2 gap-4">
+                          <FormField
+                            control={form.control}
+                            name="hp_number_groups"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Number of groups</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className="w-full rounded border text-base"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs" />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="hp_groups_type"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>Groups type</FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className="w-full rounded border text-base"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs" />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <div className="grid w-full grid-cols-2 gap-4">
+                          <FormField
+                            control={form.control}
+                            name="hp_power"
+                            render={({ field }) => (
+                              <FormItem>
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <FormLabel className="inline-flex items-center justify-start gap-2">
+                                        <div>Power (MW)</div>
+                                        <LuHelpCircle />
+                                      </FormLabel>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Total power installed</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>{" "}
+                                <FormControl>
+                                  <Input
+                                    className="w-full rounded border text-base"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs" />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="hp_annual_energy"
+                            render={({ field }) => (
+                              <FormItem>
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <FormLabel className="inline-flex items-center justify-start gap-2">
+                                        <div>Energy (GWh/yr)</div>
+                                        <LuHelpCircle />
+                                      </FormLabel>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>Produced in an average year</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                                <FormControl>
+                                  <Input
+                                    className="w-full rounded border text-base"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs" />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <FormField
+                          control={form.control}
+                          name="hp_more"
+                          render={({ field }) => (
+                            <FormItem className="w-full">
+                              <FormLabel>More info</FormLabel>
+                              <FormControl>
+                                <Textarea {...field} />
+                              </FormControl>
+
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Environmental flow */}
+              <Card className="w-full drop-shadow-lg sm:w-[400px]">
+                <CardHeader>
+                  <CardTitle>
+                    <div className="flex items-center justify-start space-x-2">
+                      <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
+                        12
+                      </div>
+                      <div className="text-yellow-500">Environmental flow</div>
+                    </div>
+                  </CardTitle>
+                  <CardDescription>Main features</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="w-full space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="has_environ_circuit"
+                      render={({ field }) => (
+                        <FormItem className="flex flex-row items-center justify-between space-x-3 pb-3">
+                          <div className="space-y-0.5">
+                            <FormLabel>Environmental flow circuit?</FormLabel>
+                          </div>
+                          <FormControl>
+                            <Switch
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
+
+                    {watchHasEnviron && (
+                      <div className="grid gap-4">
+                        <FormField
+                          control={form.control}
+                          name="environ_local"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Circuit location</FormLabel>
+                              <FormControl>
+                                <Input
+                                  className="w-full rounded border text-base"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
+                        <FormField
+                          control={form.control}
+                          name="environ_type_control"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Type of control</FormLabel>
+                              <FormControl>
+                                <Input
+                                  className="w-full rounded border text-base"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
+                        <div className="grid w-full grid-cols-2 gap-4">
+                          <FormField
+                            control={form.control}
+                            name="environ_max_flow"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel>
+                                  Maximum flow (m<sup>3</sup>/s)
+                                </FormLabel>
+                                <FormControl>
+                                  <Input
+                                    className="w-full rounded border text-base"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs" />
+                              </FormItem>
+                            )}
+                          />
+
+                          <FormField
+                            control={form.control}
+                            name="environ_ref_flow"
+                            render={({ field }) => (
+                              <FormItem>
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger>
+                                      <FormLabel className="inline-flex items-center justify-start gap-2">
+                                        <div>
+                                          Reference flow (m<sup>3</sup>/s)
+                                        </div>
+                                        <LuHelpCircle />
+                                      </FormLabel>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>
+                                        Referenced to Minimum Operational Level
+                                        (MOL)
+                                      </p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                                <FormControl>
+                                  <Input
+                                    className="w-full rounded border text-base"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage className="text-xs" />
+                              </FormItem>
+                            )}
+                          />
+                        </div>
+                        <FormField
+                          control={form.control}
+                          name="environ_more"
+                          render={({ field }) => (
+                            <FormItem className="w-full">
+                              <FormLabel>More info</FormLabel>
+                              <FormControl>
+                                <Textarea {...field} />
+                              </FormControl>
+
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Additional notes */}
+              <Card className="w-full drop-shadow-lg sm:w-[400px] md:w-[826px]">
+                <CardHeader>
+                  <CardTitle>
+                    <div className="flex items-center justify-start space-x-2">
+                      <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
+                        13
+                      </div>
+                      <div className="text-yellow-500">
+                        Final remarks on the dam
+                      </div>
+                    </div>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
                   <FormField
                     control={form.control}
-                    name="has_spillway"
+                    name="notes"
                     render={({ field }) => (
-                      <FormItem className="flex flex-row items-center justify-between space-x-3 pb-3">
-                        <div className="space-y-0.5">
-                          <FormLabel>Spillway?</FormLabel>
-                        </div>
+                      <FormItem className="w-full">
+                        <FormLabel>Notes</FormLabel>
                         <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
+                          <Textarea {...field} />
                         </FormControl>
+
+                        <FormMessage className="text-xs" />
                       </FormItem>
                     )}
                   />
+                </CardContent>
+              </Card>
+            </div>
 
-                  {watchHasSpillway && (
-                    <div className="grid gap-4">
-                      <div className="grid w-full grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="spillway_local"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Localization</FormLabel>
-                              <FormControl>
-                                <Input
-                                  className="w-full rounded border text-base"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="spillway_type"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Type</FormLabel>
-                              <FormControl>
-                                <Input
-                                  className="w-full rounded border text-base"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      <div className="grid w-full grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="spillway_number"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Number of channels</FormLabel>
-                              <FormControl>
-                                <Input
-                                  className="w-full rounded border text-base"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="spillway_floodgates"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Flood gates</FormLabel>
-                              <FormControl>
-                                <Input
-                                  className="w-full rounded border text-base"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      <div className="grid w-full grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="spillway_sill_elevation"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Sill elevation (m)</FormLabel>
-                              <FormControl>
-                                <Input
-                                  className="w-full rounded border text-base"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="spillway_sill_length"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Sill length (m)</FormLabel>
-                              <FormControl>
-                                <Input
-                                  className="w-full rounded border text-base"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      <FormField
-                        control={form.control}
-                        name="spillway_maxflow"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>
-                              Maximum flow discharge (m<sup>3</sup>/s)
-                            </FormLabel>
-                            <FormControl>
-                              <Input
-                                className="w-full rounded border text-base"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="spillway_energy"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Energy dissipation type</FormLabel>
-                            <FormControl>
-                              <Input
-                                className="w-full rounded border text-base"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="spillway_more"
-                        render={({ field }) => (
-                          <FormItem className="w-full">
-                            <FormLabel>More info</FormLabel>
-                            <FormControl>
-                              <Textarea className="h-36" {...field} />
-                            </FormControl>
-
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Hydropower plant */}
-            <Card className="w-full drop-shadow-lg sm:w-[400px]">
-              <CardHeader>
-                <CardTitle>
-                  <div className="flex items-center justify-start space-x-2">
-                    <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      11
-                    </div>
-                    <div className="text-yellow-500">Hydropower</div>
-                  </div>
-                </CardTitle>{" "}
-                <CardDescription>
-                  Hydroeletric power plant features
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="w-full space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="has_hydropower"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-center justify-between space-x-3 pb-3">
-                        <div className="space-y-0.5">
-                          <FormLabel>Hydroeletric power plant?</FormLabel>
-                        </div>
-                        <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                  {watchHasHydroPower && (
-                    <div className="grid gap-4">
-                      <FormField
-                        control={form.control}
-                        name="hp_local"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Localization/Type</FormLabel>
-                            <FormControl>
-                              <Input
-                                className="w-full rounded border text-base"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                      <div className="grid w-full grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="hp_number_groups"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Number of groups</FormLabel>
-                              <FormControl>
-                                <Input
-                                  className="w-full rounded border text-base"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="hp_groups_type"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Groups type</FormLabel>
-                              <FormControl>
-                                <Input
-                                  className="w-full rounded border text-base"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      <div className="grid w-full grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="hp_power"
-                          render={({ field }) => (
-                            <FormItem>
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger>
-                                    <FormLabel className="inline-flex items-center justify-start gap-2">
-                                      <div>Power (MW)</div>
-                                      <LuHelpCircle />
-                                    </FormLabel>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>Total power installed</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>{" "}
-                              <FormControl>
-                                <Input
-                                  className="w-full rounded border text-base"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="hp_annual_energy"
-                          render={({ field }) => (
-                            <FormItem>
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger>
-                                    <FormLabel className="inline-flex items-center justify-start gap-2">
-                                      <div>Energy (GWh/yr)</div>
-                                      <LuHelpCircle />
-                                    </FormLabel>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>Produced in an average year</p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                              <FormControl>
-                                <Input
-                                  className="w-full rounded border text-base"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      <FormField
-                        control={form.control}
-                        name="hp_more"
-                        render={({ field }) => (
-                          <FormItem className="w-full">
-                            <FormLabel>More info</FormLabel>
-                            <FormControl>
-                              <Textarea {...field} />
-                            </FormControl>
-
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Environmental flow */}
-            <Card className="w-full drop-shadow-lg sm:w-[400px]">
-              <CardHeader>
-                <CardTitle>
-                  <div className="flex items-center justify-start space-x-2">
-                    <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      12
-                    </div>
-                    <div className="text-yellow-500">Environmental flow</div>
-                  </div>
-                </CardTitle>
-                <CardDescription>Main features</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="w-full space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="has_environ_circuit"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-row items-center justify-between space-x-3 pb-3">
-                        <div className="space-y-0.5">
-                          <FormLabel>Environmental flow circuit?</FormLabel>
-                        </div>
-                        <FormControl>
-                          <Switch
-                            checked={field.value}
-                            onCheckedChange={field.onChange}
-                          />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-
-                  {watchHasEnviron && (
-                    <div className="grid gap-4">
-                      <FormField
-                        control={form.control}
-                        name="environ_local"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Circuit location</FormLabel>
-                            <FormControl>
-                              <Input
-                                className="w-full rounded border text-base"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="environ_type_control"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Type of control</FormLabel>
-                            <FormControl>
-                              <Input
-                                className="w-full rounded border text-base"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                      <div className="grid w-full grid-cols-2 gap-4">
-                        <FormField
-                          control={form.control}
-                          name="environ_max_flow"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>
-                                Maximum flow (m<sup>3</sup>/s)
-                              </FormLabel>
-                              <FormControl>
-                                <Input
-                                  className="w-full rounded border text-base"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-
-                        <FormField
-                          control={form.control}
-                          name="environ_ref_flow"
-                          render={({ field }) => (
-                            <FormItem>
-                              <TooltipProvider>
-                                <Tooltip>
-                                  <TooltipTrigger>
-                                    <FormLabel className="inline-flex items-center justify-start gap-2">
-                                      <div>
-                                        Reference flow (m<sup>3</sup>/s)
-                                      </div>
-                                      <LuHelpCircle />
-                                    </FormLabel>
-                                  </TooltipTrigger>
-                                  <TooltipContent>
-                                    <p>
-                                      Referenced to Minimum Operational Level
-                                      (MOL)
-                                    </p>
-                                  </TooltipContent>
-                                </Tooltip>
-                              </TooltipProvider>
-                              <FormControl>
-                                <Input
-                                  className="w-full rounded border text-base"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-                      <FormField
-                        control={form.control}
-                        name="environ_more"
-                        render={({ field }) => (
-                          <FormItem className="w-full">
-                            <FormLabel>More info</FormLabel>
-                            <FormControl>
-                              <Textarea {...field} />
-                            </FormControl>
-
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Additional notes */}
-            <Card className="w-full drop-shadow-lg sm:w-[400px] lg:w-[826px]">
-              <CardHeader>
-                <CardTitle>
-                  <div className="flex items-center justify-start space-x-2">
-                    <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      13
-                    </div>
-                    <div className="text-yellow-500">
-                      Final remarks on the dam
-                    </div>
-                  </div>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <FormField
-                  control={form.control}
-                  name="notes"
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormLabel>Notes</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} />
-                      </FormControl>
-
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="flex w-full items-center lg:w-1/2">
-            <div className="flex w-full items-center justify-around">
-              <div className="flex justify-start gap-4">
-                {/* delete dam Button */}
-                {dam && (
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="destructive"
-                        type="button"
-                        disabled={isDamDeleting || isLoading}
-                      >
-                        {isDamDeleting ? (
-                          <>
-                            <LuLoader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Deleting
-                          </>
-                        ) : (
-                          <>
-                            <LuTrash2 className="mr-2 h-4 w-4" /> Delete
-                          </>
-                        )}
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Are you absolutely sure?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. <br />
-                          This will permanently remove the dam data from our
-                          servers.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => handleDeleteDam(dam.id)}
+            <div className="flex w-full items-center lg:w-1/2">
+              <div className="flex w-full items-center justify-around">
+                <div className="flex justify-start gap-4">
+                  {/* delete dam Button */}
+                  {dam && (
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="destructive"
+                          type="button"
+                          disabled={isDamDeleting || isLoading}
                         >
-                          Continue
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                )}
-                {/* reset form button */}
-                <Button
-                  type="button"
-                  variant="outline"
-                  disabled={isLoading}
-                  onClick={() => handleResetform()}
-                >
-                  <LuRefreshCcw className="mr-2" />
-                  Reset
-                </Button>
-              </div>
+                          {isDamDeleting ? (
+                            <>
+                              <LuLoader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Deleting
+                            </>
+                          ) : (
+                            <>
+                              <LuTrash2 className="mr-2 h-4 w-4" /> Delete
+                            </>
+                          )}
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Are you absolutely sure?
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. <br />
+                            This will permanently remove the dam data from our
+                            servers.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => handleDeleteDam(dam.id)}
+                          >
+                            Continue
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  )}
+                  {/* reset form button */}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={isLoading}
+                    onClick={() => handleResetform()}
+                  >
+                    <LuRefreshCcw className="mr-2" />
+                    Reset
+                  </Button>
+                </div>
 
-              <div className="flex justify-end gap-4">
-                {/* view Dam button */}
+                <div className="flex justify-end gap-4">
+                  {/* view Dam button */}
 
-                {dam && (
-                  <>
+                  {dam && (
+                    <>
+                      <Button
+                        variant="default"
+                        onClick={() => {
+                          router.push(`/dam-details/${dam.id}`);
+                        }}
+                      >
+                        <LuEye className="mr-2 h-4 w-4" />
+                        View
+                      </Button>
+                    </>
+                  )}
+
+                  {/* create/update Dam Buttons */}
+                  {dam ? (
                     <Button
-                      variant="default"
-                      onClick={() => {
-                        router.push(`/dam-details/${dam.id}`);
-                      }}
+                      type="submit"
+                      disabled={isLoading}
+                      className="max-w-[150px]"
+                      variant="primary"
                     >
-                      <LuEye className="mr-2 h-4 w-4" />
-                      View
+                      {isLoading ? (
+                        <>
+                          <LuLoader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Updating
+                        </>
+                      ) : (
+                        <>
+                          <LuPencilLine className="mr-2 h-4 w-4" /> Update
+                        </>
+                      )}
                     </Button>
-                  </>
-                )}
-
-                {/* create/update Dam Buttons */}
-                {dam ? (
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="max-w-[150px]"
-                    variant="primary"
-                  >
-                    {isLoading ? (
-                      <>
-                        <LuLoader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Updating
-                      </>
-                    ) : (
-                      <>
-                        <LuPencilLine className="mr-2 h-4 w-4" /> Update
-                      </>
-                    )}
-                  </Button>
-                ) : (
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="max-w-[150px]"
-                  >
-                    {isLoading ? (
-                      <>
-                        <LuLoader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Creating
-                      </>
-                    ) : (
-                      <>
-                        <LuPencil className="mr-2 h-4 w-4" /> Create Dam
-                      </>
-                    )}
-                  </Button>
-                )}
+                  ) : (
+                    <Button
+                      type="submit"
+                      disabled={isLoading}
+                      className="max-w-[150px]"
+                    >
+                      {isLoading ? (
+                        <>
+                          <LuLoader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Creating
+                        </>
+                      ) : (
+                        <>
+                          <LuPencil className="mr-2 h-4 w-4" /> Create Dam
+                        </>
+                      )}
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
+        </form>
+      </Form>
+
+      {dam && !dam?.files?.length && (
+        <div className="p-10 drop-shadow-lg sm:w-[400px] md:w-[826px]">
+          <Alert variant="alert">
+            <LuTerminal className="h-4 w-4" />
+            <AlertTitle>Now you can add files to the dam!</AlertTitle>
+            <AlertDescription>
+              Please add images, draws or documents related to{" "}
+              <span className="font-bold underline">{dam.name}</span> dam.
+            </AlertDescription>
+          </Alert>
         </div>
-      </form>
-    </Form>
+      )}
+    </div>
   );
 }
