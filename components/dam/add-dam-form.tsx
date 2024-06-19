@@ -11,6 +11,18 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
 
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+import {
   Form,
   FormControl,
   FormField,
@@ -54,11 +66,14 @@ import { Button } from "@/components/ui/button";
 import {
   LuCheck,
   LuChevronsUpDown,
+  LuEye,
   LuHelpCircle,
   LuLoader2,
   LuPencil,
   LuPencilLine,
   LuRefreshCcw,
+  LuTrash2,
+  LuView,
 } from "react-icons/lu";
 import { toast } from "@/components/ui/use-toast";
 import { Textarea } from "@/components/ui/textarea";
@@ -77,6 +92,7 @@ import { usages, hydrologicalBasinPT } from "@/data/dam/constants";
 import { useRouter } from "next/navigation";
 import { createDam } from "@/actions/dam/create-dam";
 import { updateDam } from "@/actions/dam/update-dam";
+import { deleteDam } from "@/actions/dam/delete-dam";
 
 //to use the enum defined in dam.prisma
 const damClassArray = Object.entries(DamClass).map(([key, value]) => ({
@@ -103,6 +119,8 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
   const [states, setStates] = useState<IState[]>([]);
   const [cities, setCities] = useState<ICity[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDamDeleting, setIsDamDeleting] = useState(false);
+
   const [isCountryPT, setIsCountryPT] = useState(false); // to see if country is PRT
 
   const { getAllCountries, getCountryStates, getStateCities } = useLocation();
@@ -183,6 +201,31 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
          })
          .finally(() => setIsLoading(false));
       */
+    }
+  };
+
+  const handleDeleteDam = (damId: String) => {
+    if (dam) {
+      // update a dam witha given ID
+      startTransition(() => {
+        setIsDamDeleting(true);
+        deleteDam(dam.id)
+          .then((data) => {
+            if (!data.ok) {
+              toast({
+                variant: "destructive",
+                description: `Something went wrong! ${data.message}`,
+              });
+            } else {
+              toast({
+                variant: "success",
+                description: `Success: ${data.message}`,
+              });
+              router.push("/dam/new");
+            }
+          })
+          .finally(() => setIsDamDeleting(true));
+      });
     }
   };
 
@@ -391,7 +434,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="flex w-full flex-col items-center justify-center space-y-8">
+        <div className="flex w-full flex-col items-center justify-center space-y-6 py-6">
           <div className="flex w-full flex-col items-stretch justify-center gap-6 sm:flex-row sm:flex-wrap">
             {/* General data */}
             <Card className="w-full drop-shadow-lg sm:w-[400px]">
@@ -2290,7 +2333,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
             </Card>
 
             {/* Additional notes */}
-            <Card className="w-[400px] drop-shadow-lg lg:w-[826px]">
+            <Card className="w-full drop-shadow-lg sm:w-[400px] lg:w-[826px]">
               <CardHeader>
                 <CardTitle>
                   <div className="flex items-center justify-start space-x-2">
@@ -2321,56 +2364,122 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
               </CardContent>
             </Card>
           </div>
-          {/* submit button */}
-          <div className="flex w-full items-center">
-            <div className="flex w-full items-center justify-center gap-2">
-              {dam ? (
+
+          <div className="flex w-full items-center lg:w-1/2">
+            <div className="flex w-full items-center justify-around">
+              <div className="flex justify-start gap-4">
+                {/* delete dam Button */}
+                {dam && (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="destructive"
+                        type="button"
+                        disabled={isDamDeleting || isLoading}
+                      >
+                        {isDamDeleting ? (
+                          <>
+                            <LuLoader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Deleting
+                          </>
+                        ) : (
+                          <>
+                            <LuTrash2 className="mr-2 h-4 w-4" /> Delete
+                          </>
+                        )}
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. <br />
+                          This will permanently remove the dam data from our
+                          servers.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => handleDeleteDam(dam.id)}
+                        >
+                          Continue
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
+                {/* reset form button */}
                 <Button
-                  type="submit"
+                  type="button"
+                  variant="outline"
                   disabled={isLoading}
-                  className="max-w-[150px]"
+                  onClick={() => handleResetform()}
                 >
-                  {isLoading ? (
-                    <>
-                      <LuLoader2 className="mr-2 h-4 w-4 animate-spin-slow" />
-                      Updating
-                    </>
-                  ) : (
-                    <>
-                      <LuPencilLine className="mr-2 h-4 w-4" /> Update
-                    </>
-                  )}
+                  <LuRefreshCcw className="mr-2" />
+                  Reset
                 </Button>
-              ) : (
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  className="max-w-[150px]"
-                >
-                  {isLoading ? (
-                    <>
-                      <LuLoader2 className="mr-2 h-4 w-4 animate-spin-slow" />
-                      Creating
-                    </>
-                  ) : (
-                    <>
-                      <LuPencil className="mr-2 h-4 w-4" /> Create Dam
-                    </>
-                  )}
-                </Button>
-              )}
+              </div>
+
+              <div className="flex justify-end gap-4">
+                {/* view Dam button */}
+
+                {dam && (
+                  <>
+                    <Button
+                      variant="default"
+                      onClick={() => {
+                        router.push(`/dam-details/${dam.id}`);
+                      }}
+                    >
+                      <LuEye className="mr-2 h-4 w-4" />
+                      View
+                    </Button>
+                  </>
+                )}
+
+                {/* create/update Dam Buttons */}
+                {dam ? (
+                  <Button
+                    type="submit"
+                    disabled={isLoading}
+                    className="max-w-[150px]"
+                    variant="primary"
+                  >
+                    {isLoading ? (
+                      <>
+                        <LuLoader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Updating
+                      </>
+                    ) : (
+                      <>
+                        <LuPencilLine className="mr-2 h-4 w-4" /> Update
+                      </>
+                    )}
+                  </Button>
+                ) : (
+                  <Button
+                    type="submit"
+                    disabled={isLoading}
+                    className="max-w-[150px]"
+                  >
+                    {isLoading ? (
+                      <>
+                        <LuLoader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Creating
+                      </>
+                    ) : (
+                      <>
+                        <LuPencil className="mr-2 h-4 w-4" /> Create Dam
+                      </>
+                    )}
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
-          {/* reset form button */}
-          <Button
-            type="button"
-            variant="outline"
-            disabled={isLoading}
-            onClick={() => handleResetform()}
-          >
-            <LuRefreshCcw className="mr-2" />
-            Reset
-          </Button>
         </div>
       </form>
     </Form>
