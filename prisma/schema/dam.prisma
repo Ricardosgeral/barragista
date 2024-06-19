@@ -43,33 +43,33 @@ model Dam {
     local       String? @default("")
     hydro_basin String? @default("")
     water_line  String? @default("")
-    latitude    Float?  @default(0)
-    longitude   Float?  @default(0)
+    latitude    Float   @default(0)
+    longitude   Float   @default(0)
 
     //HydroFeatures
-    watershed_area      Decimal? @default(0)
-    average_annual_prec Int?     @default(0)
-    flood_flow          Int?     @default(0)
-    average_annual_flow Decimal? @default(0)
-    return_period       Int?     @default(0)
+    watershed_area      Float  @default(0)
+    average_annual_prec Int?   @default(0)
+    flood_flow          Int?   @default(0)
+    average_annual_flow Float? @default(0)
+    return_period       Int?   @default(0)
 
     //Reservoir Features
-    flood_area      Decimal? @default(0)
-    total_capacity  Decimal? @default(0)
-    useful_capacity Decimal? @default(0)
-    dead_volume     Decimal? @default(0)
-    fsl             Int?     @default(0)
-    mfl             Int?     @default(0)
-    mol             Int?     @default(0)
+    flood_area      Float  @default(0)
+    total_capacity  Float? @default(0)
+    useful_capacity Float? @default(0)
+    dead_volume     Float? @default(0)
+    fsl             Int?   @default(0)
+    mfl             Int?   @default(0)
+    mol             Int?   @default(0)
 
     // Dam Features
     height_to_foundation Int
-    height_to_natural    Int?     @default(0)
+    height_to_natural    Int?   @default(0)
     crest_elevation      Float
     crest_length         Int
-    crest_width          Float?   @default(0)
-    embankment_volume    Decimal? @default(0)
-    concrete_volume      Decimal? @default(0)
+    crest_width          Float? @default(0)
+    embankment_volume    Float? @default(0)
+    concrete_volume      Float? @default(0)
 
     //Geology and foundation treatment
     foundation_geology   String? @default("")

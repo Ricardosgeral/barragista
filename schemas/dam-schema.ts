@@ -4,24 +4,24 @@ import { z } from "zod";
 export const DamSchema = z.object({
   name: z
     .string()
-    .min(2, "Minimum of 2 caracters required")
+    .min(2, "Minimum of 2 caracters")
     .max(30, "Maximum of 30 caracters"),
   class: z.nativeEnum(DamClass),
   material: z.nativeEnum(DamMaterial),
-  profile: z.string().min(3, "Minimum of 3 caracters required").max(30),
+  profile: z.string().min(3, "Minimum of 3 caracters").max(30),
   description: z.string().max(200, "Maximum of 150 characters").optional(),
 
   usages: z.array(z.string()).min(1, "Select at least one"),
 
   owner: z
     .string()
-    .min(2, "Minimum of 2 caracters required")
+    .min(2, "Minimum of 2 caracters")
     .max(30, "Maximum of 30 caracters"),
   promotor: z.string().max(30, "Maximum of 30 caracters").optional(),
   builder: z.string().max(30, "Maximum of 30 caracters").optional(),
   designer: z.string().max(30, "Maximum of 30 caracters"),
-  project_year: z.string().regex(/^\d{4}$/, "YYYY required"),
-  completion_year: z.string().regex(/^\d{4}$/, "YYYY required"),
+  project_year: z.string().regex(/^\d{4}$/, "YYYY format"),
+  completion_year: z.string().regex(/^\d{4}$/, "YYYY format"),
   //localization
   country: z.string(),
   state: z.string(),
@@ -29,16 +29,28 @@ export const DamSchema = z.object({
   local: z.string().max(30, "Maximum of 30 caracters").optional(),
   hydro_basin: z.string().optional(),
   water_line: z.string().optional(),
-  latitude: z.coerce.number().min(-90).max(90).optional(),
-  longitude: z.coerce.number().min(-180).max(180).optional(),
+  latitude: z.coerce
+    .number({ message: "Latitude in DD required" })
+    .min(-90)
+    .max(90)
+    .refine((value) => value !== 0, {
+      message: "Number cannot be 0",
+    }),
+  longitude: z.coerce
+    .number({ message: "Longitude in DD required" })
+    .min(-180)
+    .max(180)
+    .refine((value) => value !== 0, {
+      message: "Number cannot be 0",
+    }),
   //HydroFeatures
-  watershed_area: z.coerce.number().nonnegative().optional(),
+  watershed_area: z.coerce.number().positive("Positive number required"),
   average_annual_prec: z.coerce.number().nonnegative().optional(),
   flood_flow: z.coerce.number().nonnegative().optional(),
   average_annual_flow: z.coerce.number().nonnegative().optional(),
   return_period: z.coerce.number().nonnegative().optional(),
   //Reservoir Features
-  flood_area: z.coerce.number().nonnegative().optional(),
+  flood_area: z.coerce.number().positive("Positive number required"),
   total_capacity: z.coerce.number().nonnegative().optional(),
   useful_capacity: z.coerce.number().nonnegative().optional(),
   dead_volume: z.coerce.number().nonnegative().optional(),
@@ -46,7 +58,7 @@ export const DamSchema = z.object({
   mfl: z.coerce.number().nonnegative().optional(),
   mol: z.coerce.number().nonnegative().optional(),
   // Dam Features
-  height_to_foundation: z.coerce.number().nonnegative(),
+  height_to_foundation: z.coerce.number().positive("Positive number required"),
   height_to_natural: z.coerce.number().nonnegative().optional(),
   crest_elevation: z.coerce.number().nonnegative(),
   crest_length: z.coerce.number().nonnegative(),

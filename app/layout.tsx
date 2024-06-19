@@ -19,7 +19,7 @@ const ibmPlexSerif = IBM_Plex_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "Barragista",
+  title: "DamHub",
   description: "All about dams",
   icons: { icon: "/logos/logo-black-_2lines.svg" },
 };

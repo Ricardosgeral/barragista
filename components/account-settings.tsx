@@ -92,7 +92,7 @@ export default function AccountSettings() {
   const onSubmitName = (values: z.infer<typeof NameSchema>) => {
     router.refresh();
     startTransition(() => {
-      console.log(values.image);
+      //console.log(values.image);
       setName(values)
         .then((data) => {
           if (data.error) {

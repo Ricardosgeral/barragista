@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 export default async function Regulations() {
   const user = await currentUser(); // uses auth from lib for rendering in server components
 
-  if (!user) redirect("/auth/login"); //middleware should avoid this but
+  if (!user) redirect("/auth/login"); //middleware should avoid this, but
   return (
     <section className="no-scrollbar flex w-full flex-row max-xl:max-h-screen">
       <div className="no-scrollbar flex w-full flex-1 flex-col p-2 md:px-5 md:py-3 xl:max-h-screen">

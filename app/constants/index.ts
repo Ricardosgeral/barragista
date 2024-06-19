@@ -1,6 +1,6 @@
-import IconMegaphone from "@/components/icons/contacts";
+import Envelopat from "@/components/icons/contacts";
 import ConcreteDam from "@/components/icons/dams";
-import IconHome6Line from "@/components/icons/home";
+// import IconHome6Line from "@/components/icons/home";
 import IconBookshelf from "@/components/icons/regulaments";
 
 export const sidebarLinks = [
@@ -20,7 +20,7 @@ export const sidebarLinks = [
     label: "Regulations",
   },
   {
-    icon: IconMegaphone,
+    icon: Envelopat,
     route: "/contacts",
     label: "Contacts",
   },

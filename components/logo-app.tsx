@@ -22,7 +22,7 @@ export default function LogoApp({
       {!square ? (
         <Image
           src={negative ? "/logos/logos_Page 5.svg" : "/logos/logos_Page 3.svg"}
-          alt="Barragista logo"
+          alt="DamHub logo"
           width={60}
           height={60}
           className="w-full"
@@ -36,10 +36,10 @@ export default function LogoApp({
               src="/logos/logos_Page 2.svg"
               width={70}
               height={70}
-              alt="Barragista logo"
+              alt="DamHub logo"
               className="cursor-pointer"
             />
-            <h1 className="cursor-pointer">Barragista</h1>
+            <h1 className="cursor-pointer">DamHub</h1>
           </div>
         </Link>
       )}

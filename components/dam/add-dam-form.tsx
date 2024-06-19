@@ -64,7 +64,7 @@ import { toast } from "@/components/ui/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import useLocation from "@/hooks/use-location";
 import { ICity, IState } from "country-state-city";
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import { PopoverClose } from "@radix-ui/react-popover";
 import {
   Card,
@@ -75,6 +75,8 @@ import {
 } from "@/components/ui/card";
 import { usages, hydrologicalBasinPT } from "@/data/dam/constants";
 import { useRouter } from "next/navigation";
+import { createDam } from "@/actions/dam/create-dam";
+import { updateDam } from "@/actions/dam/update-dam";
 
 //to use the enum defined in dam.prisma
 const damClassArray = Object.entries(DamClass).map(([key, value]) => ({
@@ -107,40 +109,80 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
   const countries = getAllCountries;
   const router = useRouter();
 
-  const onSubmit = (data: z.infer<typeof DamSchema>) => {
+  const onSubmit = (values: z.infer<typeof DamSchema>) => {
     setIsLoading(true);
     if (dam) {
-      // update logic here
+      // update a dam witha given ID
+      startTransition(() => {
+        setIsLoading(true);
+        updateDam(values, dam.id)
+          .then((data) => {
+            if (!data.ok) {
+              toast({
+                variant: "destructive",
+                description: `Something went wrong! ${data.message}`,
+              });
+            } else {
+              toast({
+                variant: "success",
+                description: `Success: ${data.message}`,
+              });
+              router.push(`/dam/${data.dam?.id}`);
+            }
+          })
+          .finally(() => setIsLoading(false));
+      });
     } else {
-      // create (NOTE this fetch chain could be replaced by a server action...)
-      fetch("/api/dam", {
-        method: "POST",
-        cache: "no-store",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json;charset=UTF-8",
-        },
-        body: JSON.stringify(data),
-      })
-        .then((res) => {
-          if (!res.ok) {
-            throw new Error(`HTTP status ${res.status}`);
-          }
-          return res.json();
+      // create (use of the server action... Could alse be done with API.)
+      startTransition(() => {
+        setIsLoading(true);
+        createDam(values)
+          .then((data) => {
+            if (!data.ok) {
+              toast({
+                variant: "destructive",
+                description: `Error: ${data.message}`,
+              });
+            } else {
+              toast({
+                variant: "success",
+                description: `Success: ${data.message}`,
+              });
+              router.push(`/dam/${data.dam?.id}`);
+            }
+          })
+          .finally(() => setIsLoading(false));
+      });
+      /* Using api route instead of server action -> uses route in api/dam/route.ts. 
+       fetch("/api/dam", {
+         method: "POST",
+         cache: "no-store",
+         headers: {
+           Accept: "application/json",
+           "Content-Type": "application/json;charset=UTF-8",
+         },
+         body: JSON.stringify(data),
         })
-        .then((data) => {
-          toast({ variant: "success", description: "Dam created!" });
-          //console.log("Post request successful. Response", data);
-          router.push(`/dam/${data.id}`);
-        })
-        .catch((error) => {
-          //console.error("Error during fetch:", error);
-          toast({
-            variant: "destructive",
-            description: `Something went wrong! ${error}`,
-          });
-        })
-        .finally(() => setIsLoading(false));
+          .then((res) => {
+            if (!res.ok) {
+              throw new Error(`HTTP status ${res.status}`);
+             }
+            return res.json();
+          })
+          .then((data) => {
+           toast({ variant: "success", description: "Dam created!" });
+           //console.log("Post request successful. Response", data);
+           router.push(`/dam/${data.id}`);
+         })
+         .catch((error) => {
+         //console.error("Error during fetch:", error);
+           toast({
+             variant: "destructive",
+             description: `Something went wrong! ${error}`,
+           });
+         })
+         .finally(() => setIsLoading(false));
+      */
     }
   };
 
@@ -937,8 +979,8 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                                 <SelectLabel>Hydro Basins</SelectLabel>
                                 {hydrologicalBasinPT.map((basin) => (
                                   <SelectItem
-                                    key={basin}
-                                    value={basin.toLowerCase()}
+                                    key={basin.toLowerCase()}
+                                    value={basin}
                                   >
                                     {basin}
                                   </SelectItem>
@@ -978,7 +1020,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                           <Tooltip>
                             <TooltipTrigger>
                               <FormLabel className="inline-flex gap-2">
-                                Latitude <LuHelpCircle />
+                                Latitude* <LuHelpCircle />
                               </FormLabel>
                             </TooltipTrigger>
                             <TooltipContent>
@@ -1007,7 +1049,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                           <Tooltip>
                             <TooltipTrigger>
                               <FormLabel className="inline-flex gap-2">
-                                Longitude <LuHelpCircle />
+                                Longitude* <LuHelpCircle />
                               </FormLabel>
                             </TooltipTrigger>
                             <TooltipContent>
@@ -1050,7 +1092,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Watershed area (km<sup>2</sup>)
+                          Watershed area* (km<sup>2</sup>)
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -1179,7 +1221,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Flooded area at FSL (m<sup>2</sup>)
+                          Flooded area at FSL* (m<sup>2</sup>)
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -1248,7 +1290,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                 </div>
 
                 <CardTitle className="pb-2 pt-4 text-sm font-semibold">
-                  Notable levels (m)
+                  Notable levels (m):
                 </CardTitle>
 
                 <div className="grid w-full grid-cols-3 gap-4">
@@ -1354,7 +1396,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
               </CardHeader>
               <CardContent>
                 <CardTitle className="pb-2 text-sm font-semibold">
-                  Heigth (m)
+                  Heigth (m):
                 </CardTitle>
                 <div className="grid w-full grid-cols-2 gap-4">
                   <FormField
@@ -1362,7 +1404,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                     name="height_to_foundation"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Above foundation</FormLabel>
+                        <FormLabel>above foundation*</FormLabel>
                         <FormControl>
                           <Input
                             className="w-full rounded border text-base"
@@ -1378,7 +1420,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                     name="height_to_natural"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Above natural ground</FormLabel>
+                        <FormLabel>above natural ground</FormLabel>
                         <FormControl>
                           <Input
                             className="w-full rounded border text-base"
@@ -1391,7 +1433,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                   />
                 </div>
                 <CardTitle className="pb-2 pt-4 text-sm font-semibold">
-                  Crest parameters (m)
+                  Crest parameters (m):
                 </CardTitle>
                 <div className="grid w-full grid-cols-3 gap-4">
                   <FormField
@@ -1399,7 +1441,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                     name="crest_elevation"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Elevation</FormLabel>
+                        <FormLabel>elevation</FormLabel>
                         <FormControl>
                           <Input
                             className="w-full rounded border text-base"
@@ -1415,7 +1457,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                     name="crest_length"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Length</FormLabel>
+                        <FormLabel>length</FormLabel>
                         <FormControl>
                           <Input
                             className="w-full rounded border text-base"
@@ -1431,7 +1473,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                     name="crest_width"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Width</FormLabel>
+                        <FormLabel>width</FormLabel>
                         <FormControl>
                           <Input
                             className="w-full rounded border text-base"
@@ -1445,7 +1487,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                 </div>
 
                 <CardTitle className="pb-2 pt-4 text-sm font-semibold">
-                  Volume of building materials (m<sup>3</sup>)
+                  Volume of building materials (m<sup>3</sup>):
                 </CardTitle>
                 <div className="grid w-full grid-cols-2 gap-4">
                   <FormField
@@ -1453,7 +1495,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                     name="embankment_volume"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Embankments</FormLabel>
+                        <FormLabel>embankments</FormLabel>
                         <FormControl>
                           <Input
                             className="w-full rounded border text-base"
@@ -1469,7 +1511,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                     name="concrete_volume"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Concrete</FormLabel>
+                        <FormLabel>concrete</FormLabel>
                         <FormControl>
                           <Input
                             className="w-full rounded border text-base"
@@ -1591,7 +1633,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                           name="btd_type"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Type of discharge</FormLabel>
+                              <FormLabel>Type</FormLabel>
                               <FormControl>
                                 <Input
                                   className="w-full rounded border text-base"
@@ -1626,7 +1668,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                           name="btd_section"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Type of section</FormLabel>
+                              <FormLabel>Section type</FormLabel>
                               <FormControl>
                                 <Input
                                   className="w-full rounded border text-base"
@@ -1803,7 +1845,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                           name="spillway_type"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Type of discharge</FormLabel>
+                              <FormLabel>Type</FormLabel>
                               <FormControl>
                                 <Input
                                   className="w-full rounded border text-base"
