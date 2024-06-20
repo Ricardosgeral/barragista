@@ -129,7 +129,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
   const countries = getAllCountries;
   const router = useRouter();
 
-  console.log(dam?.files?.length);
+  console.log("Damit");
 
   const onSubmit = (values: z.infer<typeof DamSchema>) => {
     setIsLoading(true);
@@ -437,6 +437,21 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
 
   return (
     <div className="flex flex-col items-center justify-center gap-y-6">
+      {/* Dam Files*/}
+      <div className="">
+        {dam && !dam?.files?.length && (
+          <div className="p-10 drop-shadow-lg sm:w-[400px] md:w-[826px]">
+            <Alert variant="alert">
+              <LuTerminal className="h-4 w-4" />
+              <AlertTitle>Now you can add files to the dam!</AlertTitle>
+              <AlertDescription>
+                Please add images, draws or documents related to{" "}
+                <span className="font-bold underline">{dam.name}</span> dam.
+              </AlertDescription>
+            </Alert>
+          </div>
+        )}
+      </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="flex w-full flex-col items-center justify-center space-y-6">
@@ -687,36 +702,34 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                           {/* Add grid container */}
                           {usages.map((usage) => (
                             <FormField
-                              key={usage.id}
+                              key={usage}
                               control={form.control}
                               name="usages"
                               render={({ field }) => {
                                 return (
                                   <FormItem
-                                    key={usage.id}
+                                    key={usage}
                                     className="flex flex-row items-center justify-start space-x-3 space-y-0"
                                   >
                                     <FormControl>
                                       <Checkbox
-                                        checked={field.value?.includes(
-                                          usage.id,
-                                        )}
+                                        checked={field.value?.includes(usage)}
                                         onCheckedChange={(checked) => {
                                           return checked
                                             ? field.onChange([
                                                 ...field.value,
-                                                usage.id,
+                                                usage,
                                               ])
                                             : field.onChange(
                                                 field.value?.filter(
-                                                  (value) => value !== usage.id,
+                                                  (value) => value !== usage,
                                                 ),
                                               );
                                         }}
                                       />
                                     </FormControl>
                                     <FormLabel className="text-sm font-normal">
-                                      {usage.label}
+                                      {usage}
                                     </FormLabel>
                                   </FormItem>
                                 );
@@ -2490,19 +2503,6 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
           </div>
         </form>
       </Form>
-
-      {dam && !dam?.files?.length && (
-        <div className="p-10 drop-shadow-lg sm:w-[400px] md:w-[826px]">
-          <Alert variant="alert">
-            <LuTerminal className="h-4 w-4" />
-            <AlertTitle>Now you can add files to the dam!</AlertTitle>
-            <AlertDescription>
-              Please add images, draws or documents related to{" "}
-              <span className="font-bold underline">{dam.name}</span> dam.
-            </AlertDescription>
-          </Alert>
-        </div>
-      )}
     </div>
   );
 }

@@ -1,63 +1,44 @@
-// Dam usages/purposes
+// dam profile structure
+export const damProfile = [
+  { id: "dP1", text: "Gravity" },
+  { id: "dP2", text: "Arch" },
+  { id: "dP3", text: "Buttress" },
+  { id: "dP4", text: "Roller-Compacted Concrete (RCC)" },
+  { id: "dP5", text: "Earthfill" },
+  { id: "dP6", text: "Rockfill" },
+  { id: "dP7", text: "Soil-Rock mixtures" },
+  { id: "dP8", text: "Homogeneous" },
+  { id: "dP9", text: "Zoned with central core" },
+  { id: "dP10", text: "zoned with inclined core" },
+  { id: "dP11", text: "Internal drainage system" },
+  { id: "dP12", text: "Upstream impervious-face" },
+  { id: "dP13", text: "Impervious diaphragm" },
+  { id: "dP14", text: "Concrete element" },
+  { id: "dP15", text: "Asphaltic element" },
+  { id: "dP16", text: "Geomembrane element" },
+  { id: "dP17", text: "Metalic element" },
+  { id: "dP18", text: "Timber element" },
+  { id: "dP19", text: "Hydraulic fill" },
+  { id: "dP20", text: "other" },
+];
 
+// Dam usages/purposes
 export const usages = [
-  {
-    id: "water",
-    label: "Water supply",
-  },
-  {
-    id: "hydrodropower",
-    label: "Hydropower",
-  },
-  {
-    id: "irrigation",
-    label: "Irrigation",
-  },
-  {
-    id: "flood",
-    label: "Flood control",
-  },
-  {
-    id: "recreational",
-    label: "Recreational",
-  },
-  {
-    id: "navigation",
-    label: "Navigation",
-  },
-  {
-    id: "envionmental",
-    label: "Environmental control",
-  },
-  {
-    id: "debris",
-    label: "Debris control",
-  },
-  {
-    id: "groundwater",
-    label: "Groundwater recharge",
-  },
-  {
-    id: "aquaculture",
-    label: "Aquaculture",
-  },
-  {
-    id: "tailings",
-    label: "Tailings retention",
-  },
-  {
-    id: "industrial",
-    label: "Industrial",
-  },
-  {
-    id: "erosion",
-    label: "Erosion control",
-  },
-  {
-    id: "climate",
-    label: "Climate regulation",
-  },
-] as const;
+  "Water supply",
+  "Hydropower",
+  "Irrigation",
+  "Flood control",
+  "Recreational",
+  "Navigation",
+  "Environmental control",
+  "Debris control",
+  "Groundwater recharge",
+  "Aquaculture",
+  "Tailings retention",
+  "Industrial",
+  "Erosion control",
+  "Climate regulation",
+];
 
 export const hydrologicalBasinPT = [
   "Âncora",
@@ -79,4 +60,34 @@ export const hydrologicalBasinPT = [
   "Sado",
   "Tejo",
   "Vouga",
+];
+
+export const damStatus = [
+  "Planned",
+  "Under Construction",
+  "Operational",
+  "Under Repair/Maintenance",
+  "Reconstructed/Rehabilitated",
+  "Heightened",
+  "Lowered",
+  "Decommissioned",
+  "Abandoned",
+  "Emmergency",
+  "Dam failure",
+  "Other",
+];
+
+export const foundationImprovements = [
+  "None",
+  "Excavation and preparation",
+  "Grouting",
+  "Grout curtains",
+  "Drainage/filtering systems",
+  "Preloading",
+  "Geotechnical reinforcement",
+  "Underwater constructionss",
+  "Seismic retrofitting",
+  "Slope stabilization",
+  "Environmental mitigation",
+  "Other",
 ];

@@ -1,1 +1,107 @@
-export default function AccountSettings() {}
+"use client";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Tag, TagInput } from "emblor";
+import { toast } from "@/components/ui/use-toast";
+import { useState } from "react";
+import { damProfile } from "@/data/dam/constants";
+
+const FormSchema = z.object({
+  topics: z.array(
+    z.object({
+      id: z.string(),
+      text: z.string(),
+    }),
+  ),
+});
+export default function Test() {
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
+
+  // 1. Define your form.
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      topics: [],
+    },
+  });
+  const { setValue } = form;
+  // 2. Define a submit handler.
+  function onSubmit(data: z.infer<typeof FormSchema>) {
+    toast({
+      title: "You submitted the following values:",
+      description: (
+        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+    });
+  }
+
+  return (
+    <Form {...form}>
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex flex-col items-start space-y-8"
+      >
+        <FormField
+          control={form.control}
+          name="topics"
+          render={({ field }) => (
+            <FormItem className="flex flex-col items-start">
+              <FormLabel className="text-left">Topics</FormLabel>
+              <FormControl className="w-full">
+                <TagInput
+                  {...field}
+                  placeholder="Select"
+                  tags={tags}
+                  maxTags={5}
+                  minTags={1}
+                  activeTagIndex={activeTagIndex}
+                  draggable
+                  setActiveTagIndex={setActiveTagIndex}
+                  className="sm:min-w-[450px]"
+                  setTags={(newTags) => {
+                    setTags(newTags);
+                    setValue("topics", newTags as [Tag, ...Tag[]]);
+                  }}
+                  //   customTagRenderer={(tag, isActiveTag) => (
+                  //     <div
+                  //       key={tag.id}
+                  //       className={`rounded-xl bg-yellow-500 px-4 py-1 ${isActiveTag ? "ring-2 ring-ring ring-offset-2 ring-offset-background" : ""}`}
+                  //     >
+                  //       <span className="mr-1 text-sm text-white">
+                  //         {tag.text}
+                  //       </span>
+                  //     </div>
+                  //   )}
+                  autocompleteOptions={damProfile}
+                  restrictTagsToAutocompleteOptions={true}
+                  enableAutocomplete
+                />
+              </FormControl>
+              <FormDescription className="text-left">
+                Selected tags
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
+  );
+}

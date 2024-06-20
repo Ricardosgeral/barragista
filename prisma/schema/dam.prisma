@@ -14,27 +14,42 @@ enum DamClass {
     Other
 }
 
+enum Foundation {
+    Soil
+    Rock
+    Mixed
+    Unknown
+    Other
+}
+
 model Dam {
     //general data
     id          String      @id @default(cuid())
     name        String      @unique
-    class       DamClass    @default(Unknown)
     material    DamMaterial @default(Other)
-    profile     String      @default("") //gravity , rockfill, arch, zoned earthfill... 
+    profile     String[]    @default([]) //gravity , rockfill, arch, zoned earthfill... 
     description String?     @default("")
+
+    class              DamClass @default(Unknown)
+    persons_downstream Int?     @default(0) //*
+    houses_downstream  Int?     @default(0) //*
+    other_downstream   String?  @default("") //*
+    resettlement       Int?     @default(0) //*Number of persons affected by resettlement
 
     //usages
     usages String[] @default([])
 
     // project and construction
     owner           String
-    promotor        String? @default("")
-    builder         String? @default("")
-    designer        String? @default("")
-    project_year    String  @default("")
-    completion_year String  @default("")
+    promotor        String?  @default("")
+    builder         String?  @default("")
+    designer        String?  @default("")
+    project_year    String   @default("")
+    completion_year String   @default("")
+    status          String[] @default(["Operational"]) //*
 
-    database_creation DateTime @default(now())
+    data_creation DateTime  @default(now())
+    data_modified DateTime? @default(now()) //*
 
     //localization
     country     String  @default("PT")
@@ -54,13 +69,14 @@ model Dam {
     return_period       Int?   @default(0)
 
     //Reservoir Features
-    flood_area      Float  @default(0)
-    total_capacity  Float? @default(0)
-    useful_capacity Float? @default(0)
-    dead_volume     Float? @default(0)
-    fsl             Int?   @default(0)
-    mfl             Int?   @default(0)
-    mol             Int?   @default(0)
+    flood_area       Float  @default(0)
+    reservoir_length Float? @default(0) //**
+    total_capacity   Float? @default(0)
+    useful_capacity  Float? @default(0)
+    dead_volume      Float? @default(0)
+    fsl              Int?   @default(0)
+    mfl              Int?   @default(0)
+    mol              Int?   @default(0)
 
     // Dam Features
     height_to_foundation Int
@@ -72,8 +88,10 @@ model Dam {
     concrete_volume      Float? @default(0)
 
     //Geology and foundation treatment
-    foundation_geology   String? @default("")
-    foundation_treatment String? @default("")
+    foundation_type      Foundation @default(Unknown) //**
+    foundation_geology   String?    @default("")
+    foundation_impermeab String[]   @default(["None"]) //**
+    foundation_treatment String?    @default("")
 
     //BottomDischarge
     has_btd        Boolean @default(false)
