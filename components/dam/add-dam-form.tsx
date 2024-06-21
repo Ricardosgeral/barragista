@@ -1392,9 +1392,13 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Current status
-                          {dam?.data_modified &&
-                            `(on ${new Date(dam.data_modified).toLocaleDateString("en-GB")})`}
+                          <div className="flex items-baseline">
+                            Current status
+                            <div className="pl-2 text-xs font-normal">
+                              {dam?.data_modified &&
+                                ` (modified on ${new Date(dam.data_modified).toLocaleDateString("en-GB")})`}
+                            </div>
+                          </div>
                         </FormLabel>
                         <Select
                           onValueChange={field.onChange}
