@@ -20,22 +20,24 @@ import { useState } from "react";
 import { damProfile } from "@/data/dam/constants";
 
 const FormSchema = z.object({
-  topics: z.array(
+  profile: z.array(
     z.object({
       id: z.string(),
       text: z.string(),
     }),
   ),
 });
-export default function Test() {
-  const [tags, setTags] = useState<Tag[]>([]);
-  const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
+export default function TagInputa() {
+  const [tagsProfile, setTagsProfile] = useState<Tag[]>([]);
+  const [activeTagProfileIndex, setActiveTagProfileIndex] = useState<
+    number | null
+  >(null);
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      topics: [],
+      profile: [],
     },
   });
   const { setValue } = form;
@@ -59,42 +61,32 @@ export default function Test() {
       >
         <FormField
           control={form.control}
-          name="topics"
+          name="profile"
           render={({ field }) => (
-            <FormItem className="flex flex-col items-start">
-              <FormLabel className="text-left">Topics</FormLabel>
-              <FormControl className="w-full">
+            <FormItem className="flex w-full flex-col items-start">
+              <FormLabel>Profiles</FormLabel>
+              <FormControl>
                 <TagInput
                   {...field}
-                  placeholder="Select"
-                  tags={tags}
+                  placeholder="Select from list"
+                  tags={tagsProfile}
                   maxTags={5}
                   minTags={1}
-                  activeTagIndex={activeTagIndex}
-                  draggable
-                  setActiveTagIndex={setActiveTagIndex}
+                  activeTagIndex={activeTagProfileIndex}
+                  draggable={true}
+                  setActiveTagIndex={setActiveTagProfileIndex}
                   className="sm:min-w-[450px]"
                   setTags={(newTags) => {
-                    setTags(newTags);
-                    setValue("topics", newTags as [Tag, ...Tag[]]);
+                    setTagsProfile(newTags);
+                    setValue("profile", newTags as [Tag, ...Tag[]]);
                   }}
-                  //   customTagRenderer={(tag, isActiveTag) => (
-                  //     <div
-                  //       key={tag.id}
-                  //       className={`rounded-xl bg-yellow-500 px-4 py-1 ${isActiveTag ? "ring-2 ring-ring ring-offset-2 ring-offset-background" : ""}`}
-                  //     >
-                  //       <span className="mr-1 text-sm text-white">
-                  //         {tag.text}
-                  //       </span>
-                  //     </div>
-                  //   )}
+                  enableAutocomplete
                   autocompleteOptions={damProfile}
                   restrictTagsToAutocompleteOptions={true}
-                  enableAutocomplete
                 />
               </FormControl>
               <FormDescription className="text-left">
-                Selected tags
+                Selected Profile tags
               </FormDescription>
               <FormMessage />
             </FormItem>

@@ -27,29 +27,25 @@ model Dam {
     id          String      @id @default(cuid())
     name        String      @unique
     material    DamMaterial @default(Other)
-    profile     String[]    @default([]) //gravity , rockfill, arch, zoned earthfill... 
+    profile     Json? //gravity , rockfill, arch, zoned earthfill... 
+    purpose     Json?
     description String?     @default("")
 
-    class              DamClass @default(Unknown)
-    persons_downstream Int?     @default(0) //*
-    houses_downstream  Int?     @default(0) //*
-    other_downstream   String?  @default("") //*
-    resettlement       Int?     @default(0) //*Number of persons affected by resettlement
-
-    //usages
-    usages String[] @default([])
-
-    // project and construction
-    owner           String
-    promotor        String?  @default("")
-    builder         String?  @default("")
-    designer        String?  @default("")
-    project_year    String   @default("")
-    completion_year String   @default("")
-    status          String[] @default(["Operational"]) //*
-
-    data_creation DateTime  @default(now())
-    data_modified DateTime? @default(now()) //*
+    //Risk
+    class                DamClass @default(Unknown)
+    persons_downstream   Int?     @default(0)
+    houses_downstream    Int?     @default(0)
+    other_downstream     String?  @default("")
+    resettlement         String?  @default("")
+    sismicity            String?  @default("")
+    geo_conditions       String?  @default("")
+    design_flow          String?  @default("")
+    reservoir_management String?  @default("")
+    env_harshness        String?  @default("")
+    project_construction String?  @default("")
+    foundations          String?  @default("")
+    discharge_structures String?  @default("")
+    maintenance          String?  @default("")
 
     //localization
     country     String  @default("PT")
@@ -60,6 +56,15 @@ model Dam {
     water_line  String? @default("")
     latitude    Float   @default(0)
     longitude   Float   @default(0)
+
+    // project and construction
+    owner           String
+    promotor        String? @default("")
+    builder         String? @default("")
+    designer        String? @default("")
+    project_year    String  @default("")
+    completion_year String  @default("")
+    status          String  @default("") //*
 
     //HydroFeatures
     watershed_area      Float  @default(0)
@@ -137,6 +142,9 @@ model Dam {
 
     //Overall notes on dam
     notes String? @default("")
+
+    data_creation DateTime @default(now())
+    data_modified DateTime @default(now())
 
     // files
     damFiles    DamFile[]

@@ -75,7 +75,6 @@ import {
   LuRefreshCcw,
   LuTerminal,
   LuTrash2,
-  LuView,
 } from "react-icons/lu";
 import { toast } from "@/components/ui/use-toast";
 import { Textarea } from "@/components/ui/textarea";
@@ -90,11 +89,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { usages, hydrologicalBasinPT } from "@/data/dam/constants";
+import {
+  damPurpose,
+  damProfile,
+  hydrologicalBasinPT,
+  damStatus,
+} from "@/data/dam/constants";
 import { useRouter } from "next/navigation";
 import { createDam } from "@/actions/dam/create-dam";
 import { updateDam } from "@/actions/dam/update-dam";
 import { deleteDam } from "@/actions/dam/delete-dam";
+import { Tag, TagInput } from "emblor";
 
 //to use the enum defined in dam.prisma
 const damClassArray = Object.entries(DamClass).map(([key, value]) => ({
@@ -125,11 +130,19 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
 
   const [isCountryPT, setIsCountryPT] = useState(false); // to see if country is PRT
 
+  const [tagsProfile, setTagsProfile] = useState<Tag[]>([]);
+  const [activeTagProfileIndex, setActiveTagProfileIndex] = useState<
+    number | null
+  >(null);
+
+  const [tagsPurpose, setTagsPurpose] = useState<Tag[]>([]);
+  const [activeTagPurposeIndex, setActiveTagPurposeIndex] = useState<
+    number | null
+  >(null);
+
   const { getAllCountries, getCountryStates, getStateCities } = useLocation();
   const countries = getAllCountries;
   const router = useRouter();
-
-  console.log("Damit");
 
   const onSubmit = (values: z.infer<typeof DamSchema>) => {
     setIsLoading(true);
@@ -242,20 +255,26 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
     defaultValues: (dam || {
       //if dam exists populate fields with that dam data otherwise use the following
       name: "",
-      class: DamClass.Unknown,
       material: DamMaterial.Other,
-      profile: "",
+      profile: JSON.parse("[]"),
+      purpose: JSON.parse("[]"),
       description: "",
 
-      usages: [],
-
-      //description: "",
-      owner: "",
-      promotor: "",
-      builder: "",
-      designer: "",
-      project_year: "",
-      completion_year: "",
+      // Risk managment
+      class: DamClass.Unknown,
+      persons_downstream: 0,
+      houses_downstream: 0,
+      other_downstream: "",
+      resettlement: "",
+      sismicity: "",
+      geo_conditions: "",
+      design_flow: "",
+      reservoir_management: "",
+      env_harshness: "",
+      project_construction: "",
+      foundations: "",
+      discharge_structures: "",
+      maintenance: "",
 
       //localization
       country: "PT",
@@ -266,6 +285,15 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
       water_line: "",
       latitude: 0,
       longitude: 0,
+
+      //Project and construction,
+      owner: "",
+      promotor: "",
+      builder: "",
+      designer: "",
+      project_year: "",
+      completion_year: "",
+      status: "operational",
 
       //HydroFeatures
       watershed_area: 0,
@@ -472,13 +500,13 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                   <CardDescription>Overall data</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex w-full gap-4">
+                  <div className="flex w-full flex-col gap-4">
                     {/* Name of dam */}
                     <FormField
                       control={form.control}
                       name="name"
                       render={({ field }) => (
-                        <FormItem className="w-2/3">
+                        <FormItem className="w-full">
                           <FormLabel>Name*</FormLabel>
                           <FormControl>
                             <Input
@@ -490,87 +518,13 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                         </FormItem>
                       )}
                     />
-                    {/* Risk SClass of dam */}
-                    <FormField
-                      control={form.control}
-                      name="class"
-                      render={({ field }) => (
-                        <FormItem className="w-1/3">
-                          <div className="flex flex-col gap-2.5 py-2">
-                            <FormLabel>Class*</FormLabel>
-                            <Popover>
-                              <PopoverTrigger asChild>
-                                <FormControl>
-                                  <Button
-                                    variant="outline"
-                                    role="combobox"
-                                    className={cn(
-                                      "justify-between",
-                                      !field.value && "text-muted-foreground",
-                                    )}
-                                  >
-                                    {field.value
-                                      ? damClassArray.find(
-                                          (damClassArray) =>
-                                            damClassArray.value === field.value,
-                                        )?.label
-                                      : "Select"}
-                                    <LuChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                                  </Button>
-                                </FormControl>
-                              </PopoverTrigger>
-                              <PopoverContent className="w-[150px] p-0">
-                                <PopoverClose asChild>
-                                  <Command>
-                                    <CommandInput placeholder="Choose" />
-                                    <CommandEmpty>No class found</CommandEmpty>
-                                    <CommandGroup>
-                                      <CommandList>
-                                        {damClassArray.map(
-                                          (damClassArray, index) => (
-                                            <CommandItem
-                                              value={damClassArray.label}
-                                              key={index}
-                                              onSelect={() => {
-                                                form.setValue(
-                                                  "class",
-                                                  damClassArray.value,
-                                                );
-                                              }}
-                                            >
-                                              <LuCheck
-                                                className={cn(
-                                                  "mr-2 h-4 w-4",
-                                                  damClassArray.value ===
-                                                    field.value
-                                                    ? "opacity-100"
-                                                    : "opacity-0",
-                                                )}
-                                              />
-                                              {damClassArray.label}
-                                            </CommandItem>
-                                          ),
-                                        )}
-                                      </CommandList>
-                                    </CommandGroup>
-                                  </Command>
-                                </PopoverClose>
-                              </PopoverContent>
-                            </Popover>
 
-                            <FormMessage className="text-xs" />
-                          </div>
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                  <div className="flex w-full gap-4">
                     {/* Material of dam */}
                     <FormField
                       control={form.control}
                       name="material"
                       render={({ field }) => (
-                        <FormItem className="flex w-1/3 flex-col">
+                        <FormItem className="flex w-2/3 flex-col">
                           <div className="flex flex-col gap-2.5 py-2">
                             <FormLabel>Material*</FormLabel>
                             <Popover>
@@ -646,40 +600,93 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                       control={form.control}
                       name="profile"
                       render={({ field }) => (
-                        <FormItem className="w-2/3">
-                          <FormLabel>Profile/structure type</FormLabel>
+                        <FormItem>
+                          <FormLabel>Profile/structure type*</FormLabel>
                           <FormControl>
-                            <Input
-                              className="w-full rounded border text-base"
-                              placeholder="e.g. Arch, Zoned,..."
+                            <TagInput
                               {...field}
+                              placeholder="Select from list (max 5)"
+                              tags={field.value || tagsProfile}
+                              minTags={1}
+                              variant={"default"}
+                              size={"sm"}
+                              shape={"pill"}
+                              maxTags={5}
+                              borderStyle={"none"}
+                              activeTagIndex={activeTagProfileIndex}
+                              draggable={true}
+                              setActiveTagIndex={setActiveTagProfileIndex}
+                              className=""
+                              setTags={(newTags) => {
+                                setTagsProfile(newTags);
+                                setValue("profile", newTags as [Tag, ...Tag[]]);
+                              }}
+                              enableAutocomplete
+                              autocompleteOptions={damProfile}
+                              restrictTagsToAutocompleteOptions={true}
                             />
                           </FormControl>
                           <FormMessage className="text-xs" />
                         </FormItem>
                       )}
                     />
+                    {/* Purpose */}
+                    <FormField
+                      control={form.control}
+                      name="purpose"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Purpose*</FormLabel>
+                          <FormControl>
+                            <TagInput
+                              {...field}
+                              placeholder="Select from list (max 6)"
+                              tags={field.value || tagsPurpose}
+                              minTags={1}
+                              variant={"default"}
+                              size={"sm"}
+                              shape={"pill"}
+                              maxTags={6}
+                              borderStyle={"none"}
+                              activeTagIndex={activeTagPurposeIndex}
+                              draggable={true}
+                              setActiveTagIndex={setActiveTagPurposeIndex}
+                              className=""
+                              setTags={(newTags) => {
+                                setTagsPurpose(newTags);
+                                setValue("purpose", newTags as [Tag, ...Tag[]]);
+                              }}
+                              enableAutocomplete
+                              autocompleteOptions={damPurpose}
+                              restrictTagsToAutocompleteOptions={true}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+
+                    {/* Description */}
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Textarea {...field} />
+                          </FormControl>
+
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
                   </div>
-
-                  {/* Description */}
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormLabel>Description</FormLabel>
-                        <FormControl>
-                          <Textarea {...field} />
-                        </FormControl>
-
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
                 </CardContent>
               </Card>
 
-              {/* Usages */}
+              {/* Risk Class of dam */}
+
               <Card className="w-full drop-shadow-lg sm:w-[400px]">
                 <CardHeader>
                   <CardTitle>
@@ -687,182 +694,306 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                       <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
                         2
                       </div>
-                      <div className="text-yellow-500">Purpose</div>
+                      <div className="text-yellow-500">Risk factors</div>
                     </div>
                   </CardTitle>
-                  <CardDescription>Select the dam usages*</CardDescription>
+                  <CardDescription>Factors for risk evaluation</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <FormField
-                    control={form.control}
-                    name="usages"
-                    render={() => (
-                      <FormItem className="w-full">
-                        <div className="grid grid-cols-2 gap-4">
-                          {/* Add grid container */}
-                          {usages.map((usage) => (
-                            <FormField
-                              key={usage}
-                              control={form.control}
-                              name="usages"
-                              render={({ field }) => {
-                                return (
-                                  <FormItem
-                                    key={usage}
-                                    className="flex flex-row items-center justify-start space-x-3 space-y-0"
-                                  >
-                                    <FormControl>
-                                      <Checkbox
-                                        checked={field.value?.includes(usage)}
-                                        onCheckedChange={(checked) => {
-                                          return checked
-                                            ? field.onChange([
-                                                ...field.value,
-                                                usage,
-                                              ])
-                                            : field.onChange(
-                                                field.value?.filter(
-                                                  (value) => value !== usage,
-                                                ),
-                                              );
-                                        }}
-                                      />
-                                    </FormControl>
-                                    <FormLabel className="text-sm font-normal">
-                                      {usage}
-                                    </FormLabel>
-                                  </FormItem>
-                                );
-                              }}
-                            />
-                          ))}
-                        </div>
-                        <FormMessage className="py-2 text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                </CardContent>
-              </Card>
+                  <div className="flex w-full flex-col gap-4">
+                    <FormLabel className="underline">
+                      Potential damage (D)
+                    </FormLabel>
+                    <div className="grid w-full grid-cols-2 gap-4">
+                      {/* Class */}
+                      <FormField
+                        control={form.control}
+                        name="class"
+                        render={({ field }) => (
+                          <FormItem>
+                            <div className="flex flex-col gap-2.5 py-2">
+                              <FormLabel>Class*</FormLabel>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <FormControl>
+                                    <Button
+                                      variant="outline"
+                                      role="combobox"
+                                      className={cn(
+                                        "justify-between",
+                                        !field.value && "text-muted-foreground",
+                                      )}
+                                    >
+                                      {field.value
+                                        ? damClassArray.find(
+                                            (damClassArray) =>
+                                              damClassArray.value ===
+                                              field.value,
+                                          )?.label
+                                        : "Select"}
+                                      <LuChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                    </Button>
+                                  </FormControl>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-[150px] p-0">
+                                  <PopoverClose asChild>
+                                    <Command>
+                                      <CommandInput placeholder="Choose" />
+                                      <CommandEmpty>
+                                        No class found
+                                      </CommandEmpty>
+                                      <CommandGroup>
+                                        <CommandList>
+                                          {damClassArray.map(
+                                            (damClassArray, index) => (
+                                              <CommandItem
+                                                value={damClassArray.label}
+                                                key={index}
+                                                onSelect={() => {
+                                                  form.setValue(
+                                                    "class",
+                                                    damClassArray.value,
+                                                  );
+                                                }}
+                                              >
+                                                <LuCheck
+                                                  className={cn(
+                                                    "mr-2 h-4 w-4",
+                                                    damClassArray.value ===
+                                                      field.value
+                                                      ? "opacity-100"
+                                                      : "opacity-0",
+                                                  )}
+                                                />
+                                                {damClassArray.label}
+                                              </CommandItem>
+                                            ),
+                                          )}
+                                        </CommandList>
+                                      </CommandGroup>
+                                    </Command>
+                                  </PopoverClose>
+                                </PopoverContent>
+                              </Popover>
 
-              {/* Project and construction info */}
-              <Card className="w-full drop-shadow-lg sm:w-[400px]">
-                <CardHeader>
-                  <CardTitle>
-                    <div className="flex items-center justify-start space-x-2">
-                      <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                        3
-                      </div>
-                      <div className="text-yellow-500">
-                        Project and construction
-                      </div>
+                              <FormMessage className="text-xs" />
+                            </div>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="persons_downstream"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Persons downstream</FormLabel>
+                            <FormControl>
+                              <Input
+                                className="rounded border text-base"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="houses_downstream"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Houses downstream</FormLabel>
+                            <FormControl>
+                              <Input
+                                className="rounded border text-base"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="other_downstream"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Other Infrastructrures</FormLabel>
+                            <FormControl>
+                              <Input
+                                className="rounded border text-base"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
                     </div>
-                  </CardTitle>
-                  <CardDescription>Entities and relevant dates</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid w-full grid-cols-2 gap-4">
-                    {/* Owner */}
-                    <FormField
-                      control={form.control}
-                      name="owner"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Dam owner*</FormLabel>
-                          <FormControl>
-                            <Input
-                              className="w-full rounded border text-base"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-xs" />
-                        </FormItem>
-                      )}
-                    />
-                    {/* Promotor */}
-                    <FormField
-                      control={form.control}
-                      name="promotor"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Dam promotor</FormLabel>
-                          <FormControl>
-                            <Input
-                              className="w-full rounded border text-base"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-xs" />
-                        </FormItem>
-                      )}
-                    />
-                    {/* Building company */}
-                    <FormField
-                      control={form.control}
-                      name="builder"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Building company</FormLabel>
-                          <FormControl>
-                            <Input
-                              className="w-full rounded border text-base"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-xs" />
-                        </FormItem>
-                      )}
-                    />
-                    {/* Designing company */}
-                    <FormField
-                      control={form.control}
-                      name="designer"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Designer company</FormLabel>
-                          <FormControl>
-                            <Input
-                              className="w-full rounded border text-base"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-xs" />
-                        </FormItem>
-                      )}
-                    />
-                    {/* project year */}
-                    <FormField
-                      control={form.control}
-                      name="project_year"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Project year*</FormLabel>
-                          <FormControl>
-                            <Input
-                              className="w-full rounded border text-base"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-xs" />
-                        </FormItem>
-                      )}
-                    />
-                    {/* Compleation year */}
-                    <FormField
-                      control={form.control}
-                      name="completion_year"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Completion year*</FormLabel>
-                          <FormControl>
-                            <Input
-                              className="w-full rounded border text-base"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage className="text-xs" />
-                        </FormItem>
-                      )}
-                    />
+
+                    <FormLabel className="pt-4 underline">
+                      External or enviornmental factors (E)
+                    </FormLabel>
+
+                    <div className="grid w-full grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="sismicity"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Sismicity</FormLabel>
+                            <FormControl>
+                              <Input
+                                className="rounded border text-base"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="geo_conditions"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Geological/Geotecnical</FormLabel>
+                            <FormControl>
+                              <Input
+                                className="rounded border text-base"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="design_flow"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Design flow</FormLabel>
+                            <FormControl>
+                              <Input
+                                className="rounded border text-base"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="reservoir_management"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Reservoir management</FormLabel>
+                            <FormControl>
+                              <Input
+                                className="rounded border text-base"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="env_harshness"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Environmental harshness</FormLabel>
+                            <FormControl>
+                              <Input
+                                className="rounded border text-base"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <FormLabel className="pt-4 underline">
+                      Dam vulnerability (V)
+                    </FormLabel>
+
+                    <div className="grid w-full grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="project_construction"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Project and construction</FormLabel>
+                            <FormControl>
+                              <Input
+                                className="rounded border text-base"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="foundations"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Foundations</FormLabel>
+                            <FormControl>
+                              <Input
+                                className="rounded border text-base"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="discharge_structures"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Discharge structures</FormLabel>
+                            <FormControl>
+                              <Input
+                                className="rounded border text-base"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="maintenance"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Maintenace/conservation</FormLabel>
+                            <FormControl>
+                              <Input
+                                className="rounded border text-base"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -873,7 +1004,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                   <CardTitle>
                     <div className="flex items-center justify-start space-x-2">
                       <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                        4
+                        3
                       </div>
                       <div className="text-yellow-500">Location</div>
                     </div>
@@ -1062,7 +1193,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                       name="water_line"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Stream</FormLabel>
+                          <FormLabel>Tributary stream</FormLabel>
                           <FormControl>
                             <Input
                               className="w-full rounded border text-base"
@@ -1131,6 +1262,164 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                       )}
                     />
                   </div>
+                </CardContent>
+              </Card>
+
+              {/* Project and construction info */}
+              <Card className="w-full drop-shadow-lg sm:w-[400px]">
+                <CardHeader>
+                  <CardTitle>
+                    <div className="flex items-center justify-start space-x-2">
+                      <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
+                        4
+                      </div>
+                      <div className="text-yellow-500">
+                        Project and construction
+                      </div>
+                    </div>
+                  </CardTitle>
+                  <CardDescription>Entities and relevant dates</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid w-full grid-cols-2 gap-4">
+                    {/* Owner */}
+                    <FormField
+                      control={form.control}
+                      name="owner"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Dam owner*</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    {/* Promotor */}
+                    <FormField
+                      control={form.control}
+                      name="promotor"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Dam promotor</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    {/* Building company */}
+                    <FormField
+                      control={form.control}
+                      name="builder"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Building company</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    {/* Designing company */}
+                    <FormField
+                      control={form.control}
+                      name="designer"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Designer company</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    {/* project year */}
+                    <FormField
+                      control={form.control}
+                      name="project_year"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Project year*</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                    {/* Compleation year */}
+                    <FormField
+                      control={form.control}
+                      name="completion_year"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Completion year*</FormLabel>
+                          <FormControl>
+                            <Input
+                              className="w-full rounded border text-base"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage className="text-xs" />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Current status
+                          {dam?.data_modified &&
+                            `(on ${new Date(dam.data_modified).toLocaleDateString("en-GB")})`}
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {damStatus.map((status) => {
+                              return (
+                                <SelectItem key={status.id} value={status.text}>
+                                  {status.text}
+                                </SelectItem>
+                              );
+                            })}
+                          </SelectContent>
+                        </Select>
+
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </CardContent>
               </Card>
 

@@ -31,7 +31,7 @@ export const updateDam = async (
       where: {
         id: damId,
       },
-      data: { ...data },
+      data: { ...data, data_modified: new Date() },
     });
 
     return {
