@@ -15,7 +15,7 @@ export default function FooterMainPage() {
         <Link className="text-sm hover:underline" href="#">
           Terms
         </Link>
-        <Link className="text-sm hover:underline" href="/Contact">
+        <Link className="text-sm hover:underline" href="/contacts">
           <Button
             variant="default"
             size="sm"

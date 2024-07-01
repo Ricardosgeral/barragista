@@ -23,6 +23,7 @@ export const deleteDam = async (damId: string) => {
         message: "Dam Id is required",
       };
     }
+
     const dam = await db.dam.delete({
       where: {
         id: damId,

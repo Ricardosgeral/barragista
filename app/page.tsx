@@ -35,13 +35,13 @@ export default function Home() {
           title="Dams database"
           subtitle="Discover main features and characteristics of dams"
           src="/images/dams_vertical.jpg"
-          href="/dams"
+          href="/dam"
         />
         <CardMainPage
           title="Dams regulation"
           subtitle="Get information about legislation on dam safety"
           src="/images/regulations_ia1.jpg"
-          href="/regulations"
+          href="/regulation"
         />
       </section>
       <footer className="w-full border-t bg-[radial-gradient(ellipse_at_bottom,_var(--tw-gradient-stops))] from-black to-slate-800 p-2 dark:from-yellow-500 dark:to-yellow-400">

@@ -11,12 +11,12 @@ export const sidebarLinks = [
   // },
   {
     icon: ConcreteDam,
-    route: "/dams",
+    route: "/dam",
     label: "Dams",
   },
   {
     icon: IconBookshelf,
-    route: "/regulations",
+    route: "/regulation",
     label: "Regulations",
   },
   {

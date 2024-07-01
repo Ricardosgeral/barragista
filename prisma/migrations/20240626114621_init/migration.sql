@@ -21,20 +21,27 @@ CREATE TABLE "dams" (
     "profile" JSONB,
     "purpose" JSONB,
     "description" TEXT DEFAULT '',
-    "class" "DamClass" NOT NULL DEFAULT 'Unknown',
-    "persons_downstream" INTEGER DEFAULT 0,
-    "houses_downstream" INTEGER DEFAULT 0,
-    "other_downstream" TEXT DEFAULT '',
-    "resettlement" TEXT DEFAULT '',
-    "sismicity" TEXT DEFAULT '',
-    "geo_conditions" TEXT DEFAULT '',
-    "design_flow" TEXT DEFAULT '',
-    "reservoir_managment" TEXT DEFAULT '',
-    "env_harshness" TEXT DEFAULT '',
-    "project_construction" TEXT DEFAULT '',
-    "foundations" TEXT DEFAULT '',
-    "discharge_structures" TEXT DEFAULT '',
-    "maintenance" TEXT DEFAULT '',
+    "damLocationId" TEXT,
+    "damProjectId" TEXT,
+    "damHydrologyId" TEXT,
+    "damReservoirId" TEXT,
+    "damBodyId" TEXT,
+    "damFoundationId" TEXT,
+    "damBtDischargeId" TEXT,
+    "damSpillwayId" TEXT,
+    "damEnvFlowId" TEXT,
+    "damHydropowerId" TEXT,
+    "damRiskId" TEXT,
+    "userId" TEXT,
+    "data_creation" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "data_modified" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "dams_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "DamLocation" (
+    "id" TEXT NOT NULL,
     "country" TEXT NOT NULL DEFAULT 'PT',
     "state" TEXT NOT NULL DEFAULT '',
     "city" TEXT DEFAULT '',
@@ -43,6 +50,13 @@ CREATE TABLE "dams" (
     "water_line" TEXT DEFAULT '',
     "latitude" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "longitude" DOUBLE PRECISION NOT NULL DEFAULT 0,
+
+    CONSTRAINT "DamLocation_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "DamProject" (
+    "id" TEXT NOT NULL,
     "owner" TEXT NOT NULL,
     "promotor" TEXT DEFAULT '',
     "builder" TEXT DEFAULT '',
@@ -50,11 +64,25 @@ CREATE TABLE "dams" (
     "project_year" TEXT NOT NULL DEFAULT '',
     "completion_year" TEXT NOT NULL DEFAULT '',
     "status" TEXT NOT NULL DEFAULT '',
+
+    CONSTRAINT "DamProject_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "DamHydrology" (
+    "id" TEXT NOT NULL,
     "watershed_area" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "average_annual_prec" INTEGER DEFAULT 0,
     "flood_flow" INTEGER DEFAULT 0,
     "average_annual_flow" DOUBLE PRECISION DEFAULT 0,
     "return_period" INTEGER DEFAULT 0,
+
+    CONSTRAINT "DamHydrology_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "DamReservoir" (
+    "id" TEXT NOT NULL,
     "flood_area" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "reservoir_length" DOUBLE PRECISION DEFAULT 0,
     "total_capacity" DOUBLE PRECISION DEFAULT 0,
@@ -63,6 +91,13 @@ CREATE TABLE "dams" (
     "fsl" INTEGER DEFAULT 0,
     "mfl" INTEGER DEFAULT 0,
     "mol" INTEGER DEFAULT 0,
+
+    CONSTRAINT "DamReservoir_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "DamBody" (
+    "id" TEXT NOT NULL,
     "height_to_foundation" INTEGER NOT NULL,
     "height_to_natural" INTEGER DEFAULT 0,
     "crest_elevation" DOUBLE PRECISION NOT NULL,
@@ -70,10 +105,24 @@ CREATE TABLE "dams" (
     "crest_width" DOUBLE PRECISION DEFAULT 0,
     "embankment_volume" DOUBLE PRECISION DEFAULT 0,
     "concrete_volume" DOUBLE PRECISION DEFAULT 0,
-    "foundation_type" "Foundation" NOT NULL DEFAULT 'Unknown',
+
+    CONSTRAINT "DamBody_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "DamFoundation" (
+    "id" TEXT NOT NULL,
+    "foundation_type" TEXT DEFAULT '',
     "foundation_geology" TEXT DEFAULT '',
-    "foundation_impermeab" TEXT[] DEFAULT ARRAY['None']::TEXT[],
+    "foundation_impermeab" TEXT DEFAULT '',
     "foundation_treatment" TEXT DEFAULT '',
+
+    CONSTRAINT "DamFoundation_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "DamBtDischarge" (
+    "id" TEXT NOT NULL,
     "has_btd" BOOLEAN NOT NULL DEFAULT false,
     "btd_local" TEXT DEFAULT '',
     "btd_type" TEXT DEFAULT '',
@@ -85,6 +134,13 @@ CREATE TABLE "dams" (
     "btd_downstream" TEXT DEFAULT '',
     "btd_energy" TEXT DEFAULT '',
     "btd_more" TEXT DEFAULT '',
+
+    CONSTRAINT "DamBtDischarge_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "DamSpillway" (
+    "id" TEXT NOT NULL,
     "has_spillway" BOOLEAN NOT NULL DEFAULT false,
     "spillway_local" TEXT DEFAULT '',
     "spillway_type" TEXT DEFAULT '',
@@ -95,6 +151,26 @@ CREATE TABLE "dams" (
     "spillway_maxflow" INTEGER DEFAULT 0,
     "spillway_energy" TEXT DEFAULT '',
     "spillway_more" TEXT DEFAULT '',
+
+    CONSTRAINT "DamSpillway_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "DamEnvFlow" (
+    "id" TEXT NOT NULL,
+    "has_environ_circuit" BOOLEAN NOT NULL DEFAULT false,
+    "environ_local" TEXT DEFAULT '',
+    "environ_type_control" TEXT DEFAULT '',
+    "environ_max_flow" DOUBLE PRECISION DEFAULT 0,
+    "environ_ref_flow" DOUBLE PRECISION DEFAULT 0,
+    "environ_more" TEXT DEFAULT '',
+
+    CONSTRAINT "DamEnvFlow_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "DamHydropower" (
+    "id" TEXT NOT NULL,
     "has_hydropower" BOOLEAN NOT NULL DEFAULT false,
     "hp_local" TEXT DEFAULT '',
     "hp_number_groups" INTEGER DEFAULT 0,
@@ -102,19 +178,29 @@ CREATE TABLE "dams" (
     "hp_power" INTEGER DEFAULT 0,
     "hp_annual_energy" INTEGER DEFAULT 0,
     "hp_more" TEXT DEFAULT '',
-    "has_environ_circuit" BOOLEAN NOT NULL DEFAULT false,
-    "environ_local" TEXT DEFAULT '',
-    "environ_type_control" TEXT DEFAULT '',
-    "environ_max_flow" DOUBLE PRECISION DEFAULT 0,
-    "environ_ref_flow" DOUBLE PRECISION DEFAULT 0,
-    "environ_more" TEXT DEFAULT '',
-    "notes" TEXT DEFAULT '',
-    "data_creation" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "data_modified" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "cover_image" INTEGER NOT NULL DEFAULT 0,
-    "userId" TEXT,
 
-    CONSTRAINT "dams_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "DamHydropower_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "DamRisk" (
+    "id" TEXT NOT NULL,
+    "class" "DamClass" NOT NULL DEFAULT 'Unknown',
+    "persons_downstream" INTEGER DEFAULT 0,
+    "houses_downstream" INTEGER DEFAULT 0,
+    "other_downstream" TEXT DEFAULT '',
+    "resettlement" TEXT DEFAULT '',
+    "sismicity" TEXT DEFAULT '',
+    "geo_conditions" TEXT DEFAULT '',
+    "design_flow" TEXT DEFAULT '',
+    "reservoir_management" TEXT DEFAULT '',
+    "env_harshness" TEXT DEFAULT '',
+    "project_construction" TEXT DEFAULT '',
+    "foundations" TEXT DEFAULT '',
+    "discharge_structures" TEXT DEFAULT '',
+    "maintenance" TEXT DEFAULT '',
+
+    CONSTRAINT "DamRisk_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -122,6 +208,7 @@ CREATE TABLE "damFiles" (
     "id" TEXT NOT NULL,
     "type" "FileType" NOT NULL,
     "label" TEXT NOT NULL,
+    "cover_image" INTEGER NOT NULL DEFAULT 0,
     "damId" TEXT NOT NULL,
 
     CONSTRAINT "damFiles_pkey" PRIMARY KEY ("id")
@@ -201,7 +288,7 @@ CREATE TABLE "TwoFactorConfirmation" (
 CREATE UNIQUE INDEX "dams_name_key" ON "dams"("name");
 
 -- CreateIndex
-CREATE INDEX "dams_name_material_profile_height_to_foundation_country_sta_idx" ON "dams"("name", "material", "profile", "height_to_foundation", "country", "state", "city", "hydro_basin", "userId");
+CREATE INDEX "dams_damRiskId_damLocationId_damProjectId_damHydrologyId_da_idx" ON "dams"("damRiskId", "damLocationId", "damProjectId", "damHydrologyId", "damReservoirId", "damBodyId", "damFoundationId", "damBtDischargeId", "damSpillwayId", "damEnvFlowId", "damHydropowerId", "userId");
 
 -- CreateIndex
 CREATE INDEX "damFiles_damId_idx" ON "damFiles"("damId");
@@ -232,6 +319,39 @@ CREATE UNIQUE INDEX "TwoFactorToken_email_token_key" ON "TwoFactorToken"("email"
 
 -- CreateIndex
 CREATE UNIQUE INDEX "TwoFactorConfirmation_userId_key" ON "TwoFactorConfirmation"("userId");
+
+-- AddForeignKey
+ALTER TABLE "dams" ADD CONSTRAINT "dams_damLocationId_fkey" FOREIGN KEY ("damLocationId") REFERENCES "DamLocation"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "dams" ADD CONSTRAINT "dams_damProjectId_fkey" FOREIGN KEY ("damProjectId") REFERENCES "DamProject"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "dams" ADD CONSTRAINT "dams_damHydrologyId_fkey" FOREIGN KEY ("damHydrologyId") REFERENCES "DamHydrology"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "dams" ADD CONSTRAINT "dams_damReservoirId_fkey" FOREIGN KEY ("damReservoirId") REFERENCES "DamReservoir"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "dams" ADD CONSTRAINT "dams_damBodyId_fkey" FOREIGN KEY ("damBodyId") REFERENCES "DamBody"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "dams" ADD CONSTRAINT "dams_damFoundationId_fkey" FOREIGN KEY ("damFoundationId") REFERENCES "DamFoundation"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "dams" ADD CONSTRAINT "dams_damBtDischargeId_fkey" FOREIGN KEY ("damBtDischargeId") REFERENCES "DamBtDischarge"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "dams" ADD CONSTRAINT "dams_damSpillwayId_fkey" FOREIGN KEY ("damSpillwayId") REFERENCES "DamSpillway"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "dams" ADD CONSTRAINT "dams_damEnvFlowId_fkey" FOREIGN KEY ("damEnvFlowId") REFERENCES "DamEnvFlow"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "dams" ADD CONSTRAINT "dams_damHydropowerId_fkey" FOREIGN KEY ("damHydropowerId") REFERENCES "DamHydropower"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "dams" ADD CONSTRAINT "dams_damRiskId_fkey" FOREIGN KEY ("damRiskId") REFERENCES "DamRisk"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "dams" ADD CONSTRAINT "dams_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;

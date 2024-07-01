@@ -1,23 +1,20 @@
 "use server";
 
-import { z } from "zod";
-import { db } from "@/lib/db";
 import { currentUser } from "@/lib/auth";
-import { DamSchema } from "@/schemas/dam-schema";
 import { cookies } from "next/headers";
+import { dbMap } from "@/data/dam/dam-maps";
 
-export const updateDam = async (
-  data: z.infer<typeof DamSchema>,
+export const deleteDamFeature = async (
+  type: keyof typeof dbMap,
   damId: string,
 ) => {
   try {
     const user = await currentUser();
-
     if (!user) {
       return {
         ok: false,
         status: 401,
-        message: "Access Unauthorized",
+        message: "Access unauthorized",
       };
     }
 
@@ -29,26 +26,25 @@ export const updateDam = async (
       };
     }
 
-    const dam = await db.dam.update({
+    const dbModel = dbMap[type] as any;
+    const deletedData = await dbModel.delete({
       where: {
-        id: damId,
+        damId: damId,
       },
-      data: { ...data, data_modified: new Date() },
     });
 
-    const serializedDamInfo = JSON.stringify(data);
-
+    // Delete the corresponding cookie
     cookies().set({
-      name: "damInfo",
-      value: serializedDamInfo,
+      name: `dam${type.charAt(0).toUpperCase() + type.slice(1)}`,
+      value: "",
       path: "/dam",
+      maxAge: -1, // This will cause the cookie to be deleted
     });
 
     return {
       ok: true,
-      message: "Dam updated",
-
-      dam,
+      message: `Dam ${type.charAt(0).toUpperCase() + type.slice(1)} data deleted`,
+      deletedData,
     };
   } catch (error) {
     return {

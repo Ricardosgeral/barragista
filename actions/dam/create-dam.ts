@@ -4,6 +4,8 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { currentUser } from "@/lib/auth";
 import { DamSchema } from "@/schemas/dam-schema";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 export const createDam = async (data: z.infer<typeof DamSchema>) => {
   try {
@@ -16,6 +18,18 @@ export const createDam = async (data: z.infer<typeof DamSchema>) => {
         status: 401,
         message: "Access Unauthorized",
       };
+    }
+
+    if (data.name) {
+      const serializedDamInfo = JSON.stringify(data);
+
+      cookies().set({
+        name: "damInfo",
+        value: serializedDamInfo,
+        path: "/dam",
+      });
+
+      //redirect("/dam/location");
     }
 
     // Check if the dam name already exists
@@ -39,8 +53,7 @@ export const createDam = async (data: z.infer<typeof DamSchema>) => {
 
     return {
       ok: true,
-      message: "Dam created",
-
+      message: "Dam info created",
       dam,
     };
   } catch (error) {

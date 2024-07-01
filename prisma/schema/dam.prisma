@@ -1,3 +1,4 @@
+// Define enums
 enum DamMaterial {
     Concrete
     Earthfill
@@ -22,16 +23,250 @@ enum Foundation {
     Other
 }
 
+enum FileType {
+    Draw
+    Image
+    Other
+}
+
+// Dam model with cascading delete relationships and nullable user relation
 model Dam {
-    //general data
     id          String      @id @default(cuid())
     name        String      @unique
     material    DamMaterial @default(Other)
-    profile     Json? //gravity , rockfill, arch, zoned earthfill... 
+    profile     Json?
     purpose     Json?
     description String?     @default("")
 
-    //Risk
+    // Relationships with cascading delete
+    damLocation      DamLocation?    @relation(fields: [damLocationId], references: [id], onDelete: Cascade)
+    damLocationId    String?         @unique
+    damProject       DamProject?     @relation(fields: [damProjectId], references: [id], onDelete: Cascade)
+    damProjectId     String?         @unique
+    damHydrology     DamHydrology?   @relation(fields: [damHydrologyId], references: [id], onDelete: Cascade)
+    damHydrologyId   String?         @unique
+    damReservoir     DamReservoir?   @relation(fields: [damReservoirId], references: [id], onDelete: Cascade)
+    damReservoirId   String?         @unique
+    damBody          DamBody?        @relation(fields: [damBodyId], references: [id], onDelete: Cascade)
+    damBodyId        String?         @unique
+    damFoundation    DamFoundation?  @relation(fields: [damFoundationId], references: [id], onDelete: Cascade)
+    damFoundationId  String?         @unique
+    damBtDischarge   DamBtDischarge? @relation(fields: [damBtDischargeId], references: [id], onDelete: Cascade)
+    damBtDischargeId String?         @unique
+    damSpillway      DamSpillway?    @relation(fields: [damSpillwayId], references: [id], onDelete: Cascade)
+    damSpillwayId    String?         @unique
+    damEnvFlow       DamEnvFlow?     @relation(fields: [damEnvFlowId], references: [id], onDelete: Cascade)
+    damEnvFlowId     String?         @unique
+    damHydropower    DamHydropower?  @relation(fields: [damHydropowerId], references: [id], onDelete: Cascade)
+    damHydropowerId  String?         @unique
+    damRisk          DamRisk?        @relation(fields: [damRiskId], references: [id], onDelete: Cascade)
+    damRiskId        String?         @unique
+
+    // Non-cascading relation
+    damFiles DamFile[]
+
+    // Optional relation with user
+    user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+    userId        String?  @map("userId")
+    data_creation DateTime @default(now())
+    data_modified DateTime @default(now())
+
+    // Index for performance optimization
+    @@index([damRiskId, damLocationId, damProjectId, damHydrologyId, damReservoirId, damBodyId, damFoundationId, damBtDischargeId, damSpillwayId, damEnvFlowId, damHydropowerId, userId])
+    @@map("dams")
+}
+
+// DamLocation model
+model DamLocation {
+    id            String   @id @default(cuid())
+    country       String   @default("PT")
+    state         String   @default("")
+    city          String?  @default("")
+    local         String?  @default("")
+    hydro_basin   String?  @default("")
+    water_line    String?  @default("")
+    latitude      Float    @default(0)
+    longitude     Float    @default(0)
+    data_creation DateTime @default(now())
+    data_modified DateTime @default(now())
+    dam           Dam?
+    damId         String?  @unique
+
+    @@map("damLocation")
+}
+
+// DamProject model
+model DamProject {
+    id              String   @id @default(cuid())
+    owner           String
+    promotor        String?  @default("")
+    builder         String?  @default("")
+    designer        String?  @default("")
+    project_year    String   @default("")
+    completion_year String   @default("")
+    status          String   @default("")
+    data_creation   DateTime @default(now())
+    data_modified   DateTime @default(now())
+    dam             Dam?
+    damId           String?  @unique
+
+    @@map("damProject")
+}
+
+// DamHydrology model
+model DamHydrology {
+    id                  String   @id @default(cuid())
+    watershed_area      Float    @default(0)
+    average_annual_prec Int?     @default(0)
+    flood_flow          Int?     @default(0)
+    average_annual_flow Float?   @default(0)
+    return_period       Int?     @default(0)
+    data_creation       DateTime @default(now())
+    data_modified       DateTime @default(now())
+    dam                 Dam?
+    damId               String?  @unique
+
+    @@map("damHydrology")
+}
+
+// DamReservoir model
+model DamReservoir {
+    id               String   @id @default(cuid())
+    flood_area       Float    @default(0)
+    reservoir_length Float?   @default(0)
+    total_capacity   Float?   @default(0)
+    useful_capacity  Float?   @default(0)
+    dead_volume      Float?   @default(0)
+    fsl              Int?     @default(0)
+    mfl              Int?     @default(0)
+    mol              Int?     @default(0)
+    data_creation    DateTime @default(now())
+    data_modified    DateTime @default(now())
+    dam              Dam?
+    damId            String?  @unique
+
+    @@map("damReservoir")
+}
+
+// DamBody model
+model DamBody {
+    id                   String   @id @default(cuid())
+    height_to_foundation Int
+    height_to_natural    Int?     @default(0)
+    crest_elevation      Float
+    crest_length         Int
+    crest_width          Float?   @default(0)
+    embankment_volume    Float?   @default(0)
+    concrete_volume      Float?   @default(0)
+    data_creation        DateTime @default(now())
+    data_modified        DateTime @default(now())
+    dam                  Dam?
+    damId                String?  @unique
+
+    @@map("damBody")
+}
+
+// DamFoundation model
+model DamFoundation {
+    id                   String   @id @default(cuid())
+    foundation_type      String?  @default("")
+    foundation_geology   String?  @default("")
+    foundation_impermeab String?  @default("")
+    foundation_treatment String?  @default("")
+    data_creation        DateTime @default(now())
+    data_modified        DateTime @default(now())
+
+    dam   Dam?
+    damId String? @unique
+
+    @@map("damFoundation")
+}
+
+// DamBtDischarge model
+model DamBtDischarge {
+    id             String   @id @default(cuid())
+    has_btd        Boolean  @default(false)
+    btd_local      String?  @default("")
+    btd_type       String?  @default("")
+    btd_number     Int?     @default(0)
+    btd_section    String?  @default("")
+    btd_diameter   Float?   @default(0)
+    btd_maxflow    Float?   @default(0)
+    btd_upstream   String?  @default("")
+    btd_downstream String?  @default("")
+    btd_energy     String?  @default("")
+    btd_more       String?  @default("")
+    data_creation  DateTime @default(now())
+    data_modified  DateTime @default(now())
+
+    dam   Dam?
+    damId String? @unique
+
+    @@map("damBtDischarge")
+}
+
+// DamSpillway model
+model DamSpillway {
+    id                      String   @id @default(cuid())
+    has_spillway            Boolean  @default(false)
+    spillway_local          String?  @default("")
+    spillway_type           String?  @default("")
+    spillway_number         Int?     @default(0)
+    spillway_floodgates     String?  @default("")
+    spillway_sill_elevation Float?   @default(0)
+    spillway_sill_length    Float?   @default(0)
+    spillway_maxflow        Int?     @default(0)
+    spillway_energy         String?  @default("")
+    spillway_more           String?  @default("")
+    data_creation           DateTime @default(now())
+    data_modified           DateTime @default(now())
+
+    dam   Dam?
+    damId String? @unique
+
+    @@map("damSpillway")
+}
+
+// DamEnvFlow model
+model DamEnvFlow {
+    id                   String   @id @default(cuid())
+    has_environ_circuit  Boolean  @default(false)
+    environ_local        String?  @default("")
+    environ_type_control String?  @default("")
+    environ_max_flow     Float?   @default(0)
+    environ_ref_flow     Float?   @default(0)
+    environ_more         String?  @default("")
+    data_creation        DateTime @default(now())
+    data_modified        DateTime @default(now())
+
+    dam   Dam?
+    damId String? @unique
+
+    @@map("damEnvFlow")
+}
+
+// DamHydropower model
+model DamHydropower {
+    id               String   @id @default(cuid())
+    has_hydropower   Boolean  @default(false)
+    hp_local         String?  @default("")
+    hp_number_groups Int?     @default(0)
+    hp_groups_type   String?  @default("")
+    hp_power         Int?     @default(0)
+    hp_annual_energy Int?     @default(0)
+    hp_more          String?  @default("")
+    data_creation    DateTime @default(now())
+    data_modified    DateTime @default(now())
+
+    dam   Dam?
+    damId String? @unique
+
+    @@map("damHydropower")
+}
+
+// DamRisk model
+model DamRisk {
+    id                   String   @id @default(cuid())
     class                DamClass @default(Unknown)
     persons_downstream   Int?     @default(0)
     houses_downstream    Int?     @default(0)
@@ -46,129 +281,25 @@ model Dam {
     foundations          String?  @default("")
     discharge_structures String?  @default("")
     maintenance          String?  @default("")
+    data_creation        DateTime @default(now())
+    data_modified        DateTime @default(now())
 
-    //localization
-    country     String  @default("PT")
-    state       String  @default("")
-    city        String? @default("")
-    local       String? @default("")
-    hydro_basin String? @default("")
-    water_line  String? @default("")
-    latitude    Float   @default(0)
-    longitude   Float   @default(0)
+    dam   Dam?
+    damId String? @unique
 
-    // project and construction
-    owner           String
-    promotor        String? @default("")
-    builder         String? @default("")
-    designer        String? @default("")
-    project_year    String  @default("")
-    completion_year String  @default("")
-    status          String  @default("") //*
+    @@map("damRisk")
+}
 
-    //HydroFeatures
-    watershed_area      Float  @default(0)
-    average_annual_prec Int?   @default(0)
-    flood_flow          Int?   @default(0)
-    average_annual_flow Float? @default(0)
-    return_period       Int?   @default(0)
-
-    //Reservoir Features
-    flood_area       Float  @default(0)
-    reservoir_length Float? @default(0) //**
-    total_capacity   Float? @default(0)
-    useful_capacity  Float? @default(0)
-    dead_volume      Float? @default(0)
-    fsl              Int?   @default(0)
-    mfl              Int?   @default(0)
-    mol              Int?   @default(0)
-
-    // Dam Features
-    height_to_foundation Int
-    height_to_natural    Int?   @default(0)
-    crest_elevation      Float
-    crest_length         Int
-    crest_width          Float? @default(0)
-    embankment_volume    Float? @default(0)
-    concrete_volume      Float? @default(0)
-
-    //Geology and foundation treatment
-    foundation_type      Foundation @default(Unknown) //**
-    foundation_geology   String?    @default("")
-    foundation_impermeab String[]   @default(["None"]) //**
-    foundation_treatment String?    @default("")
-
-    //BottomDischarge
-    has_btd        Boolean @default(false)
-    btd_local      String? @default("")
-    btd_type       String? @default("")
-    btd_number     Int?    @default(0)
-    btd_section    String? @default("")
-    btd_diameter   Float?  @default(0)
-    btd_maxflow    Float?  @default(0)
-    btd_upstream   String? @default("")
-    btd_downstream String? @default("")
-    btd_energy     String? @default("")
-    btd_more       String? @default("")
-
-    //Spillway
-    has_spillway            Boolean @default(false)
-    spillway_local          String? @default("")
-    spillway_type           String? @default("")
-    spillway_number         Int?    @default(0)
-    spillway_floodgates     String? @default("")
-    spillway_sill_elevation Float?  @default(0)
-    spillway_sill_length    Float?  @default(0)
-    spillway_maxflow        Int?    @default(0)
-    spillway_energy         String? @default("")
-    spillway_more           String? @default("")
-
-    //Hydroeletrical central
-    has_hydropower   Boolean @default(false)
-    hp_local         String? @default("")
-    hp_number_groups Int?    @default(0)
-    hp_groups_type   String? @default("")
-    hp_power         Int?    @default(0)
-    hp_annual_energy Int?    @default(0)
-    hp_more          String? @default("")
-
-    //Environmental circuit
-    has_environ_circuit  Boolean @default(false)
-    environ_local        String? @default("")
-    environ_type_control String? @default("")
-    environ_max_flow     Float?  @default(0)
-    environ_ref_flow     Float?  @default(0)
-    environ_more         String? @default("")
-
-    //Overall notes on dam
-    notes String? @default("")
-
+// DamFile model
+model DamFile {
+    id            String   @id @default(cuid())
+    type          FileType
+    label         String
+    cover_image   Int      @default(0)
     data_creation DateTime @default(now())
     data_modified DateTime @default(now())
 
-    // files
-    damFiles    DamFile[]
-    cover_image Int       @default(0) //image that will show in the initial view. by default will be File[0]
-
-    //user that creates the dam
-    user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
-    userId String? @map("userId")
-
-    @@index([name, material, profile, height_to_foundation, country, state, city, hydro_basin, userId])
-    @@map("dams")
-}
-
-enum FileType {
-    Draw
-    Image
-    Other
-}
-
-model DamFile {
-    id    String   @id @default(cuid())
-    type  FileType
-    label String //Description, like: plant, cros section, spillway, ....
-    dam   Dam      @relation(fields: [damId], references: [id])
+    dam   Dam    @relation(fields: [damId], references: [id])
     damId String
 
     @@index([damId])
