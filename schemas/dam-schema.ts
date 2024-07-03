@@ -65,7 +65,7 @@ export const DamProjectSchema = z.object({
   status: z.string(),
 });
 
-export const DamHydrologytSchema = z.object({
+export const DamHydrologySchema = z.object({
   //HydroFeatures
   watershed_area: z.coerce.number().positive("Positive number required"),
   average_annual_prec: z.coerce.number().nonnegative().optional(),
@@ -77,6 +77,7 @@ export const DamReservoirSchema = z.object({
   //Reservoir Features
   flood_area: z.coerce.number().positive("Positive number required"),
   total_capacity: z.coerce.number().nonnegative().optional(),
+  reservoir_length: z.coerce.number().nonnegative().optional(),
   useful_capacity: z.coerce.number().nonnegative().optional(),
   dead_volume: z.coerce.number().nonnegative().optional(),
   fsl: z.coerce.number().nonnegative().optional(),
@@ -95,10 +96,26 @@ export const DamBodySchema = z.object({
 });
 export const DamFoundationSchema = z.object({
   //foundation and treatment
-  foundation_type: z.string().max(200).optional(),
+  foundation_type: z
+    .array(
+      z.object({
+        id: z.string(),
+        text: z.string(),
+      }),
+    )
+    .min(1, "Select at least one")
+    .max(3),
   foundation_geology: z.string().max(200).optional(),
-  foundation_impermeab: z.string().max(200).optional(),
-  foundation_treatment: z.string().max(200).optional(),
+  foundation_treatment: z
+    .array(
+      z.object({
+        id: z.string(),
+        text: z.string(),
+      }),
+    )
+    .min(1, "Select at least one")
+    .max(5),
+  foundation_notes: z.string().max(200).optional(),
 });
 export const DamBtDischargeSchema = z.object({
   //BottomDischarge
@@ -128,7 +145,7 @@ export const DamSpillwaySchema = z.object({
   spillway_more: z.string().max(100).optional(),
 });
 
-export const DamEnvFlowSchema = z.object({
+export const DamEnvironSchema = z.object({
   // Ecological circuit
   has_environ_circuit: z.boolean(),
   environ_local: z.string().max(30).optional(),

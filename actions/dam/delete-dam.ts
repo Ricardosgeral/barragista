@@ -1,8 +1,8 @@
 "use server";
 
-import { z } from "zod";
 import { db } from "@/lib/db";
 import { currentUser } from "@/lib/auth";
+import { cookies } from "next/headers";
 
 export const deleteDam = async (damId: string) => {
   try {
@@ -23,6 +23,14 @@ export const deleteDam = async (damId: string) => {
         message: "Dam Id is required",
       };
     }
+
+    // Delete the corresponding cookie
+    cookies().set({
+      name: `damInfo`,
+      value: "",
+      path: "/dam",
+      maxAge: -1, // This will cause the cookie to be deleted
+    });
 
     const dam = await db.dam.delete({
       where: {

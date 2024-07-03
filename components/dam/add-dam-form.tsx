@@ -1,65 +1,19 @@
 "use client";
-import {
-  Dam,
-  DamLocation,
-  DamProject,
-  DamHydrology,
-  DamReservoir,
-  DamBody,
-  DamFoundation,
-  DamBtDischarge,
-  DamSpillway,
-  DamEnvFlow,
-  DamHydropower,
-  DamRisk,
-  DamClass,
-  DamMaterial,
-  DamFile,
-} from "@prisma/client";
+import { Dam, DamMaterial } from "@prisma/client";
 import { startTransition, useState } from "react";
 
-const damClassArray = Object.entries(DamClass).map(([key, value]) => ({
-  label: key,
-  value: value,
-}));
-
-//to use the enum defined in dam.prisma
-const damMaterialArray = Object.entries(DamMaterial).map(([key, value]) => ({
-  label: key,
-  value: value,
-}));
-
-interface AddDamFormProps {
-  // dam: DamWithAllFeatures | null;
-  dam: Dam | null; //if null will create a dam
-}
-
-// export type DamWithAllFeatures = Dam & {
-//   location: DamLocation;
-//   projectConstruction: DamProject;
-//   hydrology: DamHydrology;
-//   reservoir: DamReservoir;
-//   damBody: DamBody;
-//   Foundation: DamFoundation;
-//   bottomDischarge: DamBtDischarge;
-//   spillway: DamSpillway;
-//   envFlow: DamEnvFlow;
-//   hydropower: DamHydropower;
-//   risk: DamRisk;
-//   files: DamFile[];
-// };
 import { Tag, TagInput } from "emblor";
-import { useForm } from "react-hook-form";
 import { DamSchema } from "@/schemas/dam-schema";
-import { z } from "zod";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../ui/card";
+} from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -67,10 +21,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { Button } from "../ui/button";
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import {
   LuCheck,
@@ -90,8 +48,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "../ui/command";
-import { Textarea } from "../ui/textarea";
+} from "@/components/ui/command";
+import { Textarea } from "@/components/ui/textarea";
 import { damProfile, damPurpose } from "@/data/dam/constants";
 import { useRouter } from "next/navigation";
 import {
@@ -104,12 +62,24 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "../ui/alert-dialog";
-import { updateDam } from "@/actions/dam/update-dam";
-import { toast } from "../ui/use-toast";
+} from "@/components/ui/alert-dialog";
+import { toast } from "@/components/ui/use-toast";
+
 import { createDam } from "@/actions/dam/create-dam";
+import { updateDam } from "@/actions/dam/update-dam";
+import { deleteDam } from "@/actions/dam/delete-dam";
 
 import { parseCookies } from "nookies";
+
+//to use the enum defined in dam.prisma
+const damMaterialArray = Object.entries(DamMaterial).map(([key, value]) => ({
+  label: key,
+  value: value,
+}));
+
+interface AddDamFormProps {
+  dam: Dam | null; //if null will create a dam
+}
 
 export default function AddDamForm({ dam }: AddDamFormProps) {
   const [isLoading, setIsLoading] = useState(false);
@@ -147,10 +117,33 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
   });
 
   const { setValue } = form;
+
   const router = useRouter();
 
-  const handleDeleteDam = (damId: String) => {};
-
+  const handleDeleteDam = (damId: String) => {
+    if (dam) {
+      // update a dam witha given ID
+      startTransition(() => {
+        setIsDamDeleting(true);
+        deleteDam(dam.id)
+          .then((data) => {
+            if (!data.ok) {
+              toast({
+                variant: "destructive",
+                description: `Something went wrong! ${data.message}`,
+              });
+            } else {
+              toast({
+                variant: "success",
+                description: `Success: ${data.message}`,
+              });
+              router.push("/dam/new");
+            }
+          })
+          .finally(() => setIsDamDeleting(true));
+      });
+    }
+  };
   const handleResetform = () => {
     form.reset();
   };
@@ -214,9 +207,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                       <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
                         1
                       </div>
-                      <div className="text-yellow-500">
-                        General identification
-                      </div>
+                      <div className="text-yellow-500">Identification</div>
                     </div>
                   </CardTitle>
                   <CardDescription>Overall data</CardDescription>

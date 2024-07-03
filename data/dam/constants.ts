@@ -10,9 +10,9 @@ export const damProfile = [
   { id: "7", text: "Soil-Rock mixtures" },
   { id: "8", text: "Homogeneous" },
   { id: "9", text: "Zoned with central core" },
-  { id: "10", text: "zoned with inclined core" },
+  { id: "10", text: "Zoned with inclined core" },
   { id: "11", text: "Internal drainage system" },
-  { id: "12", text: "Upstream impervious-face" },
+  { id: "12", text: "Upstream imSpervious-face" },
   { id: "13", text: "Impervious diaphragm" },
   { id: "14", text: "Concrete element" },
   { id: "15", text: "Asphaltic element" },
@@ -79,7 +79,32 @@ export const damStatus = [
   { id: "12", text: "Other" },
 ];
 
-export const foundationImprovements = [
+export const damFoundationType = [
+  { id: "1", text: "Rock: Intact" },
+  { id: "2", text: "Rock: Jointed/fractured" },
+  { id: "3", text: "Rock: Weathered" },
+  { id: "4", text: "Rock: Sedimentary" },
+  { id: "5", text: "Rock: Metamorphic" },
+  { id: "6", text: "Rock: Karstic" },
+  { id: "7", text: "Rock: Volcanic" },
+
+  { id: "8", text: "Soil: Alluvial" },
+  { id: "9", text: "Soil: Residual" },
+  { id: "10", text: "Soil: Colluvial" },
+  { id: "11", text: "Soil: Granular" },
+  { id: "12", text: "Soil: Cohesive" },
+  { id: "13", text: "Soil: Colapsible" },
+  { id: "14", text: "Soil: Expansible" },
+
+  { id: "15", text: "Composite: Mixed Soil/Rock" },
+  { id: "16", text: "Composite: Layered" },
+
+  { id: "17", text: "Special: Piled" },
+  { id: "18", text: "Special: Caisson" },
+  { id: "19", text: "Other" },
+];
+
+export const damFoundationTreatment = [
   { id: "1", text: "Excavation and preparation" },
   { id: "2", text: "Grouting" },
   { id: "3", text: "Grout curtains" },

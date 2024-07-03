@@ -1,11 +1,10 @@
 "use client";
 
-import { DamProjectSchema } from "@/schemas/dam-schema";
-import { DamProject } from "@prisma/client";
+import { DamFoundationSchema } from "@/schemas/dam-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { DamFoundation } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { damStatus } from "@/data/dam/constants";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,20 +25,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   LuEye,
   LuLoader2,
-  LuPencil,
   LuPencilLine,
   LuRefreshCcw,
   LuSave,
@@ -59,28 +50,44 @@ import { useRouter } from "next/navigation";
 import { createDamFeature } from "@/actions/dam/create-dam-features";
 import { updateDamFeature } from "@/actions/dam/update-dam-features";
 import { deleteDamFeature } from "@/actions/dam/delete-dam-feature";
+import { Textarea } from "../ui/textarea";
+import { Tag, TagInput } from "emblor";
+import {
+  damFoundationType,
+  damFoundationTreatment,
+} from "@/data/dam/constants";
 
-interface AddDamProjectFormProps {
+interface AddDamFoundationFormProps {
   damId: string | null;
-  damProject: DamProject | null; //if null will create
+  damFoundation: DamFoundation | null; //if null will create a dam
 }
 
-export default function AddDamProjectForm({
+export default function AddDamFoundationForm({
   damId,
-  damProject,
-}: AddDamProjectFormProps) {
+  damFoundation,
+}: AddDamFoundationFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const [tagsFoundation, setTagsFoundation] = useState<Tag[]>([]);
+  const [activeTagFoundationIndex, setActiveTagFoundationIndex] = useState<
+    number | null
+  >(null);
+
+  const [tagsTreatment, setTagsTreatment] = useState<Tag[]>([]);
+  const [activeTagTreatmentIndex, setActiveTagTreatmentIndex] = useState<
+    number | null
+  >(null);
+
   const router = useRouter();
 
-  const onSubmit = (values: z.infer<typeof DamProjectSchema>) => {
+  const onSubmit = (values: z.infer<typeof DamFoundationSchema>) => {
     setIsLoading(true);
-    if (damProject && damId) {
+    if (damFoundation && damId) {
       // update  with a given dam ID
       startTransition(() => {
         setIsLoading(true);
-        updateDamFeature("project", values, damId)
+        updateDamFeature("foundation", values, damId)
           .then((data) => {
             if (!data.ok) {
               toast({
@@ -102,7 +109,7 @@ export default function AddDamProjectForm({
       if (damId) {
         startTransition(() => {
           setIsLoading(true);
-          createDamFeature("project", values, damId)
+          createDamFeature("foundation", values, damId)
             .then((data) => {
               if (!data.ok) {
                 toast({
@@ -124,12 +131,12 @@ export default function AddDamProjectForm({
     }
   };
 
-  const handleDelete = (damId: string, damProject: DamProject) => {
-    if (damId && damProject) {
-      // update with a given dam ID
+  const handleDelete = (damId: string, damFoundation: DamFoundation) => {
+    if (damId && damFoundation) {
+      // update a dam witha given ID
       startTransition(() => {
         setIsDeleting(true);
-        deleteDamFeature("project", damId)
+        deleteDamFeature("foundation", damId)
           .then((data) => {
             if (!data.ok) {
               toast({
@@ -154,184 +161,147 @@ export default function AddDamProjectForm({
     form.reset();
   };
 
-  const form = useForm<z.infer<typeof DamProjectSchema>>({
-    resolver: zodResolver(DamProjectSchema),
-    defaultValues: (damProject || {
-      //Project and construction,
-      owner: "",
-      promotor: "",
-      builder: "",
-      designer: "",
-      project_year: "",
-      completion_year: "",
-      status: "operational",
-    }) as z.infer<typeof DamProjectSchema>,
+  const form = useForm<z.infer<typeof DamFoundationSchema>>({
+    resolver: zodResolver(DamFoundationSchema),
+    defaultValues: (damFoundation || {
+      //Foundation
+      foundation_type: JSON.parse("[]"),
+      foundation_geology: "",
+      foundation_treatment: JSON.parse("[]"),
+      foundation_notes: "",
+    }) as z.infer<typeof DamFoundationSchema>,
   });
+
+  const { setValue } = form;
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex w-full flex-col items-center justify-center space-y-6">
           <div className="flex w-full flex-col items-stretch justify-center gap-6 sm:flex-row sm:flex-wrap">
-            {/* Localization*/}
+            {/* Foundation */}
             <Card className="w-full drop-shadow-lg sm:w-[400px]">
               <CardHeader>
                 <CardTitle>
                   <div className="flex items-center justify-start space-x-2">
                     <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      3
+                      7
                     </div>
-                    <div className="text-yellow-500">
-                      Project and construction
-                    </div>
+                    <div className="text-yellow-500">Foundation</div>
                   </div>
                 </CardTitle>
-                <CardDescription>Entities and relevant dates</CardDescription>
+                <CardDescription>Geology and treatment </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="mb-4 grid w-full grid-cols-2 gap-4">
-                  {/* Owner */}
+                <div className="w-full space-y-4">
+                  {/* Foundation type */}
                   <FormField
                     control={form.control}
-                    name="owner"
+                    name="foundation_type"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Dam owner*</FormLabel>
+                        <FormLabel>Dominant foundation type</FormLabel>
                         <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
+                          <TagInput
                             {...field}
+                            placeholder="Select from list (max 3)"
+                            tags={field.value || tagsFoundation}
+                            minTags={1}
+                            variant={"default"}
+                            size={"sm"}
+                            shape={"pill"}
+                            maxTags={3}
+                            borderStyle={"none"}
+                            activeTagIndex={activeTagFoundationIndex}
+                            draggable={true}
+                            setActiveTagIndex={setActiveTagFoundationIndex}
+                            className=""
+                            setTags={(newTags) => {
+                              setTagsFoundation(newTags);
+                              setValue(
+                                "foundation_type",
+                                newTags as [Tag, ...Tag[]],
+                              );
+                            }}
+                            enableAutocomplete
+                            autocompleteOptions={damFoundationType}
+                            restrictTagsToAutocompleteOptions={true}
                           />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
                     )}
                   />
-                  {/* Promotor */}
+
                   <FormField
                     control={form.control}
-                    name="promotor"
+                    name="foundation_geology"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Geology of region/local</FormLabel>
+                        <FormControl>
+                          <Textarea {...field} className="h-20" />
+                        </FormControl>
+
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* Foundation treatment */}
+                  <FormField
+                    control={form.control}
+                    name="foundation_treatment"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Dam promotor</FormLabel>
+                        <FormLabel>Foundation treatment</FormLabel>
                         <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
+                          <TagInput
                             {...field}
+                            placeholder="Select from list (max 5)"
+                            tags={field.value || tagsTreatment}
+                            minTags={1}
+                            variant={"default"}
+                            size={"sm"}
+                            shape={"pill"}
+                            maxTags={5}
+                            borderStyle={"none"}
+                            activeTagIndex={activeTagTreatmentIndex}
+                            draggable={true}
+                            setActiveTagIndex={setActiveTagTreatmentIndex}
+                            className=""
+                            setTags={(newTags) => {
+                              setTagsTreatment(newTags);
+                              setValue(
+                                "foundation_treatment",
+                                newTags as [Tag, ...Tag[]],
+                              );
+                            }}
+                            enableAutocomplete
+                            autocompleteOptions={damFoundationTreatment}
+                            restrictTagsToAutocompleteOptions={true}
                           />
                         </FormControl>
                         <FormMessage className="text-xs" />
                       </FormItem>
                     )}
                   />
-                  {/* Building company */}
+
                   <FormField
                     control={form.control}
-                    name="builder"
+                    name="foundation_notes"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Building company</FormLabel>
+                      <FormItem className="w-full">
+                        <FormLabel>Additional notes</FormLabel>
                         <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
+                          <Textarea {...field} className="h-20" />
                         </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  {/* Designing company */}
-                  <FormField
-                    control={form.control}
-                    name="designer"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Designer company</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  {/* project year */}
-                  <FormField
-                    control={form.control}
-                    name="project_year"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Project year*</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  {/* Compleation year */}
-                  <FormField
-                    control={form.control}
-                    name="completion_year"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Completion year*</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
+
                         <FormMessage className="text-xs" />
                       </FormItem>
                     )}
                   />
                 </div>
-
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        <div className="flex items-baseline">
-                          Current status
-                          <div className="pl-2 text-xs font-normal">
-                            {damProject?.data_modified &&
-                              ` (modified on ${new Date(damProject.data_modified).toLocaleDateString("en-GB")})`}
-                          </div>
-                        </div>
-                      </FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {damStatus.map((status) => {
-                            return (
-                              <SelectItem key={status.id} value={status.text}>
-                                {status.text}
-                              </SelectItem>
-                            );
-                          })}
-                        </SelectContent>
-                      </Select>
-
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
               </CardContent>
             </Card>
           </div>
@@ -340,7 +310,7 @@ export default function AddDamProjectForm({
             <div className="flex w-full items-center justify-around">
               <div className="flex justify-start gap-4">
                 {/* delete dam Button */}
-                {damId && damProject && (
+                {damId && damFoundation && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
@@ -374,7 +344,7 @@ export default function AddDamProjectForm({
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
-                          onClick={() => handleDelete(damId, damProject)}
+                          onClick={() => handleDelete(damId, damFoundation)}
                         >
                           Continue
                         </AlertDialogAction>
@@ -397,7 +367,7 @@ export default function AddDamProjectForm({
               <div className="flex justify-end gap-4">
                 {/* view Dam button */}
 
-                {damId && damProject && (
+                {damId && damFoundation && (
                   <>
                     <Button
                       variant="default"
@@ -412,7 +382,7 @@ export default function AddDamProjectForm({
                 )}
 
                 {/* create/update Dam Buttons */}
-                {damId && damProject ? (
+                {damId && damFoundation ? (
                   <Button
                     type="submit"
                     disabled={isLoading}

@@ -35,7 +35,7 @@ export const deleteDamFeature = async (
 
     // Delete the corresponding cookie
     cookies().set({
-      name: `dam${type.charAt(0).toUpperCase() + type.slice(1)}`,
+      name: `dam${type.charAt(0).toUpperCase() + type.slice(1)}Info`,
       value: "",
       path: "/dam",
       maxAge: -1, // This will cause the cookie to be deleted

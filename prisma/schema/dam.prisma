@@ -39,27 +39,27 @@ model Dam {
     description String?     @default("")
 
     // Relationships with cascading delete
-    damLocation      DamLocation?    @relation(fields: [damLocationId], references: [id], onDelete: Cascade)
+    damLocation      DamLocation?
     damLocationId    String?         @unique
-    damProject       DamProject?     @relation(fields: [damProjectId], references: [id], onDelete: Cascade)
+    damProject       DamProject?
     damProjectId     String?         @unique
-    damHydrology     DamHydrology?   @relation(fields: [damHydrologyId], references: [id], onDelete: Cascade)
+    damHydrology     DamHydrology?
     damHydrologyId   String?         @unique
-    damReservoir     DamReservoir?   @relation(fields: [damReservoirId], references: [id], onDelete: Cascade)
+    damReservoir     DamReservoir?
     damReservoirId   String?         @unique
-    damBody          DamBody?        @relation(fields: [damBodyId], references: [id], onDelete: Cascade)
+    damBody          DamBody?
     damBodyId        String?         @unique
-    damFoundation    DamFoundation?  @relation(fields: [damFoundationId], references: [id], onDelete: Cascade)
+    damFoundation    DamFoundation?
     damFoundationId  String?         @unique
-    damBtDischarge   DamBtDischarge? @relation(fields: [damBtDischargeId], references: [id], onDelete: Cascade)
+    damBtDischarge   DamBtDischarge?
     damBtDischargeId String?         @unique
-    damSpillway      DamSpillway?    @relation(fields: [damSpillwayId], references: [id], onDelete: Cascade)
+    damSpillway      DamSpillway?
     damSpillwayId    String?         @unique
-    damEnvFlow       DamEnvFlow?     @relation(fields: [damEnvFlowId], references: [id], onDelete: Cascade)
-    damEnvFlowId     String?         @unique
-    damHydropower    DamHydropower?  @relation(fields: [damHydropowerId], references: [id], onDelete: Cascade)
+    damEnviron       DamEnviron?
+    damEnvironId     String?         @unique
+    damHydropower    DamHydropower?
     damHydropowerId  String?         @unique
-    damRisk          DamRisk?        @relation(fields: [damRiskId], references: [id], onDelete: Cascade)
+    damRisk          DamRisk?
     damRiskId        String?         @unique
 
     // Non-cascading relation
@@ -72,7 +72,7 @@ model Dam {
     data_modified DateTime @default(now())
 
     // Index for performance optimization
-    @@index([damRiskId, damLocationId, damProjectId, damHydrologyId, damReservoirId, damBodyId, damFoundationId, damBtDischargeId, damSpillwayId, damEnvFlowId, damHydropowerId, userId])
+    @@index([damRiskId, damLocationId, damProjectId, damHydrologyId, damReservoirId, damBodyId, damFoundationId, damBtDischargeId, damSpillwayId, damEnvironId, damHydropowerId, userId])
     @@map("dams")
 }
 
@@ -89,8 +89,8 @@ model DamLocation {
     longitude     Float    @default(0)
     data_creation DateTime @default(now())
     data_modified DateTime @default(now())
-    dam           Dam?
-    damId         String?  @unique
+    dam           Dam      @relation(fields: [damId], references: [id], onDelete: Cascade)
+    damId         String   @unique
 
     @@map("damLocation")
 }
@@ -107,8 +107,8 @@ model DamProject {
     status          String   @default("")
     data_creation   DateTime @default(now())
     data_modified   DateTime @default(now())
-    dam             Dam?
-    damId           String?  @unique
+    dam             Dam      @relation(fields: [damId], references: [id], onDelete: Cascade)
+    damId           String   @unique
 
     @@map("damProject")
 }
@@ -123,8 +123,8 @@ model DamHydrology {
     return_period       Int?     @default(0)
     data_creation       DateTime @default(now())
     data_modified       DateTime @default(now())
-    dam                 Dam?
-    damId               String?  @unique
+    dam                 Dam      @relation(fields: [damId], references: [id], onDelete: Cascade)
+    damId               String   @unique
 
     @@map("damHydrology")
 }
@@ -142,8 +142,8 @@ model DamReservoir {
     mol              Int?     @default(0)
     data_creation    DateTime @default(now())
     data_modified    DateTime @default(now())
-    dam              Dam?
-    damId            String?  @unique
+    dam              Dam      @relation(fields: [damId], references: [id], onDelete: Cascade)
+    damId            String   @unique
 
     @@map("damReservoir")
 }
@@ -160,8 +160,8 @@ model DamBody {
     concrete_volume      Float?   @default(0)
     data_creation        DateTime @default(now())
     data_modified        DateTime @default(now())
-    dam                  Dam?
-    damId                String?  @unique
+    dam                  Dam      @relation(fields: [damId], references: [id], onDelete: Cascade)
+    damId                String   @unique
 
     @@map("damBody")
 }
@@ -169,15 +169,15 @@ model DamBody {
 // DamFoundation model
 model DamFoundation {
     id                   String   @id @default(cuid())
-    foundation_type      String?  @default("")
+    foundation_type      Json?
     foundation_geology   String?  @default("")
-    foundation_impermeab String?  @default("")
-    foundation_treatment String?  @default("")
+    foundation_treatment Json?
+    foundation_notes     String?  @default("")
     data_creation        DateTime @default(now())
     data_modified        DateTime @default(now())
 
-    dam   Dam?
-    damId String? @unique
+    dam   Dam    @relation(fields: [damId], references: [id], onDelete: Cascade)
+    damId String @unique
 
     @@map("damFoundation")
 }
@@ -199,8 +199,8 @@ model DamBtDischarge {
     data_creation  DateTime @default(now())
     data_modified  DateTime @default(now())
 
-    dam   Dam?
-    damId String? @unique
+    dam   Dam    @relation(fields: [damId], references: [id], onDelete: Cascade)
+    damId String @unique
 
     @@map("damBtDischarge")
 }
@@ -221,14 +221,14 @@ model DamSpillway {
     data_creation           DateTime @default(now())
     data_modified           DateTime @default(now())
 
-    dam   Dam?
-    damId String? @unique
+    dam   Dam    @relation(fields: [damId], references: [id], onDelete: Cascade)
+    damId String @unique
 
     @@map("damSpillway")
 }
 
-// DamEnvFlow model
-model DamEnvFlow {
+// DamEnviron model
+model DamEnviron {
     id                   String   @id @default(cuid())
     has_environ_circuit  Boolean  @default(false)
     environ_local        String?  @default("")
@@ -239,8 +239,8 @@ model DamEnvFlow {
     data_creation        DateTime @default(now())
     data_modified        DateTime @default(now())
 
-    dam   Dam?
-    damId String? @unique
+    dam   Dam    @relation(fields: [damId], references: [id], onDelete: Cascade)
+    damId String @unique
 
     @@map("damEnvFlow")
 }
@@ -258,8 +258,8 @@ model DamHydropower {
     data_creation    DateTime @default(now())
     data_modified    DateTime @default(now())
 
-    dam   Dam?
-    damId String? @unique
+    dam   Dam    @relation(fields: [damId], references: [id], onDelete: Cascade)
+    damId String @unique
 
     @@map("damHydropower")
 }
@@ -284,8 +284,8 @@ model DamRisk {
     data_creation        DateTime @default(now())
     data_modified        DateTime @default(now())
 
-    dam   Dam?
-    damId String? @unique
+    dam   Dam    @relation(fields: [damId], references: [id], onDelete: Cascade)
+    damId String @unique
 
     @@map("damRisk")
 }

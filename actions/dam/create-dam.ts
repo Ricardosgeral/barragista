@@ -5,7 +5,6 @@ import { db } from "@/lib/db";
 import { currentUser } from "@/lib/auth";
 import { DamSchema } from "@/schemas/dam-schema";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 
 export const createDam = async (data: z.infer<typeof DamSchema>) => {
   try {
@@ -28,8 +27,6 @@ export const createDam = async (data: z.infer<typeof DamSchema>) => {
         value: serializedDamInfo,
         path: "/dam",
       });
-
-      //redirect("/dam/location");
     }
 
     // Check if the dam name already exists

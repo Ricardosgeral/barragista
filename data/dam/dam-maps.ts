@@ -1,13 +1,13 @@
 import {
   DamLocationSchema,
   DamProjectSchema,
-  DamHydrologytSchema,
+  DamHydrologySchema,
   DamReservoirSchema,
   DamBodySchema,
   DamFoundationSchema,
   DamBtDischargeSchema,
   DamSpillwaySchema,
-  DamEnvFlowSchema,
+  DamEnvironSchema,
   DamHydropowerSchema,
   DamRiskSchema,
 } from "@/schemas/dam-schema";
@@ -17,13 +17,13 @@ import { db } from "@/lib/db";
 export const schemaMap = {
   location: DamLocationSchema,
   project: DamProjectSchema,
-  hydrology: DamHydrologytSchema,
+  hydrology: DamHydrologySchema,
   reservoir: DamReservoirSchema,
   body: DamBodySchema,
   foundation: DamFoundationSchema,
   bottom_discharge: DamBtDischargeSchema,
   spillway: DamSpillwaySchema,
-  ecological_flow: DamEnvFlowSchema,
+  environmental: DamEnvironSchema,
   hydropower: DamHydropowerSchema,
   risk: DamRiskSchema,
 };
@@ -37,7 +37,7 @@ export const dbMap = {
   foundation: db.damFoundation,
   bottom_discharge: db.damBtDischarge,
   spillway: db.damSpillway,
-  ecological_flow: db.damEnvFlow,
+  environmental: db.damEnviron,
   hydropower: db.damHydropower,
   risk: db.damRisk,
 };

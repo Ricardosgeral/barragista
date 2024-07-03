@@ -1,9 +1,9 @@
 "use client";
 
-import { DamLocationSchema } from "@/schemas/dam-schema";
-import { DamLocation } from "@prisma/client";
-import { useForm } from "react-hook-form";
+import { DamReservoirSchema } from "@/schemas/dam-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { DamReservoir } from "@prisma/client";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
   AlertDialog,
@@ -32,14 +32,13 @@ import {
   LuEye,
   LuHelpCircle,
   LuLoader2,
-  LuPencil,
   LuPencilLine,
   LuRefreshCcw,
   LuSave,
   LuTrash2,
 } from "react-icons/lu";
 import { toast } from "@/components/ui/use-toast";
-import { startTransition, useEffect, useState } from "react";
+import { startTransition, useState } from "react";
 import {
   Card,
   CardContent,
@@ -58,104 +57,28 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { hydrologicalBasinPT } from "@/data/dam/constants";
-import { ICity, IState } from "country-state-city";
-import useLocation from "@/hooks/use-location";
 
-import { parseCookies } from "nookies";
-
-interface AddDamLocationFormProps {
+interface AddDamReservoirFormProps {
   damId: string | null;
-  damLocation: DamLocation | null; //if null will create
+  damReservoir: DamReservoir | null; //if null will create a dam
 }
 
-export default function AddDamLocationForm({
+export default function AddDamReservoirForm({
   damId,
-  damLocation,
-}: AddDamLocationFormProps) {
+  damReservoir,
+}: AddDamReservoirFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const [states, setStates] = useState<IState[]>([]);
-  const [cities, setCities] = useState<ICity[]>([]);
-
-  const [isCountryPT, setIsCountryPT] = useState(false); // to see if country is PRT
-  const { getAllCountries, getCountryStates, getStateCities } = useLocation();
-
-  const cookies = parseCookies();
-  const serializedDamLocationInfo = cookies.damLocationInfo;
-
-  let damLocationInfo: AddDamLocationFormProps | null = null;
-
-  if (serializedDamLocationInfo) {
-    damLocationInfo = JSON.parse(serializedDamLocationInfo);
-  }
-
-  const countries = getAllCountries;
-
-  const form = useForm<z.infer<typeof DamLocationSchema>>({
-    resolver: zodResolver(DamLocationSchema),
-    defaultValues: (damLocation || {
-      //Location
-      country: "PT",
-      state: "",
-      city: "",
-      local: "",
-      hydro_basin: "",
-      water_line: "",
-      latitude: 0,
-      longitude: 0,
-    }) as z.infer<typeof DamLocationSchema>,
-  });
-
-  useEffect(() => {
-    const selectedCountry = form.watch("country");
-    const countryStates = getCountryStates(selectedCountry);
-    if (countryStates) {
-      setStates(countryStates);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.watch("country")]);
-
-  useEffect(() => {
-    const selectedCountry = form.watch("country");
-    const selectedState = form.watch("state");
-    const stateCities = getStateCities(selectedCountry, selectedState);
-    if (stateCities) {
-      setCities(stateCities);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.watch("country"), form.watch("state")]);
-
-  useEffect(() => {
-    const selectedCountry = form.watch("country");
-    if (selectedCountry === "PT") {
-      setIsCountryPT(true);
-    } else {
-      setIsCountryPT(false);
-      form.setValue("hydro_basin", "");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.watch("country")]);
-
   const router = useRouter();
 
-  const onSubmit = (values: z.infer<typeof DamLocationSchema>) => {
+  const onSubmit = (values: z.infer<typeof DamReservoirSchema>) => {
     setIsLoading(true);
-    if (damLocation && damId) {
-      // update the dam location with a given ID
+    if (damReservoir && damId) {
+      // update  with a given dam ID
       startTransition(() => {
         setIsLoading(true);
-        updateDamFeature("location", values, damId)
+        updateDamFeature("reservoir", values, damId)
           .then((data) => {
             if (!data.ok) {
               toast({
@@ -177,7 +100,7 @@ export default function AddDamLocationForm({
       if (damId) {
         startTransition(() => {
           setIsLoading(true);
-          createDamFeature("location", values, damId)
+          createDamFeature("reservoir", values, damId)
             .then((data) => {
               if (!data.ok) {
                 toast({
@@ -199,12 +122,12 @@ export default function AddDamLocationForm({
     }
   };
 
-  const handleDelete = (damId: string, damLocation: DamLocation) => {
-    if (damId && damLocation) {
+  const handleDelete = (damId: string, damReservoir: DamReservoir) => {
+    if (damId && damReservoir) {
       // update a dam witha given ID
       startTransition(() => {
         setIsDeleting(true);
-        deleteDamFeature("location", damId)
+        deleteDamFeature("reservoir", damId)
           .then((data) => {
             if (!data.ok) {
               toast({
@@ -229,146 +152,49 @@ export default function AddDamLocationForm({
     form.reset();
   };
 
+  const form = useForm<z.infer<typeof DamReservoirSchema>>({
+    resolver: zodResolver(DamReservoirSchema),
+    defaultValues: (damReservoir || {
+      //Reservoir Features
+      flood_area: 0,
+      reservoir_length: 0,
+      total_capacity: 0,
+      useful_capacity: 0,
+      dead_volume: 0,
+      fsl: 0,
+      mfl: 0,
+      mol: 0,
+    }) as z.infer<typeof DamReservoirSchema>,
+  });
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex w-full flex-col items-center justify-center space-y-6">
           <div className="flex w-full flex-col items-stretch justify-center gap-6 sm:flex-row sm:flex-wrap">
-            {/* Location*/}
+            {/* Reservoir features*/}
             <Card className="w-full drop-shadow-lg sm:w-[400px]">
               <CardHeader>
                 <CardTitle>
                   <div className="flex items-center justify-start space-x-2">
                     <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      3
+                      5
                     </div>
-                    <div className="text-yellow-500">Location</div>
+                    <div className="text-yellow-500">Reservoir</div>
                   </div>
                 </CardTitle>
-                <CardDescription>Geographical information</CardDescription>
+                <CardDescription>Main hydraulic parameters</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid w-full grid-cols-2 gap-4">
+                <div className="mb-4 grid w-full grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="country"
+                    name="flood_area"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Country*</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          value={field.value}
-                          disabled={isLoading}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue
-                                defaultValue={field.value}
-                                placeholder="Select"
-                              />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {countries.map((country) => {
-                              return (
-                                <SelectItem
-                                  key={country.isoCode}
-                                  value={country.isoCode}
-                                  defaultValue="PT"
-                                >
-                                  {country.name}
-                                </SelectItem>
-                              );
-                            })}
-                          </SelectContent>
-                        </Select>
-
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="state"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>District*</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          value={field.value}
-                          disabled={isLoading || states.length < 1}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue
-                                defaultValue={field.value}
-                                placeholder="Select"
-                              />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {states.map((state) => {
-                              return (
-                                <SelectItem
-                                  key={state.isoCode}
-                                  value={state.isoCode}
-                                >
-                                  {state.name}
-                                </SelectItem>
-                              );
-                            })}
-                          </SelectContent>
-                        </Select>
-
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="city"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Town</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          value={field.value}
-                          disabled={isLoading || cities.length < 1}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue
-                                defaultValue={field.value}
-                                placeholder="Select"
-                              />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {cities.map((city) => {
-                              return (
-                                <SelectItem key={city.name} value={city.name}>
-                                  {city.name}
-                                </SelectItem>
-                              );
-                            })}
-                          </SelectContent>
-                        </Select>
-
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="local"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Locality </FormLabel>
+                        <FormLabel>
+                          Flooded area at FSL* (m<sup>2</sup>)
+                        </FormLabel>
                         <FormControl>
                           <Input
                             className="w-full rounded border text-base"
@@ -379,57 +205,14 @@ export default function AddDamLocationForm({
                       </FormItem>
                     )}
                   />
-
                   <FormField
                     control={form.control}
-                    name="hydro_basin"
+                    name="total_capacity"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Hydrological basin</FormLabel>
-
-                        {!isCountryPT ? (
-                          <FormControl>
-                            <Input
-                              className="w-full rounded border text-base"
-                              {...field}
-                            />
-                          </FormControl>
-                        ) : (
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select" />
-                              </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                              <SelectGroup>
-                                <SelectLabel>Hydro Basins</SelectLabel>
-                                {hydrologicalBasinPT.map((basin) => (
-                                  <SelectItem
-                                    key={basin.toLowerCase()}
-                                    value={basin}
-                                  >
-                                    {basin}
-                                  </SelectItem>
-                                ))}
-                              </SelectGroup>
-                            </SelectContent>
-                          </Select>
-                        )}
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="water_line"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Tributary stream</FormLabel>
+                        <FormLabel>
+                          Total capacity (m<sup>3</sup>)
+                        </FormLabel>
                         <FormControl>
                           <Input
                             className="w-full rounded border text-base"
@@ -440,21 +223,79 @@ export default function AddDamLocationForm({
                       </FormItem>
                     )}
                   />
-
                   <FormField
                     control={form.control}
-                    name="latitude"
+                    name="useful_capacity"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Useful capacity (m<sup>3</sup>)
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            className="w-full rounded border text-base"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="dead_volume"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>
+                          Dead volume (m<sup>3</sup>)
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            className="w-full rounded border text-base"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <FormField
+                  control={form.control}
+                  name="reservoir_length"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Fetch (m)</FormLabel>
+                      <FormControl>
+                        <Input
+                          className="w-full rounded border text-base"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage className="text-xs" />
+                    </FormItem>
+                  )}
+                />
+                <CardTitle className="pb-2 pt-4 text-sm font-semibold">
+                  Notable levels (m):
+                </CardTitle>
+
+                <div className="grid w-full grid-cols-3 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="fsl"
                     render={({ field }) => (
                       <FormItem>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger>
                               <FormLabel className="inline-flex gap-2">
-                                Latitude* <LuHelpCircle />
+                                FSL <LuHelpCircle />
                               </FormLabel>
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>Decimal degrees (DD) -90 to 90</p>
+                              <p>Full Storage Level</p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
@@ -469,24 +310,51 @@ export default function AddDamLocationForm({
                       </FormItem>
                     )}
                   />
-
                   <FormField
                     control={form.control}
-                    name="longitude"
+                    name="mfl"
                     render={({ field }) => (
                       <FormItem>
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger>
                               <FormLabel className="inline-flex gap-2">
-                                Longitude* <LuHelpCircle />
+                                MFL <LuHelpCircle />
+                              </FormLabel>{" "}
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Maximum Flood Level</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+
+                        <FormControl>
+                          <Input
+                            className="w-full rounded border text-base"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="mol"
+                    render={({ field }) => (
+                      <FormItem>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <FormLabel className="inline-flex gap-2">
+                                MWL <LuHelpCircle />
                               </FormLabel>
                             </TooltipTrigger>
                             <TooltipContent>
-                              <p>Decimal degrees (DD) -180 to 180</p>
+                              <p>Minimum Operational Level</p>
                             </TooltipContent>
                           </Tooltip>
-                        </TooltipProvider>{" "}
+                        </TooltipProvider>
                         <FormControl>
                           <Input
                             className="w-full rounded border text-base"
@@ -505,8 +373,8 @@ export default function AddDamLocationForm({
           <div className="flex w-full items-center lg:w-1/2">
             <div className="flex w-full items-center justify-around">
               <div className="flex justify-start gap-4">
-                {/* delete Button */}
-                {damId && damLocation && (
+                {/* delete dam Button */}
+                {damId && damReservoir && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
@@ -540,7 +408,7 @@ export default function AddDamLocationForm({
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
-                          onClick={() => handleDelete(damId, damLocation)}
+                          onClick={() => handleDelete(damId, damReservoir)}
                         >
                           Continue
                         </AlertDialogAction>
@@ -563,7 +431,7 @@ export default function AddDamLocationForm({
               <div className="flex justify-end gap-4">
                 {/* view Dam button */}
 
-                {damId && damLocation && (
+                {damId && damReservoir && (
                   <>
                     <Button
                       variant="default"
@@ -578,7 +446,7 @@ export default function AddDamLocationForm({
                 )}
 
                 {/* create/update Dam Buttons */}
-                {damId && damLocation ? (
+                {damId && damReservoir ? (
                   <Button
                     type="submit"
                     disabled={isLoading}

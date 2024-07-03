@@ -23,9 +23,8 @@ export const createDamFeature = async (
     const schema = schemaMap[type];
     const parsedData = schema.parse(data);
     const serializedData = JSON.stringify(parsedData);
-
     cookies().set({
-      name: `dam${type.charAt(0).toUpperCase() + type.slice(1)}`,
+      name: `dam${type.charAt(0).toUpperCase() + type.slice(1)}Info`,
       value: serializedData,
       path: "/dam",
     });

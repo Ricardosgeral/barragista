@@ -1,11 +1,10 @@
 "use client";
 
-import { DamProjectSchema } from "@/schemas/dam-schema";
-import { DamProject } from "@prisma/client";
+import { DamEnvironSchema } from "@/schemas/dam-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { DamEnviron } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { damStatus } from "@/data/dam/constants";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -26,27 +25,20 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   LuEye,
+  LuHelpCircle,
   LuLoader2,
-  LuPencil,
   LuPencilLine,
   LuRefreshCcw,
   LuSave,
   LuTrash2,
 } from "react-icons/lu";
 import { toast } from "@/components/ui/use-toast";
-import { startTransition, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -54,33 +46,42 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useRouter } from "next/navigation";
 
 import { createDamFeature } from "@/actions/dam/create-dam-features";
 import { updateDamFeature } from "@/actions/dam/update-dam-features";
 import { deleteDamFeature } from "@/actions/dam/delete-dam-feature";
+import { useRouter } from "next/navigation";
 
-interface AddDamProjectFormProps {
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+
+interface AddDamEnvironFormProps {
   damId: string | null;
-  damProject: DamProject | null; //if null will create
+  damEnviron: DamEnviron | null; //if null will create a dam
 }
 
-export default function AddDamProjectForm({
+export default function AddDamEnvironForm({
   damId,
-  damProject,
-}: AddDamProjectFormProps) {
+  damEnviron,
+}: AddDamEnvironFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const router = useRouter();
 
-  const onSubmit = (values: z.infer<typeof DamProjectSchema>) => {
+  const onSubmit = (values: z.infer<typeof DamEnvironSchema>) => {
     setIsLoading(true);
-    if (damProject && damId) {
+    if (damEnviron && damId) {
       // update  with a given dam ID
       startTransition(() => {
         setIsLoading(true);
-        updateDamFeature("project", values, damId)
+        updateDamFeature("environmental", values, damId)
           .then((data) => {
             if (!data.ok) {
               toast({
@@ -102,7 +103,7 @@ export default function AddDamProjectForm({
       if (damId) {
         startTransition(() => {
           setIsLoading(true);
-          createDamFeature("project", values, damId)
+          createDamFeature("environmental", values, damId)
             .then((data) => {
               if (!data.ok) {
                 toast({
@@ -124,12 +125,12 @@ export default function AddDamProjectForm({
     }
   };
 
-  const handleDelete = (damId: string, damProject: DamProject) => {
-    if (damId && damProject) {
-      // update with a given dam ID
+  const handleDelete = (damId: string, damEnviron: DamEnviron) => {
+    if (damId && damEnviron) {
+      // update a dam witha given ID
       startTransition(() => {
         setIsDeleting(true);
-        deleteDamFeature("project", damId)
+        deleteDamFeature("environmental", damId)
           .then((data) => {
             if (!data.ok) {
               toast({
@@ -154,184 +155,176 @@ export default function AddDamProjectForm({
     form.reset();
   };
 
-  const form = useForm<z.infer<typeof DamProjectSchema>>({
-    resolver: zodResolver(DamProjectSchema),
-    defaultValues: (damProject || {
-      //Project and construction,
-      owner: "",
-      promotor: "",
-      builder: "",
-      designer: "",
-      project_year: "",
-      completion_year: "",
-      status: "operational",
-    }) as z.infer<typeof DamProjectSchema>,
+  const form = useForm<z.infer<typeof DamEnvironSchema>>({
+    resolver: zodResolver(DamEnvironSchema),
+    defaultValues: (damEnviron || {
+      //Environmental circuit
+      has_environ_circuit: false,
+      environ_local: "",
+      environ_type_control: "",
+      environ_max_flow: 0,
+      environ_ref_flow: 0,
+      environ_more: "",
+    }) as z.infer<typeof DamEnvironSchema>,
   });
+
+  const { watch, setValue } = form;
+
+  const watchHasEnviron = watch("has_environ_circuit", false);
+
+  useEffect(() => {
+    if (watchHasEnviron === false) {
+      setValue("environ_local", "");
+      setValue("environ_type_control", "");
+      setValue("environ_max_flow", 0);
+      setValue("environ_ref_flow", 0);
+      setValue("environ_more", "");
+    }
+  }, [watchHasEnviron, setValue]);
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex w-full flex-col items-center justify-center space-y-6">
           <div className="flex w-full flex-col items-stretch justify-center gap-6 sm:flex-row sm:flex-wrap">
-            {/* Localization*/}
+            {/* Environmental flow */}
             <Card className="w-full drop-shadow-lg sm:w-[400px]">
               <CardHeader>
                 <CardTitle>
                   <div className="flex items-center justify-start space-x-2">
                     <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      3
+                      11
                     </div>
-                    <div className="text-yellow-500">
-                      Project and construction
-                    </div>
+                    <div className="text-yellow-500">Environmental flow</div>
                   </div>
                 </CardTitle>
-                <CardDescription>Entities and relevant dates</CardDescription>
+                <CardDescription>Main features</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="mb-4 grid w-full grid-cols-2 gap-4">
-                  {/* Owner */}
+                <div className="w-full space-y-4">
                   <FormField
                     control={form.control}
-                    name="owner"
+                    name="has_environ_circuit"
                     render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Dam owner*</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  {/* Promotor */}
-                  <FormField
-                    control={form.control}
-                    name="promotor"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Dam promotor</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  {/* Building company */}
-                  <FormField
-                    control={form.control}
-                    name="builder"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Building company</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  {/* Designing company */}
-                  <FormField
-                    control={form.control}
-                    name="designer"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Designer company</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  {/* project year */}
-                  <FormField
-                    control={form.control}
-                    name="project_year"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Project year*</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                  {/* Compleation year */}
-                  <FormField
-                    control={form.control}
-                    name="completion_year"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Completion year*</FormLabel>
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>
-                        <div className="flex items-baseline">
-                          Current status
-                          <div className="pl-2 text-xs font-normal">
-                            {damProject?.data_modified &&
-                              ` (modified on ${new Date(damProject.data_modified).toLocaleDateString("en-GB")})`}
-                          </div>
+                      <FormItem className="flex flex-row items-center justify-between space-x-3 pb-3">
+                        <div className="space-y-0.5">
+                          <FormLabel>Environmental flow circuit?</FormLabel>
                         </div>
-                      </FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value}
-                      >
                         <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select" />
-                          </SelectTrigger>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
                         </FormControl>
-                        <SelectContent>
-                          {damStatus.map((status) => {
-                            return (
-                              <SelectItem key={status.id} value={status.text}>
-                                {status.text}
-                              </SelectItem>
-                            );
-                          })}
-                        </SelectContent>
-                      </Select>
+                      </FormItem>
+                    )}
+                  />
 
-                      <FormMessage />
-                    </FormItem>
+                  {watchHasEnviron && (
+                    <div className="grid gap-4">
+                      <FormField
+                        control={form.control}
+                        name="environ_local"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Circuit location</FormLabel>
+                            <FormControl>
+                              <Input
+                                className="w-full rounded border text-base"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="environ_type_control"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Type of control</FormLabel>
+                            <FormControl>
+                              <Input
+                                className="w-full rounded border text-base"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+                      <div className="grid w-full grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="environ_max_flow"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>
+                                Maximum flow (m<sup>3</sup>/s)
+                              </FormLabel>
+                              <FormControl>
+                                <Input
+                                  className="w-full rounded border text-base"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
+
+                        <FormField
+                          control={form.control}
+                          name="environ_ref_flow"
+                          render={({ field }) => (
+                            <FormItem>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger>
+                                    <FormLabel className="inline-flex items-center justify-start gap-2">
+                                      <div>
+                                        Reference flow (m<sup>3</sup>/s)
+                                      </div>
+                                      <LuHelpCircle />
+                                    </FormLabel>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>
+                                      Referenced to Minimum Operational Level
+                                      (MOL)
+                                    </p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                              <FormControl>
+                                <Input
+                                  className="w-full rounded border text-base"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <FormField
+                        control={form.control}
+                        name="environ_more"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>More info</FormLabel>
+                            <FormControl>
+                              <Textarea {...field} />
+                            </FormControl>
+
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   )}
-                />
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -340,7 +333,7 @@ export default function AddDamProjectForm({
             <div className="flex w-full items-center justify-around">
               <div className="flex justify-start gap-4">
                 {/* delete dam Button */}
-                {damId && damProject && (
+                {damId && damEnviron && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
@@ -374,7 +367,7 @@ export default function AddDamProjectForm({
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
-                          onClick={() => handleDelete(damId, damProject)}
+                          onClick={() => handleDelete(damId, damEnviron)}
                         >
                           Continue
                         </AlertDialogAction>
@@ -397,7 +390,7 @@ export default function AddDamProjectForm({
               <div className="flex justify-end gap-4">
                 {/* view Dam button */}
 
-                {damId && damProject && (
+                {damId && damEnviron && (
                   <>
                     <Button
                       variant="default"
@@ -412,7 +405,7 @@ export default function AddDamProjectForm({
                 )}
 
                 {/* create/update Dam Buttons */}
-                {damId && damProject ? (
+                {damId && damEnviron ? (
                   <Button
                     type="submit"
                     disabled={isLoading}
