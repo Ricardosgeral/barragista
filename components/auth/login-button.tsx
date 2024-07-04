@@ -5,9 +5,10 @@ import {
   DialogTrigger,
   DialogTitle,
   DialogDescription,
+  DialogHeader,
 } from "@/components/ui/dialog";
-import { LoginForm } from "./login-form";
-import { RegisterForm } from "./register-form";
+import { LoginForm } from "@/components/auth/login-form";
+import { RegisterForm } from "@/components/auth/register-form";
 
 interface LoginButtonProps {
   children: React.ReactNode;
@@ -36,17 +37,16 @@ export const LoginButton = ({
     return (
       <Dialog>
         <DialogTrigger asChild={asChild}>{children}</DialogTrigger>
-        <DialogTitle />
-
         <DialogContent className="w-auto bg-transparent p-0">
+          <DialogHeader className="hidden">
+            <DialogTitle>Auth</DialogTitle>
+            <DialogDescription>
+              {type === "register"
+                ? "Register for an account."
+                : "Log into your account."}
+            </DialogDescription>
+          </DialogHeader>
           {type === "register" ? <RegisterForm /> : <LoginForm />}
-
-          {/* Provide a DialogDescription */}
-          <DialogDescription id="dialog-description">
-            {type === "register"
-              ? "Register for an account."
-              : "Log into your account."}
-          </DialogDescription>
         </DialogContent>
       </Dialog>
     );
