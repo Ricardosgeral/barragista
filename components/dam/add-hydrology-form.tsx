@@ -59,6 +59,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import { damFormSteps } from "@/data/dam/constants";
+
+const hydrology = damFormSteps.sidebarNav[3];
+
 interface AddDamHydrologyFormProps {
   // dam: DamWithAllFeatures | null;
   damId: string | null;
@@ -92,7 +96,7 @@ export default function AddDamHydrologyForm({
                 variant: "success",
                 description: `Success: ${data.message}`,
               });
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${hydrology.path}`);
             }
           })
           .finally(() => setIsLoading(false));
@@ -114,7 +118,7 @@ export default function AddDamHydrologyForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}`);
+                router.push(`/dam/${damId}${hydrology.path}`);
               }
             })
 
@@ -142,7 +146,7 @@ export default function AddDamHydrologyForm({
                 description: `Success: ${data.message}`,
               });
               form.reset(); // reset the form
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${hydrology.path}`);
             }
           })
           .finally(() => setIsDeleting(true));
@@ -177,12 +181,14 @@ export default function AddDamHydrologyForm({
                 <CardTitle>
                   <div className="flex items-center justify-start space-x-2">
                     <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      4
+                      {hydrology.id}
                     </div>
-                    <div className="text-yellow-500">Hydrology</div>
+                    <div className="text-yellow-500">
+                      {hydrology.description}
+                    </div>
                   </div>
                 </CardTitle>
-                <CardDescription>Main hydrologic parameters</CardDescription>
+                <CardDescription>{hydrology.subtext}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid w-full grid-cols-2 items-end gap-4">

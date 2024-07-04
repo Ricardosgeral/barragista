@@ -1,8 +1,8 @@
 "use client";
 
-import { DamBtDischargeSchema } from "@/schemas/dam-schema";
+import { DamDischargeSchema } from "@/schemas/dam-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DamBtDischarge } from "@prisma/client";
+import { DamDischarge } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -54,27 +54,31 @@ import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 
-interface AddDamBtDischargeFormProps {
+import { damFormSteps } from "@/data/dam/constants";
+
+const discharge = damFormSteps.sidebarNav[7];
+
+interface AddDamDischargeFormProps {
   damId: string | null;
-  damBtDischarge: DamBtDischarge | null; //if null will create a dam
+  damDischarge: DamDischarge | null; //if null will create a dam
 }
 
-export default function AddDamBtDischargeForm({
+export default function AddDamDischargeForm({
   damId,
-  damBtDischarge,
-}: AddDamBtDischargeFormProps) {
+  damDischarge,
+}: AddDamDischargeFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const router = useRouter();
 
-  const onSubmit = (values: z.infer<typeof DamBtDischargeSchema>) => {
+  const onSubmit = (values: z.infer<typeof DamDischargeSchema>) => {
     setIsLoading(true);
-    if (damBtDischarge && damId) {
+    if (damDischarge && damId) {
       // update  with a given dam ID
       startTransition(() => {
         setIsLoading(true);
-        updateDamFeature("bottom_discharge", values, damId)
+        updateDamFeature("discharge", values, damId)
           .then((data) => {
             if (!data.ok) {
               toast({
@@ -86,7 +90,7 @@ export default function AddDamBtDischargeForm({
                 variant: "success",
                 description: `Success: ${data.message}`,
               });
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${discharge.path}`);
             }
           })
           .finally(() => setIsLoading(false));
@@ -96,7 +100,7 @@ export default function AddDamBtDischargeForm({
       if (damId) {
         startTransition(() => {
           setIsLoading(true);
-          createDamFeature("bottom_discharge", values, damId)
+          createDamFeature("discharge", values, damId)
             .then((data) => {
               if (!data.ok) {
                 toast({
@@ -108,7 +112,7 @@ export default function AddDamBtDischargeForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}`);
+                router.push(`/dam/${damId}${discharge.path}`);
               }
             })
 
@@ -118,12 +122,12 @@ export default function AddDamBtDischargeForm({
     }
   };
 
-  const handleDelete = (damId: string, damBtDischarge: DamBtDischarge) => {
-    if (damId && damBtDischarge) {
+  const handleDelete = (damId: string, damDischarge: DamDischarge) => {
+    if (damId && damDischarge) {
       // update a dam witha given ID
       startTransition(() => {
         setIsDeleting(true);
-        deleteDamFeature("bottom_discharge", damId)
+        deleteDamFeature("discharge", damId)
           .then((data) => {
             if (!data.ok) {
               toast({
@@ -136,7 +140,7 @@ export default function AddDamBtDischargeForm({
                 description: `Success: ${data.message}`,
               });
               form.reset(); // reset the form
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${discharge.path}`);
             }
           })
           .finally(() => setIsDeleting(true));
@@ -148,9 +152,9 @@ export default function AddDamBtDischargeForm({
     form.reset();
   };
 
-  const form = useForm<z.infer<typeof DamBtDischargeSchema>>({
-    resolver: zodResolver(DamBtDischargeSchema),
-    defaultValues: (damBtDischarge || {
+  const form = useForm<z.infer<typeof DamDischargeSchema>>({
+    resolver: zodResolver(DamDischargeSchema),
+    defaultValues: (damDischarge || {
       has_btd: false,
       btd_local: "",
       btd_type: "",
@@ -162,7 +166,7 @@ export default function AddDamBtDischargeForm({
       btd_downstream: "",
       btd_energy: "",
       btd_more: "",
-    }) as z.infer<typeof DamBtDischargeSchema>,
+    }) as z.infer<typeof DamDischargeSchema>,
   });
 
   const { watch, setValue } = form;
@@ -197,14 +201,14 @@ export default function AddDamBtDischargeForm({
                 <CardTitle>
                   <div className="flex items-center justify-start space-x-2">
                     <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      8
+                      {discharge.id}
                     </div>
-                    <div className="text-yellow-500">Bottom discharge</div>
+                    <div className="text-yellow-500">
+                      Bottom {discharge.description}
+                    </div>
                   </div>
                 </CardTitle>
-                <CardDescription>
-                  Description of hydraulic circuit
-                </CardDescription>
+                <CardDescription>{discharge.subtext}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="w-full space-y-4">
@@ -407,7 +411,7 @@ export default function AddDamBtDischargeForm({
             <div className="flex w-full items-center justify-around">
               <div className="flex justify-start gap-4">
                 {/* delete dam Button */}
-                {damId && damBtDischarge && (
+                {damId && damDischarge && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
@@ -441,7 +445,7 @@ export default function AddDamBtDischargeForm({
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
-                          onClick={() => handleDelete(damId, damBtDischarge)}
+                          onClick={() => handleDelete(damId, damDischarge)}
                         >
                           Continue
                         </AlertDialogAction>
@@ -464,7 +468,7 @@ export default function AddDamBtDischargeForm({
               <div className="flex justify-end gap-4">
                 {/* view Dam button */}
 
-                {damId && damBtDischarge && (
+                {damId && damDischarge && (
                   <>
                     <Button
                       variant="default"
@@ -479,7 +483,7 @@ export default function AddDamBtDischargeForm({
                 )}
 
                 {/* create/update Dam Buttons */}
-                {damId && damBtDischarge ? (
+                {damId && damDischarge ? (
                   <Button
                     type="submit"
                     disabled={isLoading}

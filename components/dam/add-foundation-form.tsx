@@ -57,6 +57,10 @@ import {
   damFoundationTreatment,
 } from "@/data/dam/constants";
 
+import { damFormSteps } from "@/data/dam/constants";
+
+const foundation = damFormSteps.sidebarNav[6];
+
 interface AddDamFoundationFormProps {
   damId: string | null;
   damFoundation: DamFoundation | null; //if null will create a dam
@@ -99,7 +103,7 @@ export default function AddDamFoundationForm({
                 variant: "success",
                 description: `Success: ${data.message}`,
               });
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${foundation.path}`);
             }
           })
           .finally(() => setIsLoading(false));
@@ -121,7 +125,7 @@ export default function AddDamFoundationForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}`);
+                router.push(`/dam/${damId}${foundation.path}`);
               }
             })
 
@@ -149,7 +153,7 @@ export default function AddDamFoundationForm({
                 description: `Success: ${data.message}`,
               });
               form.reset(); // reset the form
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${foundation.path}`);
             }
           })
           .finally(() => setIsDeleting(true));
@@ -185,12 +189,14 @@ export default function AddDamFoundationForm({
                 <CardTitle>
                   <div className="flex items-center justify-start space-x-2">
                     <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      7
+                      {foundation.id}
                     </div>
-                    <div className="text-yellow-500">Foundation</div>
+                    <div className="text-yellow-500">
+                      {foundation.description}
+                    </div>
                   </div>
                 </CardTitle>
-                <CardDescription>Geology and treatment </CardDescription>
+                <CardDescription>{foundation.subtext} </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="w-full space-y-4">

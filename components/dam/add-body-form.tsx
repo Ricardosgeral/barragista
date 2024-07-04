@@ -51,6 +51,9 @@ import { createDamFeature } from "@/actions/dam/create-dam-features";
 import { updateDamFeature } from "@/actions/dam/update-dam-features";
 import { deleteDamFeature } from "@/actions/dam/delete-dam-feature";
 
+import { damFormSteps } from "@/data/dam/constants";
+const body = damFormSteps.sidebarNav[5];
+
 interface AddDamBodyFormProps {
   damId: string | null;
   damBody: DamBody | null; //if null will create a dam
@@ -83,7 +86,7 @@ export default function AddDamBodyForm({
                 variant: "success",
                 description: `Success: ${data.message}`,
               });
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${body.path}`);
             }
           })
           .finally(() => setIsLoading(false));
@@ -105,7 +108,7 @@ export default function AddDamBodyForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}`);
+                router.push(`/dam/${damId}${body.path}`);
               }
             })
 
@@ -133,7 +136,7 @@ export default function AddDamBodyForm({
                 description: `Success: ${data.message}`,
               });
               form.reset(); // reset the form
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${body.path}`);
             }
           })
           .finally(() => setIsDeleting(true));
@@ -170,12 +173,12 @@ export default function AddDamBodyForm({
                 <CardTitle>
                   <div className="flex items-center justify-start space-x-2">
                     <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      6
+                      {body.id}
                     </div>
-                    <div className="text-yellow-500">Dam body</div>
+                    <div className="text-yellow-500">{body.description}</div>
                   </div>
                 </CardTitle>
-                <CardDescription>Geometrical data</CardDescription>
+                <CardDescription></CardDescription>
               </CardHeader>
               <CardContent>
                 <CardTitle className="pb-2 text-sm font-semibold">

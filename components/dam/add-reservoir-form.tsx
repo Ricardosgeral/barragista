@@ -58,6 +58,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import { damFormSteps } from "@/data/dam/constants";
+const reservoir = damFormSteps.sidebarNav[4];
+
 interface AddDamReservoirFormProps {
   damId: string | null;
   damReservoir: DamReservoir | null; //if null will create a dam
@@ -90,7 +93,7 @@ export default function AddDamReservoirForm({
                 variant: "success",
                 description: `Success: ${data.message}`,
               });
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${reservoir.path}`);
             }
           })
           .finally(() => setIsLoading(false));
@@ -112,7 +115,7 @@ export default function AddDamReservoirForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}`);
+                router.push(`/dam/${damId}${reservoir.path}`);
               }
             })
 
@@ -140,7 +143,7 @@ export default function AddDamReservoirForm({
                 description: `Success: ${data.message}`,
               });
               form.reset(); // reset the form
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${reservoir.path}`);
             }
           })
           .finally(() => setIsDeleting(true));
@@ -178,12 +181,14 @@ export default function AddDamReservoirForm({
                 <CardTitle>
                   <div className="flex items-center justify-start space-x-2">
                     <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      5
+                      {reservoir.id}
                     </div>
-                    <div className="text-yellow-500">Reservoir</div>
+                    <div className="text-yellow-500">
+                      {reservoir.description}
+                    </div>
                   </div>
                 </CardTitle>
-                <CardDescription>Main hydraulic parameters</CardDescription>
+                <CardDescription>{reservoir.subtext}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="mb-4 grid w-full grid-cols-2 gap-4">

@@ -1,8 +1,8 @@
 "use client";
 
-import { DamEnvironSchema } from "@/schemas/dam-schema";
+import { DamEnvironmentalSchema } from "@/schemas/dam-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DamEnviron } from "@prisma/client";
+import { DamEnvironmental } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import {
@@ -59,25 +59,29 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "../ui/tooltip";
+} from "@/components/ui/tooltip";
 
-interface AddDamEnvironFormProps {
+import { damFormSteps } from "@/data/dam/constants";
+
+const environmental = damFormSteps.sidebarNav[10];
+
+interface AddDamEnvironmentalFormProps {
   damId: string | null;
-  damEnviron: DamEnviron | null; //if null will create a dam
+  damEnvironmental: DamEnvironmental | null; //if null will create a dam
 }
 
-export default function AddDamEnvironForm({
+export default function AddDamEnvironmentalForm({
   damId,
-  damEnviron,
-}: AddDamEnvironFormProps) {
+  damEnvironmental,
+}: AddDamEnvironmentalFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const router = useRouter();
 
-  const onSubmit = (values: z.infer<typeof DamEnvironSchema>) => {
+  const onSubmit = (values: z.infer<typeof DamEnvironmentalSchema>) => {
     setIsLoading(true);
-    if (damEnviron && damId) {
+    if (damEnvironmental && damId) {
       // update  with a given dam ID
       startTransition(() => {
         setIsLoading(true);
@@ -93,7 +97,7 @@ export default function AddDamEnvironForm({
                 variant: "success",
                 description: `Success: ${data.message}`,
               });
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${environmental.path}`);
             }
           })
           .finally(() => setIsLoading(false));
@@ -115,7 +119,7 @@ export default function AddDamEnvironForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}`);
+                router.push(`/dam/${damId}${environmental.path}`);
               }
             })
 
@@ -125,7 +129,7 @@ export default function AddDamEnvironForm({
     }
   };
 
-  const handleDelete = (damId: string, damEnviron: DamEnviron) => {
+  const handleDelete = (damId: string, damEnviron: DamEnvironmental) => {
     if (damId && damEnviron) {
       // update a dam witha given ID
       startTransition(() => {
@@ -143,7 +147,7 @@ export default function AddDamEnvironForm({
                 description: `Success: ${data.message}`,
               });
               form.reset(); // reset the form
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${environmental.path}`);
             }
           })
           .finally(() => setIsDeleting(true));
@@ -155,9 +159,9 @@ export default function AddDamEnvironForm({
     form.reset();
   };
 
-  const form = useForm<z.infer<typeof DamEnvironSchema>>({
-    resolver: zodResolver(DamEnvironSchema),
-    defaultValues: (damEnviron || {
+  const form = useForm<z.infer<typeof DamEnvironmentalSchema>>({
+    resolver: zodResolver(DamEnvironmentalSchema),
+    defaultValues: (damEnvironmental || {
       //Environmental circuit
       has_environ_circuit: false,
       environ_local: "",
@@ -165,7 +169,7 @@ export default function AddDamEnvironForm({
       environ_max_flow: 0,
       environ_ref_flow: 0,
       environ_more: "",
-    }) as z.infer<typeof DamEnvironSchema>,
+    }) as z.infer<typeof DamEnvironmentalSchema>,
   });
 
   const { watch, setValue } = form;
@@ -193,12 +197,14 @@ export default function AddDamEnvironForm({
                 <CardTitle>
                   <div className="flex items-center justify-start space-x-2">
                     <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      11
+                      {environmental.id}
                     </div>
-                    <div className="text-yellow-500">Environmental flow</div>
+                    <div className="text-yellow-500">
+                      {environmental.description}
+                    </div>
                   </div>
                 </CardTitle>
-                <CardDescription>Main features</CardDescription>
+                <CardDescription>{environmental.subtext}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="w-full space-y-4">
@@ -208,7 +214,7 @@ export default function AddDamEnvironForm({
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-center justify-between space-x-3 pb-3">
                         <div className="space-y-0.5">
-                          <FormLabel>Environmental flow circuit?</FormLabel>
+                          <FormLabel>Environmental circuit?</FormLabel>
                         </div>
                         <FormControl>
                           <Switch
@@ -333,7 +339,7 @@ export default function AddDamEnvironForm({
             <div className="flex w-full items-center justify-around">
               <div className="flex justify-start gap-4">
                 {/* delete dam Button */}
-                {damId && damEnviron && (
+                {damId && damEnvironmental && (
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
                       <Button
@@ -367,7 +373,7 @@ export default function AddDamEnvironForm({
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
-                          onClick={() => handleDelete(damId, damEnviron)}
+                          onClick={() => handleDelete(damId, damEnvironmental)}
                         >
                           Continue
                         </AlertDialogAction>
@@ -390,7 +396,7 @@ export default function AddDamEnvironForm({
               <div className="flex justify-end gap-4">
                 {/* view Dam button */}
 
-                {damId && damEnviron && (
+                {damId && damEnvironmental && (
                   <>
                     <Button
                       variant="default"
@@ -405,7 +411,7 @@ export default function AddDamEnvironForm({
                 )}
 
                 {/* create/update Dam Buttons */}
-                {damId && damEnviron ? (
+                {damId && damEnvironmental ? (
                   <Button
                     type="submit"
                     disabled={isLoading}

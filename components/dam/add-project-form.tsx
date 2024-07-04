@@ -59,6 +59,9 @@ import { useRouter } from "next/navigation";
 import { createDamFeature } from "@/actions/dam/create-dam-features";
 import { updateDamFeature } from "@/actions/dam/update-dam-features";
 import { deleteDamFeature } from "@/actions/dam/delete-dam-feature";
+import { damFormSteps } from "@/data/dam/constants";
+
+const project = damFormSteps.sidebarNav[2];
 
 interface AddDamProjectFormProps {
   damId: string | null;
@@ -92,7 +95,7 @@ export default function AddDamProjectForm({
                 variant: "success",
                 description: `Success: ${data.message}`,
               });
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${project.path}`);
             }
           })
           .finally(() => setIsLoading(false));
@@ -114,7 +117,7 @@ export default function AddDamProjectForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}`);
+                router.push(`/dam/${damId}${project.path}`);
               }
             })
 
@@ -142,7 +145,7 @@ export default function AddDamProjectForm({
                 description: `Success: ${data.message}`,
               });
               form.reset(); // reset the form
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${project.path}`);
             }
           })
           .finally(() => setIsDeleting(true));
@@ -179,14 +182,12 @@ export default function AddDamProjectForm({
                 <CardTitle>
                   <div className="flex items-center justify-start space-x-2">
                     <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      3
+                      {project.id}
                     </div>
-                    <div className="text-yellow-500">
-                      Project and construction
-                    </div>
+                    <div className="text-yellow-500">{project.description}</div>
                   </div>
                 </CardTitle>
-                <CardDescription>Entities and relevant dates</CardDescription>
+                <CardDescription>{project.subtext}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="mb-4 grid w-full grid-cols-2 gap-4">

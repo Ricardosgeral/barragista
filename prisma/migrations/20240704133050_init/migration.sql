@@ -14,12 +14,13 @@ CREATE TYPE "FileType" AS ENUM ('Draw', 'Image', 'Other');
 CREATE TYPE "UserRole" AS ENUM ('ADMIN', 'USER');
 
 -- CreateTable
-CREATE TABLE "dams" (
+CREATE TABLE "dam" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "material" "DamMaterial" NOT NULL DEFAULT 'Other',
     "profile" JSONB,
     "purpose" JSONB,
+    "public" BOOLEAN NOT NULL DEFAULT true,
     "description" TEXT DEFAULT '',
     "damLocationId" TEXT,
     "damProjectId" TEXT,
@@ -27,16 +28,16 @@ CREATE TABLE "dams" (
     "damReservoirId" TEXT,
     "damBodyId" TEXT,
     "damFoundationId" TEXT,
-    "damBtDischargeId" TEXT,
+    "damDischargeId" TEXT,
     "damSpillwayId" TEXT,
-    "damEnvironId" TEXT,
+    "damEnvironmentalId" TEXT,
     "damHydropowerId" TEXT,
     "damRiskId" TEXT,
     "userId" TEXT,
     "data_creation" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "data_modified" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "dams_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "dam_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -139,7 +140,7 @@ CREATE TABLE "damFoundation" (
 );
 
 -- CreateTable
-CREATE TABLE "damBtDischarge" (
+CREATE TABLE "damDischarge" (
     "id" TEXT NOT NULL,
     "has_btd" BOOLEAN NOT NULL DEFAULT false,
     "btd_local" TEXT DEFAULT '',
@@ -156,7 +157,7 @@ CREATE TABLE "damBtDischarge" (
     "data_modified" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "damId" TEXT NOT NULL,
 
-    CONSTRAINT "damBtDischarge_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "damDischarge_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -180,7 +181,7 @@ CREATE TABLE "damSpillway" (
 );
 
 -- CreateTable
-CREATE TABLE "damEnvFlow" (
+CREATE TABLE "damEnvironmental" (
     "id" TEXT NOT NULL,
     "has_environ_circuit" BOOLEAN NOT NULL DEFAULT false,
     "environ_local" TEXT DEFAULT '',
@@ -192,7 +193,7 @@ CREATE TABLE "damEnvFlow" (
     "data_modified" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "damId" TEXT NOT NULL,
 
-    CONSTRAINT "damEnvFlow_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "damEnvironmental_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -320,43 +321,43 @@ CREATE TABLE "TwoFactorConfirmation" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "dams_name_key" ON "dams"("name");
+CREATE UNIQUE INDEX "dam_name_key" ON "dam"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "dams_damLocationId_key" ON "dams"("damLocationId");
+CREATE UNIQUE INDEX "dam_damLocationId_key" ON "dam"("damLocationId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "dams_damProjectId_key" ON "dams"("damProjectId");
+CREATE UNIQUE INDEX "dam_damProjectId_key" ON "dam"("damProjectId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "dams_damHydrologyId_key" ON "dams"("damHydrologyId");
+CREATE UNIQUE INDEX "dam_damHydrologyId_key" ON "dam"("damHydrologyId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "dams_damReservoirId_key" ON "dams"("damReservoirId");
+CREATE UNIQUE INDEX "dam_damReservoirId_key" ON "dam"("damReservoirId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "dams_damBodyId_key" ON "dams"("damBodyId");
+CREATE UNIQUE INDEX "dam_damBodyId_key" ON "dam"("damBodyId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "dams_damFoundationId_key" ON "dams"("damFoundationId");
+CREATE UNIQUE INDEX "dam_damFoundationId_key" ON "dam"("damFoundationId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "dams_damBtDischargeId_key" ON "dams"("damBtDischargeId");
+CREATE UNIQUE INDEX "dam_damDischargeId_key" ON "dam"("damDischargeId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "dams_damSpillwayId_key" ON "dams"("damSpillwayId");
+CREATE UNIQUE INDEX "dam_damSpillwayId_key" ON "dam"("damSpillwayId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "dams_damEnvironId_key" ON "dams"("damEnvironId");
+CREATE UNIQUE INDEX "dam_damEnvironmentalId_key" ON "dam"("damEnvironmentalId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "dams_damHydropowerId_key" ON "dams"("damHydropowerId");
+CREATE UNIQUE INDEX "dam_damHydropowerId_key" ON "dam"("damHydropowerId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "dams_damRiskId_key" ON "dams"("damRiskId");
+CREATE UNIQUE INDEX "dam_damRiskId_key" ON "dam"("damRiskId");
 
 -- CreateIndex
-CREATE INDEX "dams_damRiskId_damLocationId_damProjectId_damHydrologyId_da_idx" ON "dams"("damRiskId", "damLocationId", "damProjectId", "damHydrologyId", "damReservoirId", "damBodyId", "damFoundationId", "damBtDischargeId", "damSpillwayId", "damEnvironId", "damHydropowerId", "userId");
+CREATE INDEX "dam_damRiskId_damLocationId_damProjectId_damHydrologyId_dam_idx" ON "dam"("damRiskId", "damLocationId", "damProjectId", "damHydrologyId", "damReservoirId", "damBodyId", "damFoundationId", "damDischargeId", "damSpillwayId", "damEnvironmentalId", "damHydropowerId", "userId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "damLocation_damId_key" ON "damLocation"("damId");
@@ -377,13 +378,13 @@ CREATE UNIQUE INDEX "damBody_damId_key" ON "damBody"("damId");
 CREATE UNIQUE INDEX "damFoundation_damId_key" ON "damFoundation"("damId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "damBtDischarge_damId_key" ON "damBtDischarge"("damId");
+CREATE UNIQUE INDEX "damDischarge_damId_key" ON "damDischarge"("damId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "damSpillway_damId_key" ON "damSpillway"("damId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "damEnvFlow_damId_key" ON "damEnvFlow"("damId");
+CREATE UNIQUE INDEX "damEnvironmental_damId_key" ON "damEnvironmental"("damId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "damHydropower_damId_key" ON "damHydropower"("damId");
@@ -422,43 +423,43 @@ CREATE UNIQUE INDEX "TwoFactorToken_email_token_key" ON "TwoFactorToken"("email"
 CREATE UNIQUE INDEX "TwoFactorConfirmation_userId_key" ON "TwoFactorConfirmation"("userId");
 
 -- AddForeignKey
-ALTER TABLE "dams" ADD CONSTRAINT "dams_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "dam" ADD CONSTRAINT "dam_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "damLocation" ADD CONSTRAINT "damLocation_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dams"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "damLocation" ADD CONSTRAINT "damLocation_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "damProject" ADD CONSTRAINT "damProject_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dams"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "damProject" ADD CONSTRAINT "damProject_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "damHydrology" ADD CONSTRAINT "damHydrology_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dams"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "damHydrology" ADD CONSTRAINT "damHydrology_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "damReservoir" ADD CONSTRAINT "damReservoir_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dams"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "damReservoir" ADD CONSTRAINT "damReservoir_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "damBody" ADD CONSTRAINT "damBody_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dams"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "damBody" ADD CONSTRAINT "damBody_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "damFoundation" ADD CONSTRAINT "damFoundation_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dams"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "damFoundation" ADD CONSTRAINT "damFoundation_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "damBtDischarge" ADD CONSTRAINT "damBtDischarge_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dams"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "damDischarge" ADD CONSTRAINT "damDischarge_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "damSpillway" ADD CONSTRAINT "damSpillway_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dams"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "damSpillway" ADD CONSTRAINT "damSpillway_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "damEnvFlow" ADD CONSTRAINT "damEnvFlow_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dams"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "damEnvironmental" ADD CONSTRAINT "damEnvironmental_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "damHydropower" ADD CONSTRAINT "damHydropower_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dams"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "damHydropower" ADD CONSTRAINT "damHydropower_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "damRisk" ADD CONSTRAINT "damRisk_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dams"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "damRisk" ADD CONSTRAINT "damRisk_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dam"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "damFiles" ADD CONSTRAINT "damFiles_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dams"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "damFiles" ADD CONSTRAINT "damFiles_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dam"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -72,6 +72,9 @@ import { ICity, IState } from "country-state-city";
 import useLocation from "@/hooks/use-location";
 
 import { parseCookies } from "nookies";
+import { damFormSteps } from "@/data/dam/constants";
+
+const location = damFormSteps.sidebarNav[1];
 
 interface AddDamLocationFormProps {
   damId: string | null;
@@ -167,7 +170,7 @@ export default function AddDamLocationForm({
                 variant: "success",
                 description: `Success: ${data.message}`,
               });
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${location.path}`);
             }
           })
           .finally(() => setIsLoading(false));
@@ -189,7 +192,7 @@ export default function AddDamLocationForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}`);
+                router.push(`/dam/${damId}${location.path}`);
               }
             })
 
@@ -217,7 +220,7 @@ export default function AddDamLocationForm({
                 description: `Success: ${data.message}`,
               });
               form.reset(); // reset the form
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${location.path}`);
             }
           })
           .finally(() => setIsDeleting(true));
@@ -240,12 +243,14 @@ export default function AddDamLocationForm({
                 <CardTitle>
                   <div className="flex items-center justify-start space-x-2">
                     <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      3
+                      {location.id}
                     </div>
-                    <div className="text-yellow-500">Location</div>
+                    <div className="text-yellow-500">
+                      {location.description}
+                    </div>
                   </div>
                 </CardTitle>
-                <CardDescription>Geographical information</CardDescription>
+                <CardDescription>{location.subtext}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid w-full grid-cols-2 gap-4">

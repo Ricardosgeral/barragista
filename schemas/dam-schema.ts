@@ -26,6 +26,7 @@ export const DamSchema = z.object({
     .min(1, "Select at least one")
     .max(6),
   description: z.string().max(200, "Maximum of 150 characters").optional(),
+  public: z.boolean(),
 });
 
 export const DamLocationSchema = z.object({
@@ -117,7 +118,7 @@ export const DamFoundationSchema = z.object({
     .max(5),
   foundation_notes: z.string().max(200).optional(),
 });
-export const DamBtDischargeSchema = z.object({
+export const DamDischargeSchema = z.object({
   //BottomDischarge
   has_btd: z.boolean(),
   btd_number: z.coerce.number().nonnegative().optional(),
@@ -145,7 +146,7 @@ export const DamSpillwaySchema = z.object({
   spillway_more: z.string().max(100).optional(),
 });
 
-export const DamEnvironSchema = z.object({
+export const DamEnvironmentalSchema = z.object({
   // Ecological circuit
   has_environ_circuit: z.boolean(),
   environ_local: z.string().max(30).optional(),

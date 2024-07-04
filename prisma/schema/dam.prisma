@@ -36,31 +36,32 @@ model Dam {
     material    DamMaterial @default(Other)
     profile     Json?
     purpose     Json?
+    public      Boolean     @default(true)
     description String?     @default("")
 
     // Relationships with cascading delete
-    damLocation      DamLocation?
-    damLocationId    String?         @unique
-    damProject       DamProject?
-    damProjectId     String?         @unique
-    damHydrology     DamHydrology?
-    damHydrologyId   String?         @unique
-    damReservoir     DamReservoir?
-    damReservoirId   String?         @unique
-    damBody          DamBody?
-    damBodyId        String?         @unique
-    damFoundation    DamFoundation?
-    damFoundationId  String?         @unique
-    damBtDischarge   DamBtDischarge?
-    damBtDischargeId String?         @unique
-    damSpillway      DamSpillway?
-    damSpillwayId    String?         @unique
-    damEnviron       DamEnviron?
-    damEnvironId     String?         @unique
-    damHydropower    DamHydropower?
-    damHydropowerId  String?         @unique
-    damRisk          DamRisk?
-    damRiskId        String?         @unique
+    damLocation        DamLocation?
+    damLocationId      String?           @unique
+    damProject         DamProject?
+    damProjectId       String?           @unique
+    damHydrology       DamHydrology?
+    damHydrologyId     String?           @unique
+    damReservoir       DamReservoir?
+    damReservoirId     String?           @unique
+    damBody            DamBody?
+    damBodyId          String?           @unique
+    damFoundation      DamFoundation?
+    damFoundationId    String?           @unique
+    damDischarge       DamDischarge?
+    damDischargeId     String?           @unique
+    damSpillway        DamSpillway?
+    damSpillwayId      String?           @unique
+    damEnvironmental   DamEnvironmental?
+    damEnvironmentalId String?           @unique
+    damHydropower      DamHydropower?
+    damHydropowerId    String?           @unique
+    damRisk            DamRisk?
+    damRiskId          String?           @unique
 
     // Non-cascading relation
     damFiles DamFile[]
@@ -72,8 +73,8 @@ model Dam {
     data_modified DateTime @default(now())
 
     // Index for performance optimization
-    @@index([damRiskId, damLocationId, damProjectId, damHydrologyId, damReservoirId, damBodyId, damFoundationId, damBtDischargeId, damSpillwayId, damEnvironId, damHydropowerId, userId])
-    @@map("dams")
+    @@index([damRiskId, damLocationId, damProjectId, damHydrologyId, damReservoirId, damBodyId, damFoundationId, damDischargeId, damSpillwayId, damEnvironmentalId, damHydropowerId, userId])
+    @@map("dam")
 }
 
 // DamLocation model
@@ -182,8 +183,8 @@ model DamFoundation {
     @@map("damFoundation")
 }
 
-// DamBtDischarge model
-model DamBtDischarge {
+// DamDischarge model
+model DamDischarge {
     id             String   @id @default(cuid())
     has_btd        Boolean  @default(false)
     btd_local      String?  @default("")
@@ -202,7 +203,7 @@ model DamBtDischarge {
     dam   Dam    @relation(fields: [damId], references: [id], onDelete: Cascade)
     damId String @unique
 
-    @@map("damBtDischarge")
+    @@map("damDischarge")
 }
 
 // DamSpillway model
@@ -228,7 +229,7 @@ model DamSpillway {
 }
 
 // DamEnviron model
-model DamEnviron {
+model DamEnvironmental {
     id                   String   @id @default(cuid())
     has_environ_circuit  Boolean  @default(false)
     environ_local        String?  @default("")
@@ -242,7 +243,7 @@ model DamEnviron {
     dam   Dam    @relation(fields: [damId], references: [id], onDelete: Cascade)
     damId String @unique
 
-    @@map("damEnvFlow")
+    @@map("damEnvironmental")
 }
 
 // DamHydropower model

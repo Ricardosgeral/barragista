@@ -1,12 +1,14 @@
 "use client";
+import { z } from "zod";
+import { cn } from "@/lib/utils";
+import { Tag, TagInput } from "emblor";
+import { useForm } from "react-hook-form";
 import { Dam, DamMaterial } from "@prisma/client";
+import { DamSchema } from "@/schemas/dam-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { startTransition, useState } from "react";
 
-import { Tag, TagInput } from "emblor";
-import { DamSchema } from "@/schemas/dam-schema";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import {
   Card,
   CardContent,
@@ -29,7 +31,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import {
   LuCheck,
   LuChevronsUpDown,
@@ -40,7 +41,6 @@ import {
   LuRefreshCcw,
   LuTrash2,
 } from "react-icons/lu";
-import { PopoverClose } from "@radix-ui/react-popover";
 import {
   Command,
   CommandEmpty,
@@ -50,8 +50,6 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import { Textarea } from "@/components/ui/textarea";
-import { damProfile, damPurpose } from "@/data/dam/constants";
-import { useRouter } from "next/navigation";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -64,6 +62,11 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/components/ui/use-toast";
+import { Switch } from "@/components/ui/switch";
+import { PopoverClose } from "@radix-ui/react-popover";
+
+import { damProfile, damPurpose, damFormSteps } from "@/data/dam/constants";
+import { useRouter } from "next/navigation";
 
 import { createDam } from "@/actions/dam/create-dam";
 import { updateDam } from "@/actions/dam/update-dam";
@@ -76,6 +79,7 @@ const damMaterialArray = Object.entries(DamMaterial).map(([key, value]) => ({
   label: key,
   value: value,
 }));
+const identification = damFormSteps.sidebarNav[0];
 
 interface AddDamFormProps {
   dam: Dam | null; //if null will create a dam
@@ -112,6 +116,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
       material: DamMaterial.Other,
       profile: JSON.parse("[]"),
       purpose: JSON.parse("[]"),
+      public: true,
       description: "",
     }) as z.infer<typeof DamSchema>,
   });
@@ -137,7 +142,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                 variant: "success",
                 description: `Success: ${data.message}`,
               });
-              router.push("/dam/new");
+              router.push(`/dam/new${identification.path}`);
             }
           })
           .finally(() => setIsDamDeleting(true));
@@ -165,7 +170,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                 variant: "success",
                 description: `Success: ${data.message}`,
               });
-              router.push(`/dam/${data.dam?.id}`);
+              router.push(`/dam/${data.dam?.id}${identification.path}`);
             }
           })
           .finally(() => setIsLoading(false));
@@ -186,7 +191,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                 variant: "success",
                 description: `Success: ${data.message}`,
               });
-              router.push(`/dam/${data.dam?.id}`);
+              router.push(`/dam/${data.dam?.id}${identification.path}`);
             }
           })
           .finally(() => setIsLoading(false));
@@ -205,12 +210,14 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                   <CardTitle>
                     <div className="flex items-center justify-start space-x-2">
                       <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                        1
+                        {identification.id}
                       </div>
-                      <div className="text-yellow-500">Identification</div>
+                      <div className="text-yellow-500">
+                        {identification.description}
+                      </div>
                     </div>
                   </CardTitle>
-                  <CardDescription>Overall data</CardDescription>
+                  <CardDescription>{identification.subtext}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="flex w-full flex-col gap-4">
@@ -380,20 +387,43 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                     />
 
                     {/* Description */}
-                    <FormField
-                      control={form.control}
-                      name="description"
-                      render={({ field }) => (
-                        <FormItem className="w-full">
-                          <FormLabel>Description</FormLabel>
-                          <FormControl>
-                            <Textarea {...field} />
-                          </FormControl>
+                    <div className="flex flex-col gap-4">
+                      <FormField
+                        control={form.control}
+                        name="description"
+                        render={({ field }) => (
+                          <FormItem className="w-full">
+                            <FormLabel>Description</FormLabel>
+                            <FormControl>
+                              <Textarea {...field} />
+                            </FormControl>
 
-                          <FormMessage className="text-xs" />
-                        </FormItem>
-                      )}
-                    />
+                            <FormMessage className="text-xs" />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="flex flex-col gap-4">
+                      <FormField
+                        control={form.control}
+                        name="public"
+                        render={({ field }) => (
+                          <FormItem className="flex items-center space-x-2 space-y-0">
+                            <FormLabel className="flex justify-center">
+                              Public
+                            </FormLabel>
+                            <FormControl>
+                              <div className="flex justify-center">
+                                <Switch
+                                  checked={field.value}
+                                  onCheckedChange={field.onChange}
+                                />
+                              </div>
+                            </FormControl>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                   </div>
                 </CardContent>
               </Card>

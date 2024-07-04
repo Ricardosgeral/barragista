@@ -54,6 +54,9 @@ import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 
+import { damFormSteps } from "@/data/dam/constants";
+const spillway = damFormSteps.sidebarNav[8];
+
 interface AddDamSpillwayFormProps {
   damId: string | null;
   damSpillway: DamSpillway | null; //if null will create a dam
@@ -86,7 +89,7 @@ export default function AddDamSpillwayForm({
                 variant: "success",
                 description: `Success: ${data.message}`,
               });
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${spillway.path}`);
             }
           })
           .finally(() => setIsLoading(false));
@@ -108,7 +111,7 @@ export default function AddDamSpillwayForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}`);
+                router.push(`/dam/${damId}${spillway.path}`);
               }
             })
 
@@ -136,7 +139,7 @@ export default function AddDamSpillwayForm({
                 description: `Success: ${data.message}`,
               });
               form.reset(); // reset the form
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${spillway.path}`);
             }
           })
           .finally(() => setIsDeleting(true));
@@ -196,14 +199,14 @@ export default function AddDamSpillwayForm({
                 <CardTitle>
                   <div className="flex items-center justify-start space-x-2">
                     <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      9
+                      {spillway.id}
                     </div>
-                    <div className="text-yellow-500">Spillway</div>
+                    <div className="text-yellow-500">
+                      {spillway.description}
+                    </div>
                   </div>
                 </CardTitle>
-                <CardDescription>
-                  Description of hydraulic features
-                </CardDescription>
+                <CardDescription>{spillway.subtext}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="w-full space-y-4">

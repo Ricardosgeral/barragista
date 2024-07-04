@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { DamHydropower } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,7 +17,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-
 import {
   Form,
   FormControl,
@@ -25,9 +25,25 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
+import { toast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+
 import {
   LuEye,
   LuHelpCircle,
@@ -37,29 +53,18 @@ import {
   LuSave,
   LuTrash2,
 } from "react-icons/lu";
-import { toast } from "@/components/ui/use-toast";
+
 import { startTransition, useEffect, useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
 import { createDamFeature } from "@/actions/dam/create-dam-features";
 import { updateDamFeature } from "@/actions/dam/update-dam-features";
 import { deleteDamFeature } from "@/actions/dam/delete-dam-feature";
+
 import { useRouter } from "next/navigation";
 
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
+import { damFormSteps } from "@/data/dam/constants";
+
+const hydropower = damFormSteps.sidebarNav[9];
 
 interface AddDamHydropowerFormProps {
   damId: string | null;
@@ -93,7 +98,7 @@ export default function AddDamHydropowerForm({
                 variant: "success",
                 description: `Success: ${data.message}`,
               });
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${hydropower.path}`);
             }
           })
           .finally(() => setIsLoading(false));
@@ -115,7 +120,7 @@ export default function AddDamHydropowerForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}`);
+                router.push(`/dam/${damId}${hydropower.path}`);
               }
             })
 
@@ -143,7 +148,7 @@ export default function AddDamHydropowerForm({
                 description: `Success: ${data.message}`,
               });
               form.reset(); // reset the form
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${hydropower.path}`);
             }
           })
           .finally(() => setIsDeleting(true));
@@ -197,14 +202,14 @@ export default function AddDamHydropowerForm({
                 <CardTitle>
                   <div className="flex items-center justify-start space-x-2">
                     <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      10
+                      {hydropower.id}
                     </div>
-                    <div className="text-yellow-500">Hydropower</div>
+                    <div className="text-yellow-500">
+                      {hydropower.description}
+                    </div>
                   </div>
                 </CardTitle>{" "}
-                <CardDescription>
-                  Hydroeletric power plant features
-                </CardDescription>
+                <CardDescription>{hydropower.subtext}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="w-full space-y-4">
@@ -214,7 +219,7 @@ export default function AddDamHydropowerForm({
                     render={({ field }) => (
                       <FormItem className="flex flex-row items-center justify-between space-x-3 pb-3">
                         <div className="space-y-0.5">
-                          <FormLabel>Hydroeletric power plant?</FormLabel>
+                          <FormLabel>Hydroeletric dam?</FormLabel>
                         </div>
                         <FormControl>
                           <Switch

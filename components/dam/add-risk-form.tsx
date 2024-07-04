@@ -65,6 +65,9 @@ import {
   CommandList,
 } from "@/components/ui/command";
 
+import { damFormSteps } from "@/data/dam/constants";
+const risk = damFormSteps.sidebarNav[11];
+
 interface AddDamRiskFormProps {
   // dam: DamWithAllFeatures | null;
   damId: string | null;
@@ -102,7 +105,7 @@ export default function AddDamRiskForm({
                 variant: "success",
                 description: `Success: ${data.message}`,
               });
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${risk.path}`);
             }
           })
           .finally(() => setIsLoading(false));
@@ -124,7 +127,7 @@ export default function AddDamRiskForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}`);
+                router.push(`/dam/${damId}${risk.path}`);
               }
             })
 
@@ -152,7 +155,7 @@ export default function AddDamRiskForm({
                 description: `Success: ${data.message}`,
               });
               form.reset(); // reset the form
-              router.push(`/dam/${damId}`);
+              router.push(`/dam/${damId}${risk.path}`);
             }
           })
           .finally(() => {
@@ -198,12 +201,12 @@ export default function AddDamRiskForm({
                 <CardTitle>
                   <div className="flex items-center justify-start space-x-2">
                     <div className="flex size-5 items-center justify-center rounded-lg border-2 border-yellow-500 text-xs font-bold text-yellow-500">
-                      12
+                      {risk.id}
                     </div>
-                    <div className="text-yellow-500">Risk factors</div>
+                    <div className="text-yellow-500">{risk.description}</div>
                   </div>
                 </CardTitle>
-                <CardDescription>Factors for risk evaluation</CardDescription>
+                <CardDescription>{risk.subtext}</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="flex w-full flex-col gap-4">

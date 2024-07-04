@@ -1,3 +1,87 @@
+export const damFormSteps = {
+  sidebarNav: [
+    {
+      id: 1,
+      description: "Identification",
+      path: "/identification",
+      subtext: "Overall data",
+    },
+
+    {
+      id: 2,
+      description: "Location",
+      path: "/location",
+      subtext: "Geographical information",
+    },
+    {
+      id: 3,
+      description: "Project",
+      path: "/project",
+      subtext: "Relevant entities and dates",
+    },
+    {
+      id: 4,
+      description: "Hydrology",
+      path: "/hydrology",
+      subtext: "Main hydrologic parameters",
+    },
+    {
+      id: 5,
+      description: "Reservoir",
+      path: "/reservoir",
+      subtext: "Main hydraulic parameters",
+    },
+    {
+      id: 6,
+      description: "Body",
+      path: "/body",
+      subtext: "Geometrical data",
+    },
+    {
+      id: 7,
+      description: "Foundation",
+      path: "/foundation",
+      subtext: "Geology and treatment",
+    },
+    {
+      id: 8,
+      description: "Discharge",
+      path: "/discharge",
+      subtext: "Hydraulic circuit features",
+    },
+    {
+      id: 9,
+      description: "Spillway",
+      path: "/spillway",
+      subtext: "Main features",
+    },
+    {
+      id: 10,
+      description: "Hydropower",
+      path: "/hydropower",
+      subtext: "Hydroeletric power plant",
+    },
+    {
+      id: 11,
+      description: "Environmental",
+      path: "/environmental",
+      subtext: "Ecological circuit",
+    },
+    {
+      id: 12,
+      description: "Risk",
+      path: "/risk",
+      subtext: "Factors for risk evaluation",
+    },
+    {
+      id: 13,
+      description: "Files",
+      path: "/files",
+      subtext: "Photos, docs or draws",
+    },
+  ],
+};
+
 // dam profile structure
 
 export const damProfile = [
