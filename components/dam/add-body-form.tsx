@@ -178,7 +178,7 @@ export default function AddDamBodyForm({
                     <div className="text-yellow-500">{body.description}</div>
                   </div>
                 </CardTitle>
-                <CardDescription></CardDescription>
+                <CardDescription>{body.subtext}</CardDescription>
               </CardHeader>
               <CardContent>
                 <CardTitle className="pb-2 text-sm font-semibold">

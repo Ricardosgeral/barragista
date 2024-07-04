@@ -24,12 +24,19 @@ export const deleteDam = async (damId: string) => {
       };
     }
 
-    // Delete the corresponding cookie
-    cookies().set({
-      name: `damInfo`,
-      value: "",
-      path: "/dam",
-      maxAge: -1, // This will cause the cookie to be deleted
+    // Delete all cookies
+
+    const allCookies = cookies().getAll();
+    // Iterate through all cookies and delete those with Info in the name
+    allCookies.forEach((cookie) => {
+      if (cookie.name.includes("Info")) {
+        cookies().set({
+          name: cookie.name,
+          value: "",
+          path: "/dam",
+          maxAge: -1, // This will cause the cookie to be deleted
+        });
+      }
     });
 
     const dam = await db.dam.delete({

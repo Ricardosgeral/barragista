@@ -35,7 +35,7 @@ export const damFormSteps = {
       id: 6,
       description: "Body",
       path: "/body",
-      subtext: "Geometrical data",
+      subtext: "Dam body geometry",
     },
     {
       id: 7,
@@ -47,13 +47,13 @@ export const damFormSteps = {
       id: 8,
       description: "Discharge",
       path: "/discharge",
-      subtext: "Hydraulic circuit features",
+      subtext: "Bottom discharge structure",
     },
     {
       id: 9,
       description: "Spillway",
       path: "/spillway",
-      subtext: "Main features",
+      subtext: "Spillway structure",
     },
     {
       id: 10,

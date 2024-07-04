@@ -204,7 +204,7 @@ export default function AddDamDischargeForm({
                       {discharge.id}
                     </div>
                     <div className="text-yellow-500">
-                      Bottom {discharge.description}
+                      {discharge.description}
                     </div>
                   </div>
                 </CardTitle>
