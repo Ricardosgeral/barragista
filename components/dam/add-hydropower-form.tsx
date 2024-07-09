@@ -43,7 +43,7 @@ import { deleteDamFeature } from "@/actions/dam/delete-dam-feature";
 import { useRouter } from "next/navigation";
 
 import { damFormSteps } from "@/data/dam/constants";
-import DamFormButtons from "./dam-form-buttons";
+import DamFormButtons from "@/components/dam/dam-form-buttons";
 
 const hydropower = damFormSteps.sidebarNav[9];
 

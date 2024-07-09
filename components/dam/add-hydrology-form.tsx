@@ -5,17 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { DamHydrology } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
 import {
   Form,
@@ -27,17 +16,7 @@ import {
 } from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  LuEye,
-  LuHelpCircle,
-  LuLoader2,
-  LuPencil,
-  LuPencilLine,
-  LuRefreshCcw,
-  LuSave,
-  LuTrash2,
-} from "react-icons/lu";
+import { LuHelpCircle } from "react-icons/lu";
 import { toast } from "@/components/ui/use-toast";
 import { startTransition, useState } from "react";
 import {
@@ -60,7 +39,7 @@ import {
 } from "@/components/ui/tooltip";
 
 import { damFormSteps } from "@/data/dam/constants";
-import DamFormButtons from "./dam-form-buttons";
+import DamFormButtons from "@/components/dam/dam-form-buttons";
 
 const hydrology = damFormSteps.sidebarNav[3];
 

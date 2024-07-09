@@ -18,7 +18,6 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { toast } from "@/components/ui/use-toast";
-import { startTransition, useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -26,17 +25,18 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+
+import { startTransition, useEffect, useState } from "react";
 
 import { createDamFeature } from "@/actions/dam/create-dam-features";
 import { updateDamFeature } from "@/actions/dam/update-dam-features";
 import { deleteDamFeature } from "@/actions/dam/delete-dam-feature";
 import { useRouter } from "next/navigation";
 
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-
 import { damFormSteps } from "@/data/dam/constants";
-import DamFormButtons from "./dam-form-buttons";
+import DamFormButtons from "@/components/dam/dam-form-buttons";
 
 const spillway = damFormSteps.sidebarNav[8];
 

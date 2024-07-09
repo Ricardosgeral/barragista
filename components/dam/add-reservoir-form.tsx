@@ -39,7 +39,8 @@ import {
 } from "@/components/ui/tooltip";
 
 import { damFormSteps } from "@/data/dam/constants";
-import DamFormButtons from "./dam-form-buttons";
+import DamFormButtons from "@/components/dam/dam-form-buttons";
+
 const reservoir = damFormSteps.sidebarNav[4];
 
 interface AddDamReservoirFormProps {

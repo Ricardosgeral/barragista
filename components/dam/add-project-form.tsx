@@ -40,7 +40,7 @@ import { createDamFeature } from "@/actions/dam/create-dam-features";
 import { updateDamFeature } from "@/actions/dam/update-dam-features";
 import { deleteDamFeature } from "@/actions/dam/delete-dam-feature";
 import { damFormSteps } from "@/data/dam/constants";
-import DamFormButtons from "./dam-form-buttons";
+import DamFormButtons from "@/components/dam/dam-form-buttons";
 
 const project = damFormSteps.sidebarNav[2];
 

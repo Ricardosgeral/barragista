@@ -52,7 +52,7 @@ import useLocation from "@/hooks/use-location";
 
 import { parseCookies } from "nookies";
 import { damFormSteps } from "@/data/dam/constants";
-import DamFormButtons from "./dam-form-buttons";
+import DamFormButtons from "@/components/dam/dam-form-buttons";
 
 const location = damFormSteps.sidebarNav[1];
 

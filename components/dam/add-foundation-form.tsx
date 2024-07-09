@@ -37,7 +37,7 @@ import {
 } from "@/data/dam/constants";
 
 import { damFormSteps } from "@/data/dam/constants";
-import DamFormButtons from "./dam-form-buttons";
+import DamFormButtons from "@/components/dam/dam-form-buttons";
 
 const foundation = damFormSteps.sidebarNav[6];
 
