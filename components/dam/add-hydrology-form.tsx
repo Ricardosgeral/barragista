@@ -86,6 +86,8 @@ export default function AddDamHydrologyForm({
       if (damId) {
         startTransition(() => {
           setIsLoading(true);
+          setIsDeleting(false);
+
           createDamFeature("hydrology", values, damId)
             .then((data) => {
               if (!data.ok) {
@@ -113,6 +115,7 @@ export default function AddDamHydrologyForm({
       // update a dam witha given ID
       startTransition(() => {
         setIsDeleting(true);
+
         deleteDamFeature("hydrology", damId)
           .then((data) => {
             if (!data.ok) {

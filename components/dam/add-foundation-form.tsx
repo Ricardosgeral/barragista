@@ -71,6 +71,8 @@ export default function AddDamFoundationForm({
       // update  with a given dam ID
       startTransition(() => {
         setIsLoading(true);
+        setIsDeleting(false);
+
         updateDamFeature("foundation", values, damId)
           .then((data) => {
             if (!data.ok) {
@@ -93,6 +95,8 @@ export default function AddDamFoundationForm({
       if (damId) {
         startTransition(() => {
           setIsLoading(true);
+          setIsDeleting(false);
+
           createDamFeature("foundation", values, damId)
             .then((data) => {
               if (!data.ok) {

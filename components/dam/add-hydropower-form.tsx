@@ -67,6 +67,8 @@ export default function AddDamHydropowerForm({
       // update  with a given dam ID
       startTransition(() => {
         setIsLoading(true);
+        setIsDeleting(false);
+
         updateDamFeature("hydropower", values, damId)
           .then((data) => {
             if (!data.ok) {
@@ -89,6 +91,8 @@ export default function AddDamHydropowerForm({
       if (damId) {
         startTransition(() => {
           setIsLoading(true);
+          setIsDeleting(false);
+
           createDamFeature("hydropower", values, damId)
             .then((data) => {
               if (!data.ok) {

@@ -56,10 +56,14 @@ export default function AddDamDischargeForm({
 
   const onSubmit = (values: z.infer<typeof DamDischargeSchema>) => {
     setIsLoading(true);
+    setIsDeleting(false);
+
     if (damDischarge && damId) {
       // update  with a given dam ID
       startTransition(() => {
         setIsLoading(true);
+        setIsDeleting(false);
+
         updateDamFeature("discharge", values, damId)
           .then((data) => {
             if (!data.ok) {
@@ -82,6 +86,8 @@ export default function AddDamDischargeForm({
       if (damId) {
         startTransition(() => {
           setIsLoading(true);
+          setIsDeleting(false);
+
           createDamFeature("discharge", values, damId)
             .then((data) => {
               if (!data.ok) {

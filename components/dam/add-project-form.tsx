@@ -64,6 +64,8 @@ export default function AddDamProjectForm({
       // update  with a given dam ID
       startTransition(() => {
         setIsLoading(true);
+        setIsDeleting(false);
+
         updateDamFeature("project", values, damId)
           .then((data) => {
             if (!data.ok) {
@@ -86,6 +88,8 @@ export default function AddDamProjectForm({
       if (damId) {
         startTransition(() => {
           setIsLoading(true);
+          setIsDeleting(false);
+
           createDamFeature("project", values, damId)
             .then((data) => {
               if (!data.ok) {

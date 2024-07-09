@@ -40,6 +40,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+
 import { Textarea } from "@/components/ui/textarea";
 
 import { toast } from "@/components/ui/use-toast";
@@ -140,6 +141,8 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
       // update a dam witha given ID
       startTransition(() => {
         setIsLoading(true);
+        setIsDamDeleting(false);
+
         updateDam(values, dam.id)
           .then((data) => {
             if (!data.ok) {
@@ -161,6 +164,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
       // create (use of the server action... Could alse be done with API.)
       startTransition(() => {
         setIsLoading(true);
+        setIsDamDeleting(false);
         createDam(values)
           .then((data) => {
             if (!data.ok) {

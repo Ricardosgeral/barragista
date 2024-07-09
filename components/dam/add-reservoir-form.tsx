@@ -63,6 +63,8 @@ export default function AddDamReservoirForm({
       // update  with a given dam ID
       startTransition(() => {
         setIsLoading(true);
+        setIsDeleting(false);
+
         updateDamFeature("reservoir", values, damId)
           .then((data) => {
             if (!data.ok) {
@@ -85,6 +87,8 @@ export default function AddDamReservoirForm({
       if (damId) {
         startTransition(() => {
           setIsLoading(true);
+          setIsDeleting(false);
+
           createDamFeature("reservoir", values, damId)
             .then((data) => {
               if (!data.ok) {

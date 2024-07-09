@@ -66,6 +66,8 @@ export default function AddDamEnvironmentalForm({
       // update  with a given dam ID
       startTransition(() => {
         setIsLoading(true);
+        setIsDeleting(false);
+
         updateDamFeature("environmental", values, damId)
           .then((data) => {
             if (!data.ok) {
@@ -88,6 +90,8 @@ export default function AddDamEnvironmentalForm({
       if (damId) {
         startTransition(() => {
           setIsLoading(true);
+          setIsDeleting(false);
+
           createDamFeature("environmental", values, damId)
             .then((data) => {
               if (!data.ok) {

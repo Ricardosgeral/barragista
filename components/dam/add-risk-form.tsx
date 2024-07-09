@@ -75,6 +75,8 @@ export default function AddDamRiskForm({
       // update with a given dam ID
       startTransition(() => {
         setIsLoading(true);
+        setIsDeleting(false);
+
         updateDamFeature("risk", values, damId)
           .then((data) => {
             if (!data.ok) {
@@ -97,6 +99,8 @@ export default function AddDamRiskForm({
       if (damId) {
         startTransition(() => {
           setIsLoading(true);
+          setIsDeleting(false);
+
           createDamFeature("risk", values, damId)
             .then((data) => {
               if (!data.ok) {

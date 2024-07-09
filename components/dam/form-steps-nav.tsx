@@ -19,14 +19,13 @@ import {
   DamRisk,
   DamSpillway,
 } from "@prisma/client";
-import { LuBadgeCheck, LuCheck } from "react-icons/lu";
+import { LuBadgeCheck } from "react-icons/lu";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "../ui/tooltip";
-import { Button } from "../ui/button";
+} from "@/components/ui/tooltip";
 
 interface FormStepsNavProps {
   damId: string | null;

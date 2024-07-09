@@ -56,6 +56,8 @@ export default function AddDamSpillwayForm({
 
   const onSubmit = (values: z.infer<typeof DamSpillwaySchema>) => {
     setIsLoading(true);
+    setIsDeleting(false);
+
     if (damSpillway && damId) {
       // update  with a given dam ID
       startTransition(() => {
@@ -82,6 +84,8 @@ export default function AddDamSpillwayForm({
       if (damId) {
         startTransition(() => {
           setIsLoading(true);
+          setIsDeleting(false);
+
           createDamFeature("spillway", values, damId)
             .then((data) => {
               if (!data.ok) {

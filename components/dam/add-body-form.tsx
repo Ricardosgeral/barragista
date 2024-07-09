@@ -57,6 +57,8 @@ export default function AddDamBodyForm({
       // update  with a given dam ID
       startTransition(() => {
         setIsLoading(true);
+        setIsDeleting(false);
+
         updateDamFeature("body", values, damId)
           .then((data) => {
             if (!data.ok) {
@@ -79,6 +81,8 @@ export default function AddDamBodyForm({
       if (damId) {
         startTransition(() => {
           setIsLoading(true);
+          setIsDeleting(false);
+
           createDamFeature("body", values, damId)
             .then((data) => {
               if (!data.ok) {
