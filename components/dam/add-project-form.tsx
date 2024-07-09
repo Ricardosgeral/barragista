@@ -6,17 +6,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { damStatus } from "@/data/dam/constants";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
 import {
   Form,
@@ -35,16 +24,7 @@ import {
 } from "@/components/ui/select";
 
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  LuEye,
-  LuLoader2,
-  LuPencil,
-  LuPencilLine,
-  LuRefreshCcw,
-  LuSave,
-  LuTrash2,
-} from "react-icons/lu";
+
 import { toast } from "@/components/ui/use-toast";
 import { startTransition, useState } from "react";
 import {
@@ -60,7 +40,7 @@ import { createDamFeature } from "@/actions/dam/create-dam-features";
 import { updateDamFeature } from "@/actions/dam/update-dam-features";
 import { deleteDamFeature } from "@/actions/dam/delete-dam-feature";
 import { damFormSteps } from "@/data/dam/constants";
-import FormButtons from "./form-buttons";
+import DamFormButtons from "./dam-form-buttons";
 
 const project = damFormSteps.sidebarNav[2];
 
@@ -337,7 +317,7 @@ export default function AddDamProjectForm({
               </CardContent>
             </Card>
 
-            <FormButtons
+            <DamFormButtons
               damId={damId}
               damFeature={damProject}
               isLoading={isLoading}

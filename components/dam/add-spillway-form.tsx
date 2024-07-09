@@ -5,17 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { DamSpillway } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
 import {
   Form,
@@ -27,15 +16,7 @@ import {
 } from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  LuEye,
-  LuLoader2,
-  LuPencilLine,
-  LuRefreshCcw,
-  LuSave,
-  LuTrash2,
-} from "react-icons/lu";
+
 import { toast } from "@/components/ui/use-toast";
 import { startTransition, useEffect, useState } from "react";
 import {
@@ -55,7 +36,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 
 import { damFormSteps } from "@/data/dam/constants";
-import FormButtons from "./form-buttons";
+import DamFormButtons from "./dam-form-buttons";
+
 const spillway = damFormSteps.sidebarNav[8];
 
 interface AddDamSpillwayFormProps {
@@ -391,7 +373,7 @@ export default function AddDamSpillwayForm({
               </CardContent>
             </Card>
 
-            <FormButtons
+            <DamFormButtons
               damId={damId}
               damFeature={damSpillway}
               isLoading={isLoading}

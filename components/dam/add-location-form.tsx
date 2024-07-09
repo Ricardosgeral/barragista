@@ -5,17 +5,6 @@ import { DamLocation } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
 import {
   Form,
@@ -27,17 +16,7 @@ import {
 } from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  LuEye,
-  LuHelpCircle,
-  LuLoader2,
-  LuPencil,
-  LuPencilLine,
-  LuRefreshCcw,
-  LuSave,
-  LuTrash2,
-} from "react-icons/lu";
+import { LuHelpCircle } from "react-icons/lu";
 import { toast } from "@/components/ui/use-toast";
 import { startTransition, useEffect, useState } from "react";
 import {
@@ -73,7 +52,7 @@ import useLocation from "@/hooks/use-location";
 
 import { parseCookies } from "nookies";
 import { damFormSteps } from "@/data/dam/constants";
-import FormButtons from "./form-buttons";
+import DamFormButtons from "./dam-form-buttons";
 
 const location = damFormSteps.sidebarNav[1];
 
@@ -510,7 +489,7 @@ export default function AddDamLocationForm({
                 </div>
               </CardContent>
             </Card>
-            <FormButtons
+            <DamFormButtons
               damId={damId}
               damFeature={damLocation}
               isLoading={isLoading}

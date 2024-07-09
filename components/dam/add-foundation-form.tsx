@@ -5,17 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { DamFoundation } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
 import {
   Form,
@@ -26,16 +15,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  LuEye,
-  LuLoader2,
-  LuPencilLine,
-  LuRefreshCcw,
-  LuSave,
-  LuTrash2,
-} from "react-icons/lu";
 import { toast } from "@/components/ui/use-toast";
 import { startTransition, useState } from "react";
 import {
@@ -58,7 +37,7 @@ import {
 } from "@/data/dam/constants";
 
 import { damFormSteps } from "@/data/dam/constants";
-import FormButtons from "./form-buttons";
+import DamFormButtons from "./dam-form-buttons";
 
 const foundation = damFormSteps.sidebarNav[6];
 
@@ -312,7 +291,7 @@ export default function AddDamFoundationForm({
               </CardContent>
             </Card>
 
-            <FormButtons
+            <DamFormButtons
               damId={damId}
               damFeature={damFoundation}
               isLoading={isLoading}

@@ -60,7 +60,7 @@ import {
 } from "@/components/ui/tooltip";
 
 import { damFormSteps } from "@/data/dam/constants";
-import FormButtons from "./form-buttons";
+import DamFormButtons from "./dam-form-buttons";
 
 const hydrology = damFormSteps.sidebarNav[3];
 
@@ -306,7 +306,7 @@ export default function AddDamHydrologyForm({
                 </div>
               </CardContent>
             </Card>
-            <FormButtons
+            <DamFormButtons
               damId={damId}
               damFeature={damHydrology}
               isLoading={isLoading}

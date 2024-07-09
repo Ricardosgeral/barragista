@@ -5,17 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { DamEnvironmental } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
 import {
   Form,
@@ -27,16 +16,7 @@ import {
 } from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  LuEye,
-  LuHelpCircle,
-  LuLoader2,
-  LuPencilLine,
-  LuRefreshCcw,
-  LuSave,
-  LuTrash2,
-} from "react-icons/lu";
+import { LuHelpCircle } from "react-icons/lu";
 import { toast } from "@/components/ui/use-toast";
 import { startTransition, useEffect, useState } from "react";
 import {
@@ -62,7 +42,7 @@ import {
 } from "@/components/ui/tooltip";
 
 import { damFormSteps } from "@/data/dam/constants";
-import FormButtons from "./form-buttons";
+import DamFormButtons from "./dam-form-buttons";
 
 const environmental = damFormSteps.sidebarNav[10];
 
@@ -335,7 +315,7 @@ export default function AddDamEnvironmentalForm({
               </CardContent>
             </Card>
 
-            <FormButtons
+            <DamFormButtons
               damId={damId}
               damFeature={damEnvironmental}
               isLoading={isLoading}

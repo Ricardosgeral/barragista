@@ -7,17 +7,6 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
   Form,
   FormControl,
   FormField,
@@ -27,7 +16,6 @@ import {
 } from "@/components/ui/form";
 import { toast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -44,15 +32,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 
-import {
-  LuEye,
-  LuHelpCircle,
-  LuLoader2,
-  LuPencilLine,
-  LuRefreshCcw,
-  LuSave,
-  LuTrash2,
-} from "react-icons/lu";
+import { LuHelpCircle } from "react-icons/lu";
 
 import { startTransition, useEffect, useState } from "react";
 
@@ -63,7 +43,7 @@ import { deleteDamFeature } from "@/actions/dam/delete-dam-feature";
 import { useRouter } from "next/navigation";
 
 import { damFormSteps } from "@/data/dam/constants";
-import FormButtons from "./form-buttons";
+import DamFormButtons from "./dam-form-buttons";
 
 const hydropower = damFormSteps.sidebarNav[9];
 
@@ -363,7 +343,7 @@ export default function AddDamHydropowerForm({
               </CardContent>
             </Card>
 
-            <FormButtons
+            <DamFormButtons
               damId={damId}
               damFeature={damHydropower}
               isLoading={isLoading}

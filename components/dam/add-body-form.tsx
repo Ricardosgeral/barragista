@@ -5,17 +5,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { DamBody } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
 import {
   Form,
@@ -27,15 +16,7 @@ import {
 } from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import {
-  LuEye,
-  LuLoader2,
-  LuPencilLine,
-  LuRefreshCcw,
-  LuSave,
-  LuTrash2,
-} from "react-icons/lu";
+
 import { toast } from "@/components/ui/use-toast";
 import { startTransition, useState } from "react";
 import {
@@ -52,7 +33,7 @@ import { updateDamFeature } from "@/actions/dam/update-dam-features";
 import { deleteDamFeature } from "@/actions/dam/delete-dam-feature";
 
 import { damFormSteps } from "@/data/dam/constants";
-import FormButtons from "./form-buttons";
+import DamFormButtons from "./dam-form-buttons";
 const body = damFormSteps.sidebarNav[5];
 
 interface AddDamBodyFormProps {
@@ -313,7 +294,7 @@ export default function AddDamBodyForm({
               </CardContent>
             </Card>
 
-            <FormButtons
+            <DamFormButtons
               damId={damId}
               damFeature={damBody}
               isLoading={isLoading}

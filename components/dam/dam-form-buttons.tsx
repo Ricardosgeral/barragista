@@ -19,7 +19,7 @@ import {
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 
-interface PageProps {
+interface DamFormButtonsProps {
   damId: string | null;
   damFeature: any | null;
   isLoading: boolean;
@@ -28,14 +28,14 @@ interface PageProps {
   handleResetform: () => void;
 }
 
-export default function FormButtons({
+export default function DamFormButtons({
   damId,
   damFeature,
   isLoading,
   isDeleting,
   handleDelete,
   handleResetform,
-}: PageProps) {
+}: DamFormButtonsProps) {
   const router = useRouter();
 
   return (
