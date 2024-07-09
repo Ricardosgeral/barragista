@@ -87,10 +87,10 @@ export function FormStepsNav({
   return (
     <nav>
       <div className="mb-4 font-bold">
-        <div className="flex items-center">
-          <div className="pr-2 text-foreground/50">Dam:</div>
-          <div className="text-xl text-yellow-500">
-            {damData ? damData.name : "..."}
+        <div className="flex items-end">
+          <div className="pr-2 text-foreground/30">Dam</div>
+          <div className="text-lg text-yellow-500">
+            {damData && damData.name}
           </div>
         </div>
       </div>
@@ -110,6 +110,7 @@ export function FormStepsNav({
           return (
             <li key={step.id}>
               {disableForm ? (
+                // when there is no dam created yet
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
@@ -118,9 +119,8 @@ export function FormStepsNav({
                           className={cn(
                             "flex size-6 items-center justify-center rounded-lg text-xs",
                             current_step === normalizedStepPath
-                              ? "size-6 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-yellow-500 to-yellow-400 font-bold text-background"
-                              : "border bg-foreground/20 text-foreground/80",
-                            "bg-foreground/10 text-foreground/20",
+                              ? "size-6 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-yellow-500 to-yellow-400 font-bold text-background shadow-xl"
+                              : "border bg-foreground/10 text-foreground/30",
                           )}
                         >
                           {step.id}
@@ -130,8 +130,7 @@ export function FormStepsNav({
                             "flex items-center justify-center",
                             current_step === normalizedStepPath
                               ? "font-bold text-yellow-500"
-                              : "text-foreground/80",
-                            "text-foreground/20",
+                              : "text-foreground/5",
                           )}
                         >
                           {step.description}
@@ -139,11 +138,12 @@ export function FormStepsNav({
                       </div>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>First create the dam</p>
+                      <p>Dam identification required</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               ) : (
+                // if there is a dam created
                 <Link href={`/dam/${damId}/${step.path}`}>
                   <div className="flex items-center gap-x-2 text-background">
                     <div
@@ -151,8 +151,8 @@ export function FormStepsNav({
                         "relative flex h-6 w-6 items-center justify-center rounded-lg text-xs",
                         current_step === normalizedStepPath
                           ? "bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-yellow-500 to-yellow-400 font-bold text-background"
-                          : "border bg-foreground/20 text-foreground/80",
-                        hasData && "font-bold",
+                          : "border bg-foreground/20 text-background/90",
+                        hasData && "font-bold text-background",
                       )}
                     >
                       {step.id}
@@ -165,7 +165,7 @@ export function FormStepsNav({
                         "flex items-center justify-center",
                         current_step === normalizedStepPath
                           ? "font-bold text-yellow-500"
-                          : "text-foreground/80",
+                          : "text-foreground/60",
                         hasData && "font-semibold",
                       )}
                     >

@@ -417,6 +417,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
               <DamFormButtons
                 damId={dam && dam.id}
                 damFeature={dam}
+                feature="identification"
                 isLoading={isLoading}
                 isDeleting={isDamDeleting}
                 handleDelete={handleDeleteDam}

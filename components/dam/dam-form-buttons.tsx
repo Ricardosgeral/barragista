@@ -23,6 +23,7 @@ import { useRouter } from "next/navigation";
 interface DamFormButtonsProps {
   damId: string | null;
   damFeature: any | null;
+  feature?: string;
   isLoading: boolean;
   isDeleting: boolean;
   handleDelete: (damId: string, damFeature: any) => void;
@@ -32,6 +33,7 @@ interface DamFormButtonsProps {
 export default function DamFormButtons({
   damId,
   damFeature,
+  feature,
   isLoading,
   isDeleting,
   handleDelete,
@@ -68,7 +70,11 @@ export default function DamFormButtons({
                   <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                   <AlertDialogDescription>
                     This action cannot be undone. <br />
-                    This will permanently remove the data from our servers.
+                    This will permanently remove{" "}
+                    {feature === "identification"
+                      ? " ALL DATA of this dam"
+                      : " the data of this dam feature"}
+                    from our servers.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
