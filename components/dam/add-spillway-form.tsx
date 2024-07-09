@@ -55,6 +55,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 
 import { damFormSteps } from "@/data/dam/constants";
+import FormButtons from "./form-buttons";
 const spillway = damFormSteps.sidebarNav[8];
 
 interface AddDamSpillwayFormProps {
@@ -170,7 +171,7 @@ export default function AddDamSpillwayForm({
 
   const { watch, setValue } = form;
 
-  const watchHasSpillway = watch("has_spillway", false);
+  const watchHasSpillway = watch("has_spillway");
 
   useEffect(() => {
     if (watchHasSpillway === false) {
@@ -192,7 +193,7 @@ export default function AddDamSpillwayForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex w-full flex-col items-center justify-center space-y-6">
-          <div className="flex w-full flex-col items-stretch justify-center gap-6 sm:flex-row sm:flex-wrap">
+          <div className="space-y-4">
             {/* Spillway */}
             <Card className="w-full drop-shadow-lg sm:w-[400px]">
               <CardHeader>
@@ -389,122 +390,15 @@ export default function AddDamSpillwayForm({
                 </div>
               </CardContent>
             </Card>
-          </div>
 
-          <div className="flex w-full items-center lg:w-1/2">
-            <div className="flex w-full items-center justify-around">
-              <div className="flex justify-start gap-4">
-                {/* delete dam Button */}
-                {damId && damSpillway && (
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="destructive"
-                        type="button"
-                        disabled={isDeleting || isLoading}
-                      >
-                        {isDeleting ? (
-                          <>
-                            <LuLoader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Deleting
-                          </>
-                        ) : (
-                          <>
-                            <LuTrash2 className="mr-2 h-4 w-4" /> Delete
-                          </>
-                        )}
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Are you absolutely sure?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This action cannot be undone. <br />
-                          This will permanently remove the dam data from our
-                          servers.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => handleDelete(damId, damSpillway)}
-                        >
-                          Continue
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                )}
-                {/* reset form button */}
-                <Button
-                  type="button"
-                  variant="outline"
-                  disabled={isLoading}
-                  onClick={() => handleResetform()}
-                >
-                  <LuRefreshCcw className="mr-2" />
-                  Reset
-                </Button>
-              </div>
-
-              <div className="flex justify-end gap-4">
-                {/* view Dam button */}
-
-                {damId && damSpillway && (
-                  <>
-                    <Button
-                      variant="default"
-                      onClick={() => {
-                        router.push(`/dam-details/${damId}`);
-                      }}
-                    >
-                      <LuEye className="mr-2 h-4 w-4" />
-                      View
-                    </Button>
-                  </>
-                )}
-
-                {/* create/update Dam Buttons */}
-                {damId && damSpillway ? (
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="max-w-[150px]"
-                    variant="primary"
-                  >
-                    {isLoading ? (
-                      <>
-                        <LuLoader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Updating
-                      </>
-                    ) : (
-                      <>
-                        <LuPencilLine className="mr-2 h-4 w-4" /> Update
-                      </>
-                    )}
-                  </Button>
-                ) : (
-                  <Button
-                    type="submit"
-                    disabled={isLoading}
-                    className="max-w-[150px]"
-                  >
-                    {isLoading ? (
-                      <>
-                        <LuLoader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Creating
-                      </>
-                    ) : (
-                      <>
-                        <LuSave className="mr-2 h-4 w-4" /> Save
-                      </>
-                    )}
-                  </Button>
-                )}
-              </div>
-            </div>
+            <FormButtons
+              damId={damId}
+              damFeature={damSpillway}
+              isLoading={isLoading}
+              isDeleting={isDeleting}
+              handleDelete={handleDelete}
+              handleResetform={handleResetform}
+            />
           </div>
         </div>
       </form>

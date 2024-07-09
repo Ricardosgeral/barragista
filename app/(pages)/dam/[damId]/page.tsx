@@ -4,6 +4,7 @@ import { getDamById } from "@/data/dam/get-dam-by-id";
 import { currentUser } from "@/lib/auth";
 import { Dam } from "@prisma/client";
 import { redirect } from "next/navigation";
+import { FcCameraIdentification } from "react-icons/fc";
 
 interface DamDetailsProps {
   params: { damId: string };
@@ -15,7 +16,8 @@ export default async function DamDetailsPage({ params }: DamDetailsProps) {
 
   const damId = params.damId;
 
-  if (!isCuid(damId)) redirect("/dam/");
+  if (damId === "new") redirect("/dam/new/identification");
+  if (!isCuid(damId)) redirect("/dam");
 
   const damData: Dam | null = await getDamById(damId);
 

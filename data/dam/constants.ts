@@ -104,7 +104,8 @@ export const damProfile = [
   { id: "17", text: "Metalic element" },
   { id: "18", text: "Timber element" },
   { id: "19", text: "Hydraulic fill" },
-  { id: "20", text: "Other" },
+  { id: "20", text: "Unknown" },
+  { id: "21", text: "Other" },
 ];
 
 // Dam usages/purposes
@@ -185,7 +186,9 @@ export const damFoundationType = [
 
   { id: "17", text: "Special: Piled" },
   { id: "18", text: "Special: Caisson" },
-  { id: "19", text: "Other" },
+  { id: "19", text: "Unknown" },
+
+  { id: "20", text: "Other" },
 ];
 
 export const damFoundationTreatment = [
@@ -200,5 +203,6 @@ export const damFoundationTreatment = [
   { id: "9", text: "Slope stabilization" },
   { id: "10", text: "Environmental mitigation" },
   { id: "11", text: "None" },
-  { id: "12", text: "Other" },
+  { id: "12", text: "Unknown" },
+  { id: "13", text: "Other" },
 ];

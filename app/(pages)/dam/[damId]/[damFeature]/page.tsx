@@ -1,9 +1,7 @@
-import Link from "next/link";
 import AddDamLocationForm from "@/components/dam/add-location-form";
 import AddDamProjectForm from "@/components/dam/add-project-form";
 import AddDamHydrologyForm from "@/components/dam/add-hydrology-form";
 
-import { damFormSteps } from "@/data/dam/constants";
 import { currentUser } from "@/lib/auth";
 import { isCuid } from "@/app/utils/isCuid";
 import { redirect } from "next/navigation";
@@ -32,6 +30,7 @@ import AddDamEnvironmentalForm from "@/components/dam/add-environmental-form";
 import AddDamRiskForm from "@/components/dam/add-risk-form";
 import AddDamHydropowerForm from "@/components/dam/add-hydropower-form";
 import { getDamById } from "@/data/dam/get-dam-by-id";
+import { FormStepsNav } from "@/components/dam/form-steps-nav";
 
 const componentMap: { [key: string]: React.ComponentType<any> } = {
   identification: AddDamForm,
@@ -58,6 +57,8 @@ export default async function DamFeaturePage({ params }: DamFeatureProps) {
 
   const user = await currentUser(); // uses auth from lib for rendering in server components
   if (!user) redirect("/auth/register");
+
+  if (!isCuid(damId) && damId !== "new") redirect("/dam");
 
   // if there is a recognized id in dam it must exists
   if (!(isCuid(damId) || damFeature === "identification"))
@@ -156,17 +157,22 @@ export default async function DamFeaturePage({ params }: DamFeatureProps) {
 
   return (
     <div style={{ display: "flex" }}>
-      <nav style={{ width: "200px", marginRight: "20px" }}>
-        <ul>
-          {damFormSteps.sidebarNav.map((step) => (
-            <li key={step.id}>
-              <Link href={`/dam/${damId}/${step.path}`}>
-                {step.description}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
+      <FormStepsNav
+        damId={damId}
+        damData={damData}
+        damLocationData={damLocationData}
+        damProjectData={damProjectData}
+        damHydrologyData={damHydrologyData}
+        damReservoirData={damReservoirData}
+        damBodyData={damBodyData}
+        damFoundationData={damFoundationData}
+        damDischargeData={damDischargeData}
+        damSpillwayData={damSpillwayData}
+        damHydropowerData={damHydropowerData}
+        damEnvironmentalData={damEnvironmentalData}
+        damRiskData={damRiskData}
+        // damFilesData={damFilesData}
+      />
       <main style={{ flex: 1 }}>
         {SelectedComponent ? <SelectedComponent {...props} /> : <p>TODO</p>}
       </main>
