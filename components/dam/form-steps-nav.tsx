@@ -151,7 +151,7 @@ export function FormStepsNav({
                         "relative flex h-6 w-6 items-center justify-center rounded-lg text-xs",
                         current_step === normalizedStepPath
                           ? "bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-yellow-500 to-yellow-400 font-bold text-background"
-                          : "border bg-foreground/20 text-background/90",
+                          : "border bg-foreground/30 text-background/90",
                         hasData && "font-bold text-background",
                       )}
                     >
@@ -165,7 +165,7 @@ export function FormStepsNav({
                         "flex items-center justify-center",
                         current_step === normalizedStepPath
                           ? "font-bold text-yellow-500"
-                          : "text-foreground/60",
+                          : "text-foreground/70",
                         hasData && "font-semibold",
                       )}
                     >
