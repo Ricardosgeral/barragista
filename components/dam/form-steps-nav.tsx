@@ -130,7 +130,7 @@ export function FormStepsNav({
                             "flex items-center justify-center",
                             current_step === normalizedStepPath
                               ? "font-bold text-yellow-500"
-                              : "text-foreground/5",
+                              : "text-foreground/30",
                           )}
                         >
                           {step.description}

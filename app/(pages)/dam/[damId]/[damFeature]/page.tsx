@@ -156,7 +156,7 @@ export default async function DamFeaturePage({ params }: DamFeatureProps) {
   };
 
   return (
-    <div style={{ display: "flex" }}>
+    <div className="flex justify-center space-x-8">
       <FormStepsNav
         damId={damId}
         damData={damData}
@@ -173,7 +173,7 @@ export default async function DamFeaturePage({ params }: DamFeatureProps) {
         damRiskData={damRiskData}
         // damFilesData={damFilesData}
       />
-      <main style={{ flex: 1 }}>
+      <main>
         {SelectedComponent ? <SelectedComponent {...props} /> : <p>TODO</p>}
       </main>
     </div>

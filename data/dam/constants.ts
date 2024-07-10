@@ -96,7 +96,7 @@ export const damProfile = [
   { id: "9", text: "Zoned with central core" },
   { id: "10", text: "Zoned with inclined core" },
   { id: "11", text: "Internal drainage system" },
-  { id: "12", text: "Upstream imSpervious-face" },
+  { id: "12", text: "Upstream impervious-face" },
   { id: "13", text: "Impervious diaphragm" },
   { id: "14", text: "Concrete element" },
   { id: "15", text: "Asphaltic element" },

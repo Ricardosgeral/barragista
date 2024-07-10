@@ -16,9 +16,9 @@ import {
 } from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
-import { LuHelpCircle } from "react-icons/lu";
+import { LuHelpCircle, LuLoader2 } from "react-icons/lu";
 import { toast } from "@/components/ui/use-toast";
-import { startTransition, useEffect, useState } from "react";
+import { startTransition, useEffect, useMemo, useState } from "react";
 import {
   Card,
   CardContent,
@@ -53,6 +53,9 @@ import useLocation from "@/hooks/use-location";
 import { parseCookies } from "nookies";
 import { damFormSteps } from "@/data/dam/constants";
 import DamFormButtons from "@/components/dam/dam-form-buttons";
+import MyMap from "./map-add-location-form";
+import dynamic from "next/dynamic";
+import Map from "./map-add-location-form";
 
 const location = damFormSteps.sidebarNav[1];
 
@@ -215,6 +218,20 @@ export default function AddDamLocationForm({
   const handleResetform = () => {
     form.reset();
   };
+
+  const Map = useMemo(
+    () =>
+      dynamic(() => import("@/components/dam/map-add-location-form"), {
+        loading: () => (
+          <div className="flex gap-x-2">
+            <LuLoader2 className="h-4 w-4 animate-spin" />
+            <p>Map is loading</p>
+          </div>
+        ),
+        ssr: false,
+      }),
+    [],
+  );
 
   return (
     <Form {...form}>
@@ -486,6 +503,10 @@ export default function AddDamLocationForm({
                       </FormItem>
                     )}
                   />
+                </div>
+
+                <div className="bg-white-700 mx-auto my-5 h-[250px] w-[98%]">
+                  <Map posix={[4.79029, -75.69003]} />
                 </div>
               </CardContent>
             </Card>
