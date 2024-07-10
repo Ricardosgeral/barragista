@@ -86,7 +86,7 @@ export function FormStepsNav({
 
   return (
     <nav>
-      <div className="mb-4 font-bold">
+      <div className="mb-4 hidden font-bold sm:flex">
         <div className="flex items-end">
           <div className="pr-2 text-foreground/30">Dam</div>
           <div className="text-lg text-yellow-500">
@@ -151,18 +151,19 @@ export function FormStepsNav({
                         "relative flex h-6 w-6 items-center justify-center rounded-lg text-xs",
                         current_step === normalizedStepPath
                           ? "bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-yellow-500 to-yellow-400 font-bold text-background"
-                          : "border bg-foreground/30 text-background/90",
-                        hasData && "font-bold text-background",
+                          : "bg-foreground/30 text-background/90",
+                        hasData &&
+                          "bg-foreground-80 shadow-xxl bg-foreground/60",
                       )}
                     >
                       {step.id}
                       {hasData && (
-                        <LuBadgeCheck className="absolute -right-1 -top-1 rounded-full bg-background text-yellow-500" />
+                        <LuBadgeCheck className="absolute -right-1 -top-1 rounded-full bg-background text-emerald-500" />
                       )}
                     </div>
                     <div
                       className={cn(
-                        "flex items-center justify-center",
+                        "hidden sm:flex sm:items-center sm:justify-center",
                         current_step === normalizedStepPath
                           ? "font-bold text-yellow-500"
                           : "text-foreground/70",

@@ -53,9 +53,8 @@ import useLocation from "@/hooks/use-location";
 import { parseCookies } from "nookies";
 import { damFormSteps } from "@/data/dam/constants";
 import DamFormButtons from "@/components/dam/dam-form-buttons";
-import MyMap from "./map-add-location-form";
 import dynamic from "next/dynamic";
-import Map from "./map-add-location-form";
+import { LatLngExpression, LatLngTuple } from "leaflet";
 
 const location = damFormSteps.sidebarNav[1];
 
@@ -73,6 +72,8 @@ export default function AddDamLocationForm({
 
   const [states, setStates] = useState<IState[]>([]);
   const [cities, setCities] = useState<ICity[]>([]);
+
+  const [posix, setPosix] = useState<LatLngExpression | LatLngTuple>([0, 0]);
 
   const [isCountryPT, setIsCountryPT] = useState(false); // to see if country is PRT
   const { getAllCountries, getCountryStates, getStateCities } = useLocation();
@@ -134,6 +135,57 @@ export default function AddDamLocationForm({
   }, [form.watch("country")]);
 
   const router = useRouter();
+
+  // Update posix coordinates when country state or city changes
+  useEffect(
+    () => {
+      const selectedCountry = countries.find(
+        (country) => country.isoCode === form.watch("country"),
+      );
+      const selectedState = states.find(
+        (state) => state.isoCode === form.watch("state"),
+      );
+
+      const selectedCity = cities.find(
+        (city) => city.name.toLowerCase() === form.watch("city")?.toLowerCase(),
+      );
+
+      const latitude =
+        selectedCity?.latitude ??
+        selectedState?.latitude ??
+        selectedCountry?.latitude ??
+        "0";
+      const longitude =
+        selectedCity?.longitude ??
+        selectedState?.longitude ??
+        selectedCountry?.longitude ??
+        "0";
+
+      // Set latitude and longitude fields in the form
+      form.setValue("latitude", parseFloat(latitude));
+      form.setValue("longitude", parseFloat(longitude));
+
+      setPosix([parseFloat(latitude), parseFloat(longitude)]);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      form.watch("country"),
+      form.watch("state"),
+      form.watch("city"),
+      countries,
+      states,
+      cities,
+    ],
+  );
+
+  useEffect(() => {
+    const latitude = form.watch("latitude");
+    const longitude = form.watch("longitude");
+    if (!isNaN(latitude) && !isNaN(longitude)) {
+      setPosix([latitude, longitude]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.watch("latitude"), form.watch("longitude")]);
 
   const onSubmit = (values: z.infer<typeof DamLocationSchema>) => {
     if (damLocation && damId) {
@@ -224,7 +276,7 @@ export default function AddDamLocationForm({
       dynamic(() => import("@/components/dam/map-add-location-form"), {
         loading: () => (
           <div className="flex gap-x-2">
-            <LuLoader2 className="h-4 w-4 animate-spin" />
+            <LuLoader2 className="h-4 w-4 animate-spin pr-3" />
             <p>Map is loading</p>
           </div>
         ),
@@ -504,9 +556,9 @@ export default function AddDamLocationForm({
                     )}
                   />
                 </div>
-
-                <div className="bg-white-700 mx-auto my-5 h-[250px] w-[98%]">
-                  <Map posix={[4.79029, -75.69003]} />
+                {/* Mapa */}
+                <div className="bg-white-700 mx-auto my-5 h-[280px] w-[98%]">
+                  <Map posix={posix} />
                 </div>
               </CardContent>
             </Card>

@@ -1,99 +1,82 @@
+// app/page.tsx
 "use client";
+import { useState, useEffect } from "react";
 
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+type CityData = {
+  [key: string]: any;
+};
 
-import { Button } from "@/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Tag, TagInput } from "emblor";
-import { toast } from "@/components/ui/use-toast";
-import { useState } from "react";
-import { damProfile } from "@/data/dam/constants";
+export default function GeolocationPage() {
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
+  const [data, setData] = useState<CityData | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-const FormSchema = z.object({
-  profile: z.array(
-    z.object({
-      id: z.string(),
-      text: z.string(),
-    }),
-  ),
-});
-export default function TagInputa() {
-  const [tagsProfile, setTagsProfile] = useState<Tag[]>([]);
-  const [activeTagProfileIndex, setActiveTagProfileIndex] = useState<
-    number | null
-  >(null);
+  useEffect(() => {
+    const fetchData = async () => {
+      if (city.trim() !== "" && country.trim() !== "") {
+        try {
+          const response = await fetch(
+            `/api/geocoding?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`,
+            {
+              headers: {
+                "Ninja-Api-Key": process.env.API_NINJAS_API_SECRET || "",
+              },
+            },
+          );
+          if (response.ok) {
+            const result = await response.json();
+            setData(result.data);
+            setError(null);
+          } else {
+            const errorData = await response.json();
+            setError(errorData.error || "Failed to fetch data");
+            setData(null);
+          }
+        } catch (error) {
+          console.error("Fetch error:", error);
+          setError("An error occurred while fetching data");
+          setData(null);
+        }
+      }
+    };
 
-  // 1. Define your form.
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      profile: [],
-    },
-  });
-  const { setValue } = form;
-  // 2. Define a submit handler.
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    toast({
-      title: "You submitted the following values:",
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
-  }
+    fetchData();
+  }, [city, country]);
+
+  const handleCityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCity(e.target.value);
+  };
+
+  const handleCountryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setCountry(e.target.value);
+  };
 
   return (
-    <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col items-start space-y-8"
-      >
-        <FormField
-          control={form.control}
-          name="profile"
-          render={({ field }) => (
-            <FormItem className="flex w-full flex-col items-start">
-              <FormLabel>Profiles</FormLabel>
-              <FormControl>
-                <TagInput
-                  {...field}
-                  placeholder="Select from list"
-                  tags={tagsProfile}
-                  maxTags={5}
-                  minTags={1}
-                  activeTagIndex={activeTagProfileIndex}
-                  draggable={true}
-                  setActiveTagIndex={setActiveTagProfileIndex}
-                  className="sm:min-w-[450px]"
-                  setTags={(newTags) => {
-                    setTagsProfile(newTags);
-                    setValue("profile", newTags as [Tag, ...Tag[]]);
-                  }}
-                  enableAutocomplete
-                  autocompleteOptions={damProfile}
-                  restrictTagsToAutocompleteOptions={true}
-                />
-              </FormControl>
-              <FormDescription className="text-left">
-                Selected Profile tags
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
+    <div>
+      <form>
+        <input
+          type="text"
+          value={city}
+          onChange={handleCityChange}
+          placeholder="Enter city name"
+          required
         />
-        <Button type="submit">Submit</Button>
+        <input
+          type="text"
+          value={country}
+          onChange={handleCountryChange}
+          placeholder="Enter country name"
+          required
+        />
       </form>
-    </Form>
+      {error && <p>Error: {error}</p>}
+      {data && (
+        <div>
+          <h3>City Data:</h3>
+          <pre>{JSON.stringify(data, null, 2)}</pre>
+        </div>
+      )}
+    </div>
   );
 }

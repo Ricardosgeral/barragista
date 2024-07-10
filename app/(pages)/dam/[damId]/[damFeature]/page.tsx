@@ -110,7 +110,6 @@ export default async function DamFeaturePage({ params }: DamFeatureProps) {
   );
 
   const damRiskData: DamRisk[] = await getDamFeatureByDamId("risk", damId);
-  console.log(damFeature);
   // Find the component based on damFeature
   const SelectedComponent = componentMap[damFeature as any];
 
