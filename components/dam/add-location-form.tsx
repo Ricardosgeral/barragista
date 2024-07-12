@@ -74,8 +74,10 @@ export default function AddDamLocationForm({
   const [cities, setCities] = useState<ICity[]>([]);
 
   const [posix, setPosix] = useState<LatLngExpression | LatLngTuple>([0, 0]);
+  const [zoom, setZoom] = useState(6);
 
   const [isCountryPT, setIsCountryPT] = useState(false); // to see if country is PRT
+
   const { getAllCountries, getCountryStates, getStateCities } = useLocation();
 
   const cookies = parseCookies();
@@ -104,6 +106,7 @@ export default function AddDamLocationForm({
     }) as z.infer<typeof DamLocationSchema>,
   });
 
+  // change states list when selecting country
   useEffect(() => {
     const selectedCountry = form.watch("country");
     const countryStates = getCountryStates(selectedCountry);
@@ -113,6 +116,7 @@ export default function AddDamLocationForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch("country")]);
 
+  //  change city lists when selecting state
   useEffect(() => {
     const selectedCountry = form.watch("country");
     const selectedState = form.watch("state");
@@ -123,6 +127,7 @@ export default function AddDamLocationForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch("country"), form.watch("state")]);
 
+  // consider the hydraulic basis from portugal when it is selected
   useEffect(() => {
     const selectedCountry = form.watch("country");
     if (selectedCountry === "PT") {
@@ -134,49 +139,69 @@ export default function AddDamLocationForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch("country")]);
 
-  const router = useRouter();
-
-  // Update posix coordinates when country state or city changes
+  // Update posix coordinates and zoom  when country changes
   useEffect(
     () => {
       const selectedCountry = countries.find(
         (country) => country.isoCode === form.watch("country"),
       );
+      const latitude = selectedCountry?.latitude;
+      const longitude = selectedCountry?.longitude;
+
+      if (latitude && longitude) {
+        // Set latitude and longitude fields in the form
+        form.setValue("latitude", parseFloat(latitude));
+        form.setValue("longitude", parseFloat(longitude));
+
+        setPosix([parseFloat(latitude), parseFloat(longitude)]);
+        setZoom(6);
+      }
+    },
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [form.watch("country")],
+  );
+
+  // Update posix coordinates and zoom  when state changes
+  useEffect(
+    () => {
       const selectedState = states.find(
         (state) => state.isoCode === form.watch("state"),
       );
 
-      const selectedCity = cities.find(
-        (city) => city.name.toLowerCase() === form.watch("city")?.toLowerCase(),
-      );
+      const latitude = selectedState?.latitude;
+      const longitude = selectedState?.longitude;
+      if (latitude && longitude) {
+        // Set latitude and longitude fields in the form
+        form.setValue("latitude", parseFloat(latitude));
+        form.setValue("longitude", parseFloat(longitude));
 
-      const latitude =
-        selectedCity?.latitude ??
-        selectedState?.latitude ??
-        selectedCountry?.latitude ??
-        "0";
-      const longitude =
-        selectedCity?.longitude ??
-        selectedState?.longitude ??
-        selectedCountry?.longitude ??
-        "0";
+        setPosix([parseFloat(latitude), parseFloat(longitude)]);
+        setZoom(10);
+      }
+    },
 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [form.watch("state")],
+  );
+
+  // Update posix coordinates and zoom  when city changes
+  useEffect(() => {
+    const selectedCity = cities.find(
+      (city) => city.name.toLowerCase() === form.watch("city")?.toLowerCase(),
+    );
+
+    const latitude = selectedCity?.latitude;
+    const longitude = selectedCity?.longitude;
+    if (latitude && longitude) {
       // Set latitude and longitude fields in the form
       form.setValue("latitude", parseFloat(latitude));
       form.setValue("longitude", parseFloat(longitude));
 
       setPosix([parseFloat(latitude), parseFloat(longitude)]);
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      form.watch("country"),
-      form.watch("state"),
-      form.watch("city"),
-      countries,
-      states,
-      cities,
-    ],
-  );
+      setZoom(14);
+    }
+  }, [form.watch("city")]);
 
   useEffect(() => {
     const latitude = form.watch("latitude");
@@ -186,6 +211,31 @@ export default function AddDamLocationForm({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch("latitude"), form.watch("longitude")]);
+
+  const handleMarkerDragEnd = (newPosition: LatLngTuple) => {
+    const [lat, lng] = newPosition;
+    form.setValue("latitude", lat);
+    form.setValue("longitude", lng);
+    setPosix([lat, lng]);
+  };
+
+  const router = useRouter();
+
+  //this one should run last.
+  useEffect(() => {
+    const state = form.getValues("state");
+    const city = form.getValues("city");
+    setZoom(6);
+    state && setZoom(10);
+    city && setZoom(14);
+
+    if (damLocation) {
+      const lat = form.setValue("latitude", damLocation?.latitude);
+      const long = form.setValue("longitude", damLocation?.longitude);
+
+      setPosix([damLocation?.latitude, damLocation?.longitude]);
+    }
+  }, []); // run only once at start after all the other
 
   const onSubmit = (values: z.infer<typeof DamLocationSchema>) => {
     if (damLocation && damId) {
@@ -262,13 +312,33 @@ export default function AddDamLocationForm({
               router.push(`/dam/${damId}${location.path}`);
             }
           })
-          .finally(() => setIsDeleting(true));
+          .finally(() => {
+            setIsDeleting(true);
+            setPosix([39.5, -8]);
+            setZoom(6);
+            form.setValue("country", "PT");
+            form.setValue("state", "");
+            form.setValue("city", "");
+          });
       });
     }
   };
 
   const handleResetform = () => {
     form.reset();
+    if (damLocation) {
+      setPosix([damLocation.latitude, damLocation.longitude]);
+    }
+    setZoom(6);
+    if (form.getValues("state") !== "") {
+      setZoom(10);
+    }
+    if (form.getValues("city") !== "") {
+      setZoom(14);
+    }
+    //default center of Portugal
+    form.setValue("latitude", 39.5);
+    form.setValue("longitude", -8);
   };
 
   const Map = useMemo(
@@ -557,8 +627,12 @@ export default function AddDamLocationForm({
                   />
                 </div>
                 {/* Mapa */}
-                <div className="bg-white-700 mx-auto my-5 h-[280px] w-[98%]">
-                  <Map posix={posix} />
+                <div className="bg-white-700 mx-auto my-5 h-[320px] w-[98%]">
+                  <Map
+                    posix={posix}
+                    zoom={zoom}
+                    onMarkerDragEnd={handleMarkerDragEnd}
+                  />
                 </div>
               </CardContent>
             </Card>

@@ -10,27 +10,34 @@ import { useEffect } from "react";
 
 interface MapProps {
   posix: LatLngExpression | LatLngTuple;
-  zoom?: number;
+  zoom: number;
+  onMarkerDragEnd?: (newPosition: LatLngTuple) => void; // Optional callback for parent component
 }
 
-const defaults = {
-  zoom_1: 5,
-  zomm_2: 8,
-  zomm_3: 12,
-};
+const Map = ({ posix, zoom, onMarkerDragEnd }: MapProps) => {
+  const handleMarkerDragEnd = (event: any) => {
+    const { lat, lng } = event.target.getLatLng(); // Get the new latlng after drag
+    const newMarkerPosition: LatLngTuple = [lat, lng];
 
-const Map = ({ posix, zoom = defaults.zoom_1 }: MapProps) => {
+    // Optional callback to parent component
+    if (onMarkerDragEnd) {
+      onMarkerDragEnd(newMarkerPosition);
+    }
+  };
+
   const MapCenterSetter = ({
     posix,
+    zoom,
   }: {
     posix: LatLngExpression | LatLngTuple;
+    zoom: number;
   }) => {
     const map = useMap();
     useEffect(() => {
-      map.setView(posix, map.getZoom(), {
+      map.setView(posix, zoom, {
         animate: true,
       });
-    }, [posix, map]);
+    }, [posix, zoom, map]);
 
     return null;
   };
@@ -39,17 +46,20 @@ const Map = ({ posix, zoom = defaults.zoom_1 }: MapProps) => {
     <MapContainer
       center={posix}
       zoom={zoom}
-      scrollWheelZoom={true}
       style={{ height: "100%", width: "100%" }}
+      doubleClickZoom={false} // Disable default double-click zoom behavior
     >
-      <TileLayer
-        // attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-      />
-      <Marker position={posix} draggable={true}>
-        <Popup>Dam Location</Popup>
+      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+
+      {/* Render draggable marker with drag end event handler */}
+      <Marker
+        position={posix}
+        draggable={true}
+        eventHandlers={{ dragend: handleMarkerDragEnd }}
+      >
+        <Popup>Selected Position</Popup>
       </Marker>
-      <MapCenterSetter posix={posix} />
+      <MapCenterSetter posix={posix} zoom={zoom} />
     </MapContainer>
   );
 };
