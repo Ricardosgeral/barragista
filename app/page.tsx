@@ -22,7 +22,7 @@ export default function Home() {
   return (
     <div className="flex min-h-screen w-full min-w-[350px] max-w-4xl flex-col items-center justify-center">
       <header className="flex w-full flex-col items-center">
-        <div className="flex w-1/3 justify-center">
+        <div className="flex w-4/5 max-w-[280px] justify-center">
           <LogoApp />
         </div>
         <div className="w-full">

@@ -490,7 +490,6 @@ export default function AddDamLocationForm({
                       </FormItem>
                     )}
                   />
-
                   <FormField
                     control={form.control}
                     name="local"
@@ -507,7 +506,76 @@ export default function AddDamLocationForm({
                       </FormItem>
                     )}
                   />
+                </div>
+                {/* Mapa */}
+                <h3 className="pb-2 pt-4 text-xs text-foreground/50">
+                  For accurate location, pick & drag the marker or insert dam
+                  Latitude and Longitude. Do not forget to save it.
+                </h3>
+                <div className="bg-white-700 mx-auto h-[320px] w-[98%] space-y-2">
+                  <Map
+                    posix={posix}
+                    zoom={zoom}
+                    onMarkerDragEnd={handleMarkerDragEnd}
+                  />
+                </div>
+                <div className="grid w-full grid-cols-2 gap-4 pt-4">
+                  <FormField
+                    control={form.control}
+                    name="latitude"
+                    render={({ field }) => (
+                      <FormItem>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <FormLabel className="inline-flex gap-2">
+                                Latitude* <LuHelpCircle />
+                              </FormLabel>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Decimal degrees (DD) -90 to 90</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
 
+                        <FormControl>
+                          <Input
+                            className="w-full rounded border text-base"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="longitude"
+                    render={({ field }) => (
+                      <FormItem>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <FormLabel className="inline-flex gap-2">
+                                Longitude* <LuHelpCircle />
+                              </FormLabel>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>Decimal degrees (DD) -180 to 180</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>{" "}
+                        <FormControl>
+                          <Input
+                            className="w-full rounded border text-base"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage className="text-xs" />
+                      </FormItem>
+                    )}
+                  />
                   <FormField
                     control={form.control}
                     name="hydro_basin"
@@ -567,71 +635,6 @@ export default function AddDamLocationForm({
                         <FormMessage className="text-xs" />
                       </FormItem>
                     )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="latitude"
-                    render={({ field }) => (
-                      <FormItem>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <FormLabel className="inline-flex gap-2">
-                                Latitude* <LuHelpCircle />
-                              </FormLabel>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Decimal degrees (DD) -90 to 90</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="longitude"
-                    render={({ field }) => (
-                      <FormItem>
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger>
-                              <FormLabel className="inline-flex gap-2">
-                                Longitude* <LuHelpCircle />
-                              </FormLabel>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>Decimal degrees (DD) -180 to 180</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>{" "}
-                        <FormControl>
-                          <Input
-                            className="w-full rounded border text-base"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage className="text-xs" />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                {/* Mapa */}
-                <div className="bg-white-700 mx-auto my-5 h-[320px] w-[98%]">
-                  <Map
-                    posix={posix}
-                    zoom={zoom}
-                    onMarkerDragEnd={handleMarkerDragEnd}
                   />
                 </div>
               </CardContent>
