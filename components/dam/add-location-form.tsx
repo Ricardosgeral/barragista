@@ -627,7 +627,7 @@ export default function AddDamLocationForm({
                   />
                 </div>
                 {/* Mapa */}
-                <div className="bg-white-700 mx-auto my-5 h-[320px] w-[98%]">
+                <div className="bg-white-700 mx-auto my-5 h-[380px] w-[98%]">
                   <Map
                     posix={posix}
                     zoom={zoom}
