@@ -71,7 +71,7 @@ export const damFormSteps = {
       id: 12,
       description: "Risk",
       path: "/risk",
-      subtext: "Factors for risk evaluation",
+      subtext: "Dam risk evaluation",
     },
     {
       id: 13,

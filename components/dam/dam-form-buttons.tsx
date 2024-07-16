@@ -70,10 +70,10 @@ export default function DamFormButtons({
                   <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                   <AlertDialogDescription>
                     This action cannot be undone. <br />
-                    This will permanently remove{" "}
+                    This will permanently remove
                     {feature === "identification"
-                      ? " ALL DATA of this dam"
-                      : " the data of this dam feature"}
+                      ? " ALL DATA of this dam "
+                      : " the data of this dam feature "}
                     from our servers.
                   </AlertDialogDescription>
                 </AlertDialogHeader>
@@ -99,44 +99,35 @@ export default function DamFormButtons({
           </Button>
         </div>
 
-        {/* view Dam and save buttons button */}
+        {/* view Dam and save buttons */}
         <div className="flex justify-end gap-4">
+          {/* view */}
           {damId && !!damFeature && (
-            <>
-              <Button
-                variant="default"
-                onClick={() => {
-                  router.push(`/dam-details/${damId}`);
-                }}
-              >
-                <LuEye className="h-4 w-4" />
-              </Button>
-            </>
+            <Button
+              variant="default"
+              onClick={() => {
+                router.push(`/dam-details/${damId}`);
+              }}
+            >
+              <LuEye className="h-4 w-4" />
+            </Button>
           )}
 
-          {/* create/update Dam Buttons */}
+          {/* save button */}
           {damId && !!damFeature ? (
             <Button type="submit" disabled={isLoading} variant="success">
               {isLoading ? (
-                <>
-                  <LuLoader2 className="h-4 w-4 animate-spin" />
-                </>
+                <LuLoader2 className="h-4 w-4 animate-spin" />
               ) : (
-                <>
-                  <LuSave className="h-4 w-4" />
-                </>
+                <LuSave className="h-4 w-4" />
               )}
             </Button>
           ) : (
             <Button variant="success" type="submit" disabled={isLoading}>
               {isLoading ? (
-                <>
-                  <LuLoader2 className="h-4 w-4 animate-spin" />
-                </>
+                <LuLoader2 className="h-4 w-4 animate-spin" />
               ) : (
-                <>
-                  <LuSave className="h-4 w-4" />
-                </>
+                <LuSave className="h-4 w-4" />
               )}
             </Button>
           )}

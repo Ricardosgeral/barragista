@@ -256,7 +256,7 @@ export default function AddDamLocationForm({
                 variant: "success",
                 description: `Success: ${data.message}`,
               });
-              router.push(`/dam/${damId}${location.path}`);
+              router.push(`/dam/${damId}/project`);
             }
           })
           .finally(() => {
@@ -281,7 +281,7 @@ export default function AddDamLocationForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}${location.path}`);
+                router.push(`/dam/${damId}/project`);
               }
             })
 
@@ -527,7 +527,7 @@ export default function AddDamLocationForm({
                       <FormItem>
                         <TooltipProvider>
                           <Tooltip>
-                            <TooltipTrigger>
+                            <TooltipTrigger asChild>
                               <FormLabel className="inline-flex gap-2">
                                 Latitude* <LuHelpCircle />
                               </FormLabel>
@@ -556,7 +556,7 @@ export default function AddDamLocationForm({
                       <FormItem>
                         <TooltipProvider>
                           <Tooltip>
-                            <TooltipTrigger>
+                            <TooltipTrigger asChild>
                               <FormLabel className="inline-flex gap-2">
                                 Longitude* <LuHelpCircle />
                               </FormLabel>

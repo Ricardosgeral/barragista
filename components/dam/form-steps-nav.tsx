@@ -113,7 +113,7 @@ export function FormStepsNav({
                 // when there is no dam created yet
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger>
+                    <TooltipTrigger asChild>
                       <div className="flex cursor-default items-center gap-x-2">
                         <div
                           className={cn(
@@ -152,8 +152,7 @@ export function FormStepsNav({
                         current_step === normalizedStepPath
                           ? "bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-yellow-500 to-yellow-400 font-bold text-background"
                           : "bg-foreground/30 text-background/90",
-                        hasData &&
-                          "bg-foreground-80 shadow-xxl bg-foreground/60",
+                        hasData && "shadow-xxl bg-foreground/50",
                       )}
                     >
                       {step.id}
@@ -166,7 +165,7 @@ export function FormStepsNav({
                         "hidden sm:flex sm:items-center sm:justify-center",
                         current_step === normalizedStepPath
                           ? "font-bold text-yellow-500"
-                          : "text-foreground/70",
+                          : "text-foreground/50",
                         hasData && "font-semibold",
                       )}
                     >

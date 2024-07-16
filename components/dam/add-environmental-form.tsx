@@ -104,7 +104,7 @@ export default function AddDamEnvironmentalForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}${environmental.path}`);
+                router.push(`/dam/${damId}/risk}`);
               }
             })
 

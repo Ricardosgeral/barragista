@@ -105,7 +105,7 @@ export default function AddDamHydropowerForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}${hydropower.path}`);
+                router.push(`/dam/${damId}/environmental`);
               }
             })
 
@@ -276,7 +276,7 @@ export default function AddDamHydropowerForm({
                             <FormItem>
                               <TooltipProvider>
                                 <Tooltip>
-                                  <TooltipTrigger>
+                                  <TooltipTrigger asChild>
                                     <FormLabel className="inline-flex items-center justify-start gap-2">
                                       <div>Power (MW)</div>
                                       <LuHelpCircle />
@@ -305,7 +305,7 @@ export default function AddDamHydropowerForm({
                             <FormItem>
                               <TooltipProvider>
                                 <Tooltip>
-                                  <TooltipTrigger>
+                                  <TooltipTrigger asChild>
                                     <FormLabel className="inline-flex items-center justify-start gap-2">
                                       <div>Energy (GWh/yr)</div>
                                       <LuHelpCircle />

@@ -177,7 +177,7 @@ export default function AddDamForm({ dam }: AddDamFormProps) {
                 variant: "success",
                 description: `Success: ${data.message}`,
               });
-              router.push(`/dam/${data.dam?.id}${identification.path}`);
+              router.push(`/dam/${data.dam?.id}/location`);
             }
           })
           .finally(() => setIsLoading(false));

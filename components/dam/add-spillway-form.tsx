@@ -98,7 +98,7 @@ export default function AddDamSpillwayForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}${spillway.path}`);
+                router.push(`/dam/${damId}/hydropower`);
               }
             })
 

@@ -109,7 +109,7 @@ export default function AddDamFoundationForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}${foundation.path}`);
+                router.push(`/dam/${damId}/discharge`);
               }
             })
 

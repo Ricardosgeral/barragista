@@ -95,7 +95,7 @@ export default function AddDamBodyForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}${body.path}`);
+                router.push(`/dam/${damId}/foundation`);
               }
             })
 

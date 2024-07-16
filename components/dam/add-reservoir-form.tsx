@@ -101,7 +101,7 @@ export default function AddDamReservoirForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}${reservoir.path}`);
+                router.push(`/dam/${damId}/body`);
               }
             })
 
@@ -280,7 +280,7 @@ export default function AddDamReservoirForm({
                       <FormItem>
                         <TooltipProvider>
                           <Tooltip>
-                            <TooltipTrigger>
+                            <TooltipTrigger asChild>
                               <FormLabel className="inline-flex gap-2">
                                 FSL <LuHelpCircle />
                               </FormLabel>
@@ -308,7 +308,7 @@ export default function AddDamReservoirForm({
                       <FormItem>
                         <TooltipProvider>
                           <Tooltip>
-                            <TooltipTrigger>
+                            <TooltipTrigger asChild>
                               <FormLabel className="inline-flex gap-2">
                                 MFL <LuHelpCircle />
                               </FormLabel>{" "}
@@ -336,7 +336,7 @@ export default function AddDamReservoirForm({
                       <FormItem>
                         <TooltipProvider>
                           <Tooltip>
-                            <TooltipTrigger>
+                            <TooltipTrigger asChild>
                               <FormLabel className="inline-flex gap-2">
                                 MWL <LuHelpCircle />
                               </FormLabel>

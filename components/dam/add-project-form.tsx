@@ -102,7 +102,7 @@ export default function AddDamProjectForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}${project.path}`);
+                router.push(`/dam/${damId}/hydrology`);
               }
             })
 

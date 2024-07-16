@@ -100,7 +100,7 @@ export default function AddDamHydrologyForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}${hydrology.path}`);
+                router.push(`/dam/${damId}/reservoir`);
               }
             })
 
@@ -201,7 +201,7 @@ export default function AddDamHydrologyForm({
                       <FormItem>
                         <TooltipProvider>
                           <Tooltip>
-                            <TooltipTrigger>
+                            <TooltipTrigger asChild>
                               <FormLabel className="inline-flex gap-2">
                                 Precipitation (mm/yr) <LuHelpCircle />
                               </FormLabel>
@@ -246,7 +246,7 @@ export default function AddDamHydrologyForm({
                       <FormItem>
                         <TooltipProvider>
                           <Tooltip>
-                            <TooltipTrigger>
+                            <TooltipTrigger asChild>
                               <FormLabel className="inline-flex">
                                 Total flow (m<sup>3</sup>/yr){" "}
                                 <LuHelpCircle className="ml-2" />

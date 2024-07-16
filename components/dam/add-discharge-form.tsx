@@ -100,7 +100,7 @@ export default function AddDamDischargeForm({
                   variant: "success",
                   description: `Success: ${data.message}`,
                 });
-                router.push(`/dam/${damId}${discharge.path}`);
+                router.push(`/dam/${damId}/spillway`);
               }
             })
 

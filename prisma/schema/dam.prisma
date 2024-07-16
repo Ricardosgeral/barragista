@@ -1,7 +1,7 @@
 // Define enums
 enum DamMaterial {
     Concrete
-    Earthfill
+    Embankment
     Masonary
     Mixed
     Other
@@ -267,23 +267,34 @@ model DamHydropower {
 
 // DamRisk model
 model DamRisk {
-    id                   String   @id @default(cuid())
-    class                DamClass @default(Unknown)
-    persons_downstream   Int?     @default(0)
-    houses_downstream    Int?     @default(0)
-    other_downstream     String?  @default("")
-    resettlement         String?  @default("")
-    sismicity            String?  @default("")
-    geo_conditions       String?  @default("")
-    design_flow          String?  @default("")
-    reservoir_management String?  @default("")
-    env_harshness        String?  @default("")
-    project_construction String?  @default("")
-    foundations          String?  @default("")
-    discharge_structures String?  @default("")
-    maintenance          String?  @default("")
-    data_creation        DateTime @default(now())
-    data_modified        DateTime @default(now())
+    id String @id @default(cuid())
+
+    class DamClass @default(Unknown)
+
+    houses_downstream   Int?     @default(0)
+    persons_downstream  Int?     @default(0)
+    has_infrastructures Boolean? @default(false)
+    infrastructures     String?  @default("")
+    has_pei             Boolean? @default(false)
+    pei                 String?  @default("")
+
+    hazard_factor_X      Float? @default(0) //H^2/sqrt(V)
+    sismicity            Int?   @default(0)
+    geo_conditions       Int?   @default(0)
+    design_flow          Int?   @default(0)
+    reservoir_management Int?   @default(0)
+    env_harshness        Int?   @default(0)
+    project_construction Int?   @default(0)
+    foundations          Int?   @default(0)
+    discharge_structures Int?   @default(0)
+    maintenance          Int?   @default(0)
+    risk_E               Float? @default(0)
+    risk_V               Float? @default(0)
+    risk_D               Float? @default(0)
+    risk_global          Float? @default(0)
+
+    data_creation DateTime @default(now())
+    data_modified DateTime @default(now())
 
     dam   Dam    @relation(fields: [damId], references: [id], onDelete: Cascade)
     damId String @unique
