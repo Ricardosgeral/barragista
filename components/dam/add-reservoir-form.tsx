@@ -202,7 +202,7 @@ export default function AddDamReservoirForm({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>
-                          Total capacity (m<sup>3</sup>)
+                          Total capacity* (m<sup>3</sup>)
                         </FormLabel>
                         <FormControl>
                           <Input
@@ -311,7 +311,7 @@ export default function AddDamReservoirForm({
                             <TooltipTrigger asChild>
                               <FormLabel className="inline-flex gap-2">
                                 MFL <LuHelpCircle />
-                              </FormLabel>{" "}
+                              </FormLabel>
                             </TooltipTrigger>
                             <TooltipContent>
                               <p>Maximum Flood Level</p>

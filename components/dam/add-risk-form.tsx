@@ -2,7 +2,7 @@
 
 import { DamRiskSchema } from "@/schemas/dam-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DamClass, DamRisk } from "@prisma/client";
+import { DamBody, DamClass, DamReservoir, DamRisk } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LuCheck, LuChevronsUpDown, LuHelpCircle } from "react-icons/lu";
 import { toast } from "@/components/ui/use-toast";
-import { startTransition, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -47,7 +47,6 @@ import {
 
 import { damFormSteps } from "@/data/dam/constants";
 import DamFormButtons from "@/components/dam/dam-form-buttons";
-import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { Switch } from "../ui/switch";
 import { Separator } from "@radix-ui/react-separator";
 import {
@@ -56,13 +55,19 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import {
+  DamClassificationPT,
+  hazardXFactorPT,
+  potentialDamagePT,
+} from "@/data/dam/dam-classification-PT";
 
 const risk = damFormSteps.sidebarNav[11];
 
 interface AddDamRiskFormProps {
-  // dam: DamWithAllFeatures | null;
   damId: string | null;
   damRisk: DamRisk | null; //if null will create a dam
+  damBody: DamBody | null;
+  damReservoir: DamReservoir | null;
 }
 //to use the enum defined in dam.prisma
 const damClassArray = Object.entries(DamClass).map(([key, value]) => ({
@@ -72,9 +77,13 @@ const damClassArray = Object.entries(DamClass).map(([key, value]) => ({
 export default function AddDamRiskForm({
   damId,
   damRisk,
+  damBody,
+  damReservoir,
 }: AddDamRiskFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [hasInfrastructures, setHasInfrastructures] = useState(false);
 
   const router = useRouter();
 
@@ -175,7 +184,7 @@ export default function AddDamRiskForm({
       infrastructures: "",
       has_pei: false,
       pei: "",
-      hazard_factor_X: 0,
+      hazard_factor_X: hazardXFactorPT(damBody, damReservoir),
       sismicity: 0,
       geo_conditions: 0,
       design_flow: 0,
@@ -191,6 +200,163 @@ export default function AddDamRiskForm({
       risk_global: 0,
     }) as z.infer<typeof DamRiskSchema>,
   });
+
+  // check if X or Y or Infrastucture is introduced by user and compute class
+  useEffect(() => {
+    const hazard_X = form.getValues("hazard_factor_X");
+    const houses_Y = form.watch("houses_downstream");
+    const has_infrastructures = form.watch("has_infrastructures");
+
+    const dam_class = DamClassificationPT(
+      hazard_X as number,
+      houses_Y as number,
+      has_infrastructures as boolean,
+    );
+    form.setValue("class", dam_class);
+    has_infrastructures
+      ? setHasInfrastructures(true)
+      : setHasInfrastructures(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.watch("houses_downstream"), form.watch("has_infrastructures")]);
+
+  // check if any risk factor for E (alphas_E) is changed
+  useEffect(
+    () => {
+      const alpha_1 = form.watch("sismicity");
+      const alpha_2 = form.watch("geo_conditions");
+      const alpha_3 = form.watch("design_flow");
+      const alpha_4 = form.watch("reservoir_management");
+      const alpha_5 = form.watch("env_harshness");
+
+      // Check if any of the values are undefined or "0" as strings
+      if (
+        alpha_1 === undefined ||
+        alpha_2 === undefined ||
+        alpha_3 === undefined ||
+        alpha_4 === undefined ||
+        alpha_5 === undefined ||
+        alpha_1 === 0 ||
+        alpha_2 === 0 ||
+        alpha_3 === 0 ||
+        alpha_4 === 0 ||
+        alpha_5 === 0
+      ) {
+        return;
+      }
+
+      // Convert the values to numbers if they are not already parsed
+      const parsedAlpha_1 =
+        typeof alpha_1 === "string" ? parseFloat(alpha_1) : alpha_1;
+      const parsedAlpha_2 =
+        typeof alpha_2 === "string" ? parseFloat(alpha_2) : alpha_2;
+      const parsedAlpha_3 =
+        typeof alpha_3 === "string" ? parseFloat(alpha_3) : alpha_3;
+      const parsedAlpha_4 =
+        typeof alpha_4 === "string" ? parseFloat(alpha_4) : alpha_4;
+      const parsedAlpha_5 =
+        typeof alpha_5 === "string" ? parseFloat(alpha_5) : alpha_5;
+
+      // Calculate the average risk_E
+      const risk_E =
+        (parsedAlpha_1 +
+          parsedAlpha_2 +
+          parsedAlpha_3 +
+          parsedAlpha_4 +
+          parsedAlpha_5) /
+        5;
+
+      // Set the value of risk_E in the form
+
+      form.setValue("risk_E", risk_E);
+    },
+    // eslint-di sable-next-line react-hooks/exhaustive-deps
+    [
+      form.watch("sismicity"),
+      form.watch("geo_conditions"),
+      form.watch("design_flow"),
+      form.watch("reservoir_management"),
+      form.watch("env_harshness"),
+    ],
+  );
+
+  // check if any risk factor for V (alphas_V) is changed
+  useEffect(() => {
+    const alpha_6 = form.watch("project_construction");
+    const alpha_7 = form.watch("foundations");
+    const alpha_8 = form.watch("discharge_structures");
+    const alpha_9 = form.watch("maintenance");
+
+    // Check if any of the values are undefined or "0" as strings
+    if (
+      alpha_6 === undefined ||
+      alpha_7 === undefined ||
+      alpha_8 === undefined ||
+      alpha_9 === undefined ||
+      alpha_6 === 0 ||
+      alpha_7 === 0 ||
+      alpha_8 === 0 ||
+      alpha_9 === 0
+    ) {
+      return;
+    }
+
+    // Convert the values to numbers if they are not already parsed
+    const parsedAlpha_6 =
+      typeof alpha_6 === "string" ? parseFloat(alpha_6) : alpha_6;
+    const parsedAlpha_7 =
+      typeof alpha_7 === "string" ? parseFloat(alpha_7) : alpha_7;
+    const parsedAlpha_8 =
+      typeof alpha_8 === "string" ? parseFloat(alpha_8) : alpha_8;
+    const parsedAlpha_9 =
+      typeof alpha_9 === "string" ? parseFloat(alpha_9) : alpha_9;
+
+    // Calculate the average risk_V
+    const risk_V =
+      (parsedAlpha_6 + parsedAlpha_7 + parsedAlpha_8 + parsedAlpha_9) / 4;
+
+    // Set the value of risk_E in the form
+    form.setValue("risk_V", risk_V);
+  }, [
+    form.watch("project_construction"),
+    form.watch("foundations"),
+    form.watch("discharge_structures"),
+    form.watch("maintenance"),
+  ]);
+
+  // potential damage factor
+  useEffect(() => {
+    const damClassPT = form.watch("class");
+    const has_pei = form.watch("has_pei");
+    const persons = form.watch("persons_downstream");
+    const risk_D = potentialDamagePT(
+      damClassPT,
+      has_pei as boolean,
+      persons as number,
+    );
+    // Set the value of risk_E in the form
+    form.setValue("risk_D", risk_D);
+  }, [
+    form.watch("class"),
+    form.watch("has_pei"),
+    form.watch("persons_downstream"),
+  ]);
+
+  useEffect(() => {
+    const risk_E = form.watch("risk_E");
+    const risk_V = form.watch("risk_V");
+    const risk_D = form.watch("risk_D");
+
+    // Check if any of the values are undefined
+    if (!risk_D || !risk_E || !risk_V) {
+      return;
+    }
+
+    // Calculate global risk
+    const risk_global = Math.round(risk_D * risk_E * risk_V * 100) / 100;
+
+    // Set the value of risk_global in the form
+    form.setValue("risk_global", risk_global);
+  }, [form.watch("risk_D"), form.watch("risk_E"), form.watch("risk_V")]); // Dependency array should only include form instance
 
   return (
     <Form {...form}>
@@ -249,7 +415,8 @@ export default function AddDamRiskForm({
 
                             <FormControl>
                               <Input
-                                className="rounded border text-base"
+                                readOnly={true}
+                                className="rounded border bg-foreground/5 text-base"
                                 {...field}
                               />
                             </FormControl>
@@ -280,6 +447,9 @@ export default function AddDamRiskForm({
 
                             <FormControl>
                               <Input
+                                type="number"
+                                min={0}
+                                step={1}
                                 className="rounded border text-base"
                                 {...field}
                               />
@@ -314,6 +484,9 @@ export default function AddDamRiskForm({
 
                             <FormControl>
                               <Input
+                                type="number"
+                                min={0}
+                                step={1}
                                 className="rounded border text-base"
                                 {...field}
                               />
@@ -328,7 +501,7 @@ export default function AddDamRiskForm({
                         control={form.control}
                         name="has_infrastructures"
                         render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between space-x-3 pb-3">
+                          <FormItem className="flex flex-row items-center justify-between space-x-3">
                             <div className="space-y-0.5">
                               <TooltipProvider>
                                 <Tooltip>
@@ -358,24 +531,27 @@ export default function AddDamRiskForm({
                           </FormItem>
                         )}
                       />
-                      <FormField
-                        control={form.control}
-                        name="infrastructures"
-                        render={({ field }) => (
-                          <FormItem className="w-full">
-                            <FormLabel></FormLabel>
-                            <FormControl>
-                              <Input
-                                className="rounded border text-base"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
+                      {hasInfrastructures && (
+                        <FormField
+                          control={form.control}
+                          name="infrastructures"
+                          render={({ field }) => (
+                            <FormItem className="w-full">
+                              <FormLabel></FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="..."
+                                  className="rounded border text-base"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
+                      )}
                     </div>
-                    <div className="w-full">
+                    <div className="w-full pt-2">
                       <FormField
                         control={form.control}
                         name="class"
@@ -475,7 +651,9 @@ export default function AddDamRiskForm({
                         name="sismicity"
                         render={({ field }) => (
                           <FormItem className="w-full">
-                            <FormLabel>Sismicity</FormLabel>
+                            <FormLabel>
+                              Sismicity, &alpha;<sub>1</sub>
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
@@ -495,7 +673,9 @@ export default function AddDamRiskForm({
                         name="geo_conditions"
                         render={({ field }) => (
                           <FormItem className="w-full">
-                            <FormLabel>Geological/Geotechnical</FormLabel>
+                            <FormLabel>
+                              Geo, &alpha;<sub>2</sub>
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
@@ -515,7 +695,9 @@ export default function AddDamRiskForm({
                         name="design_flow"
                         render={({ field }) => (
                           <FormItem className="w-full">
-                            <FormLabel>Design flow</FormLabel>
+                            <FormLabel>
+                              Design flow, &alpha;<sub>3</sub>
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
@@ -535,7 +717,9 @@ export default function AddDamRiskForm({
                         name="reservoir_management"
                         render={({ field }) => (
                           <FormItem className="w-full">
-                            <FormLabel>Reservoir management</FormLabel>
+                            <FormLabel>
+                              Reservoir, &alpha;<sub>4</sub>
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
@@ -555,7 +739,9 @@ export default function AddDamRiskForm({
                         name="env_harshness"
                         render={({ field }) => (
                           <FormItem className="w-full">
-                            <FormLabel>Environmental harshness</FormLabel>
+                            <FormLabel>
+                              Env harshness , &alpha;<sub>5</sub>
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
@@ -620,7 +806,9 @@ export default function AddDamRiskForm({
                         name="project_construction"
                         render={({ field }) => (
                           <FormItem className="w-full">
-                            <FormLabel>Project and construction</FormLabel>
+                            <FormLabel>
+                              Project, &alpha;<sub>6</sub>
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
@@ -641,7 +829,9 @@ export default function AddDamRiskForm({
                         name="foundations"
                         render={({ field }) => (
                           <FormItem className="w-full">
-                            <FormLabel>Foundations</FormLabel>
+                            <FormLabel>
+                              Foundations, &alpha;<sub>7</sub>
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
@@ -662,7 +852,9 @@ export default function AddDamRiskForm({
                         name="discharge_structures"
                         render={({ field }) => (
                           <FormItem className="w-full">
-                            <FormLabel>Discharge structures</FormLabel>
+                            <FormLabel>
+                              Discharge, &alpha;<sub>8</sub>
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
@@ -683,7 +875,9 @@ export default function AddDamRiskForm({
                         name="maintenance"
                         render={({ field }) => (
                           <FormItem className="w-full">
-                            <FormLabel>Maintenace/conservation</FormLabel>
+                            <FormLabel>
+                              Maintenace, &alpha;<sub>9</sub>
+                            </FormLabel>
                             <FormControl>
                               <Input
                                 type="number"
