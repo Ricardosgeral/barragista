@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "DamMaterial" AS ENUM ('Concrete', 'Earthfill', 'Masonary', 'Mixed', 'Other');
+CREATE TYPE "DamMaterial" AS ENUM ('Concrete', 'Embankment', 'Masonary', 'Mixed', 'Other');
 
 -- CreateEnum
 CREATE TYPE "DamClass" AS ENUM ('I', 'II', 'III', 'Unknown', 'Other');
@@ -95,7 +95,7 @@ CREATE TABLE "damReservoir" (
     "id" TEXT NOT NULL,
     "flood_area" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "reservoir_length" DOUBLE PRECISION DEFAULT 0,
-    "total_capacity" DOUBLE PRECISION DEFAULT 0,
+    "total_capacity" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "useful_capacity" DOUBLE PRECISION DEFAULT 0,
     "dead_volume" DOUBLE PRECISION DEFAULT 0,
     "fsl" INTEGER DEFAULT 0,
@@ -217,13 +217,11 @@ CREATE TABLE "damHydropower" (
 CREATE TABLE "damRisk" (
     "id" TEXT NOT NULL,
     "class" "DamClass" NOT NULL DEFAULT 'Unknown',
-    "persons_downstream" INTEGER DEFAULT 0,
+    "hazard_factor_X" DOUBLE PRECISION DEFAULT 0,
     "houses_downstream" INTEGER DEFAULT 0,
+    "persons_downstream" INTEGER DEFAULT 0,
     "has_infrastructures" BOOLEAN DEFAULT false,
     "infrastructures" TEXT DEFAULT '',
-    "has_pei" BOOLEAN DEFAULT false,
-    "pei" TEXT DEFAULT '',
-    "hazard_factor_X" DOUBLE PRECISION DEFAULT 0,
     "sismicity" INTEGER DEFAULT 0,
     "geo_conditions" INTEGER DEFAULT 0,
     "design_flow" INTEGER DEFAULT 0,
@@ -233,6 +231,8 @@ CREATE TABLE "damRisk" (
     "foundations" INTEGER DEFAULT 0,
     "discharge_structures" INTEGER DEFAULT 0,
     "maintenance" INTEGER DEFAULT 0,
+    "has_pei" BOOLEAN DEFAULT false,
+    "pei" TEXT DEFAULT '',
     "risk_E" DOUBLE PRECISION DEFAULT 0,
     "risk_V" DOUBLE PRECISION DEFAULT 0,
     "risk_D" DOUBLE PRECISION DEFAULT 0,

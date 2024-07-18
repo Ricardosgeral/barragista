@@ -4,7 +4,6 @@ import { getDamById } from "@/data/dam/get-dam-by-id";
 import { currentUser } from "@/lib/auth";
 import { Dam } from "@prisma/client";
 import { redirect } from "next/navigation";
-import { FcCameraIdentification } from "react-icons/fc";
 
 interface DamDetailsProps {
   params: { damId: string };

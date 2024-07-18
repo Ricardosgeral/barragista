@@ -1,22 +1,17 @@
 "use client";
-import { Poppins } from "next/font/google";
+// import { Poppins } from "next/font/google";
 
-import { Button } from "@/components/ui/button";
-import { LoginButton } from "@/components/auth/login-button";
 import LogoApp from "@/components/logo-app";
-import Link from "next/link";
-import { Card } from "@/components/ui/card";
-import Image from "next/image";
-import { ModeToggle } from "@/components/theme-toggle";
-import { useRouter } from "next/navigation";
+
 import CardMainPage from "@/components/card-main-page";
 import BannerMainPage from "@/components/banner-main-page";
 import FooterMainPage from "@/components/footer-main-page";
 
-const font = Poppins({
-  subsets: ["latin"],
-  weight: ["600"],
-});
+// const font = Poppins({
+//   subsets: ["latin"],
+//   weight: ["600"],
+//   preload: false,
+// });
 
 export default function Home() {
   return (

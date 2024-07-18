@@ -47,14 +47,14 @@ import {
 
 import { damFormSteps } from "@/data/dam/constants";
 import DamFormButtons from "@/components/dam/dam-form-buttons";
-import { Switch } from "../ui/switch";
+import { Switch } from "@/components/ui/switch";
 import { Separator } from "@radix-ui/react-separator";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "../ui/tooltip";
+} from "@/components/ui/tooltip";
 import {
   DamClassificationPT,
   hazardXFactorPT,
@@ -164,7 +164,7 @@ export default function AddDamRiskForm({
             }
           })
           .finally(() => {
-            setIsDeleting(true);
+            setIsDeleting(false);
           });
       });
     }

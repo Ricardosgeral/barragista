@@ -1,11 +1,4 @@
-import { Poppins } from "next/font/google";
-import { cn } from "@/lib/utils";
 import LogoApp from "@/components/logo-app";
-
-const font = Poppins({
-  subsets: ["latin"],
-  weight: ["600"],
-});
 
 interface HeaderProps {
   label: string;
@@ -13,9 +6,9 @@ interface HeaderProps {
 
 export function Header({ label }: HeaderProps) {
   return (
-    <div className="w-full flex flex-col gap-y-4 items-center justify-center">
+    <div className="flex w-full flex-col items-center justify-center gap-y-4">
       <LogoApp />
-      <p className="text-muted-foreground text-sm">{label}</p>
+      <p className="text-sm text-muted-foreground">{label}</p>
     </div>
   );
 }

@@ -271,7 +271,7 @@ model DamRisk {
 
     class DamClass @default(Unknown)
 
-    hazard_factor_X     Float?   @default(0) //H^2/sqrt(V)
+    hazard_factor_X     Float?   @default(0.0) //H^2/sqrt(V)
     houses_downstream   Int?     @default(0)
     persons_downstream  Int?     @default(0)
     has_infrastructures Boolean? @default(false)
