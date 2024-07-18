@@ -405,7 +405,7 @@ export default function AddDamRiskForm({
                 <div className="flex w-full flex-col items-center gap-4">
                   <FormLabel
                     style={{ fontVariant: "small-caps" }}
-                    className="flex font-extrabold text-foreground/60"
+                    className="text-md flex font-extrabold text-yellow-500"
                   >
                     Dam Classification
                   </FormLabel>
@@ -662,7 +662,7 @@ export default function AddDamRiskForm({
                   />
                   <FormLabel
                     style={{ fontVariant: "small-caps" }}
-                    className="font-extrabold text-foreground/60"
+                    className="text-md font-extrabold text-yellow-500"
                   >
                     Risk Factors
                   </FormLabel>
@@ -958,7 +958,7 @@ export default function AddDamRiskForm({
                   </div>
                   <FormLabel
                     style={{ fontVariant: "small-caps" }}
-                    className="pt-4 font-sans"
+                    className="pt-4"
                   >
                     Potential Damage (D)
                   </FormLabel>
