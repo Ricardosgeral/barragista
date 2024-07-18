@@ -240,17 +240,12 @@ export default function AddDamRiskForm({
         alpha_2 === undefined ||
         alpha_3 === undefined ||
         alpha_4 === undefined ||
-        alpha_5 === undefined ||
-        alpha_1 === 0 ||
-        alpha_2 === 0 ||
-        alpha_3 === 0 ||
-        alpha_4 === 0 ||
-        alpha_5 === 0
+        alpha_5 === undefined
       ) {
         return;
       }
 
-      // Convert the values to numbers if they are not already parsed
+      // Convert the values to numbers if they are not already parsed (this is because typescript)
       const parsedAlpha_1 =
         typeof alpha_1 === "string" ? parseFloat(alpha_1) : alpha_1;
       const parsedAlpha_2 =
@@ -263,14 +258,24 @@ export default function AddDamRiskForm({
         typeof alpha_5 === "string" ? parseFloat(alpha_5) : alpha_5;
 
       // Calculate the average risk_E
-      const risk_E =
-        (parsedAlpha_1 +
-          parsedAlpha_2 +
-          parsedAlpha_3 +
-          parsedAlpha_4 +
-          parsedAlpha_5) /
-        5;
-
+      let risk_E = 0;
+      if (
+        parsedAlpha_1 !== 0 &&
+        parsedAlpha_2 !== 0 &&
+        parsedAlpha_3 !== 0 &&
+        parsedAlpha_4 !== 0 &&
+        parsedAlpha_5 !== 0
+      ) {
+        risk_E =
+          (parsedAlpha_1 +
+            parsedAlpha_2 +
+            parsedAlpha_3 +
+            parsedAlpha_4 +
+            parsedAlpha_5) /
+          5;
+      } else {
+        form.setValue("risk_global", 0);
+      }
       // Set the value of risk_E in the form
 
       form.setValue("risk_E", risk_E);
@@ -297,11 +302,7 @@ export default function AddDamRiskForm({
       alpha_6 === undefined ||
       alpha_7 === undefined ||
       alpha_8 === undefined ||
-      alpha_9 === undefined ||
-      alpha_6 === 0 ||
-      alpha_7 === 0 ||
-      alpha_8 === 0 ||
-      alpha_9 === 0
+      alpha_9 === undefined
     ) {
       return;
     }
@@ -316,9 +317,19 @@ export default function AddDamRiskForm({
     const parsedAlpha_9 =
       typeof alpha_9 === "string" ? parseFloat(alpha_9) : alpha_9;
 
-    // Calculate the average risk_V
-    const risk_V =
-      (parsedAlpha_6 + parsedAlpha_7 + parsedAlpha_8 + parsedAlpha_9) / 4;
+    // Calculate the average risk_E
+    let risk_V = 0;
+    if (
+      parsedAlpha_6 !== 0 &&
+      parsedAlpha_7 !== 0 &&
+      parsedAlpha_8 !== 0 &&
+      parsedAlpha_9 !== 0
+    ) {
+      risk_V =
+        (parsedAlpha_6 + parsedAlpha_7 + parsedAlpha_8 + parsedAlpha_9) / 4;
+    } else {
+      form.setValue("risk_global", 0);
+    }
 
     // Set the value of risk_E in the form
     form.setValue("risk_V", risk_V);
@@ -658,8 +669,8 @@ export default function AddDamRiskForm({
                   <FormLabel style={{ fontVariant: "small-caps" }} className="">
                     External or Enviornmental Factors (E)
                   </FormLabel>
-                  <div className="flex flex-col gap-4">
-                    <div className="grid w-full grid-cols-2 gap-4">
+                  <div className="flex w-full flex-col gap-4">
+                    <div className="grid grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
                         name="sismicity"
