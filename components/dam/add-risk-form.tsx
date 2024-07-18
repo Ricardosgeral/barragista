@@ -84,6 +84,7 @@ export default function AddDamRiskForm({
   const [isDeleting, setIsDeleting] = useState(false);
 
   const [hasInfrastructures, setHasInfrastructures] = useState(false);
+  const [hasPei, setHasPei] = useState(false);
 
   const router = useRouter();
 
@@ -184,7 +185,7 @@ export default function AddDamRiskForm({
       infrastructures: "",
       has_pei: false,
       pei: "",
-      hazard_factor_X: hazardXFactorPT(damBody, damReservoir),
+      hazard_factor_X: 0,
       sismicity: 0,
       geo_conditions: 0,
       design_flow: 0,
@@ -200,6 +201,11 @@ export default function AddDamRiskForm({
       risk_global: 0,
     }) as z.infer<typeof DamRiskSchema>,
   });
+
+  //calculate X on page render first time
+  useEffect(() => {
+    form.setValue("hazard_factor_X", hazardXFactorPT(damBody, damReservoir));
+  }, []);
 
   // check if X or Y or Infrastucture is introduced by user and compute class
   useEffect(() => {
@@ -357,6 +363,14 @@ export default function AddDamRiskForm({
     // Set the value of risk_global in the form
     form.setValue("risk_global", risk_global);
   }, [form.watch("risk_D"), form.watch("risk_E"), form.watch("risk_V")]); // Dependency array should only include form instance
+
+  // check if ha_Pei
+  useEffect(() => {
+    const has_pei = form.watch("has_pei");
+
+    has_pei ? setHasPei(true) : setHasPei(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.watch("has_pei")]);
 
   return (
     <Form {...form}>
@@ -783,6 +797,7 @@ export default function AddDamRiskForm({
                             </TooltipProvider>
                             <FormControl>
                               <Input
+                                readOnly={true}
                                 className="flex w-1/3 bg-foreground/10 font-bold"
                                 {...field}
                               />
@@ -919,6 +934,7 @@ export default function AddDamRiskForm({
                             </TooltipProvider>
                             <FormControl>
                               <Input
+                                readOnly={true}
                                 className="flex w-1/3 bg-foreground/10 font-bold"
                                 {...field}
                               />
@@ -954,22 +970,25 @@ export default function AddDamRiskForm({
                           </FormItem>
                         )}
                       />
-                      <FormField
-                        control={form.control}
-                        name="pei"
-                        render={({ field }) => (
-                          <FormItem className="w-full">
-                            <FormLabel></FormLabel>
-                            <FormControl>
-                              <Input
-                                className="rounded border text-base"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage className="text-xs" />
-                          </FormItem>
-                        )}
-                      />
+                      {hasPei && (
+                        <FormField
+                          control={form.control}
+                          name="pei"
+                          render={({ field }) => (
+                            <FormItem className="w-full">
+                              <FormLabel></FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="..."
+                                  className="rounded border text-base"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage className="text-xs" />
+                            </FormItem>
+                          )}
+                        />
+                      )}
                     </div>
                     <div>
                       <FormField
@@ -982,6 +1001,7 @@ export default function AddDamRiskForm({
                             </FormLabel>
                             <FormControl>
                               <Input
+                                readOnly={true}
                                 className="flex w-1/3 bg-foreground/10 font-bold"
                                 {...field}
                               />

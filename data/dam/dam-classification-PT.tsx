@@ -21,7 +21,7 @@ export function hazardXFactorPT(
   damBody: DamBody | null,
   damReservoir: DamReservoir | null,
 ): number {
-  if (!damBody || !damReservoir) return 0;
+  if (!damBody?.height_to_foundation || !damReservoir?.total_capacity) return 0;
   const heightToFoundation = damBody?.height_to_foundation;
   const totalCapacity = damReservoir?.total_capacity;
 

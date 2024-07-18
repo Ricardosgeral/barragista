@@ -40,6 +40,8 @@ import {
 
 import { damFormSteps } from "@/data/dam/constants";
 import DamFormButtons from "@/components/dam/dam-form-buttons";
+import { setHazardX } from "@/actions/dam/set-hazard-X";
+import { clearHazardX } from "@/actions/dam/clear-hazard-X";
 
 const reservoir = damFormSteps.sidebarNav[4];
 
@@ -80,7 +82,10 @@ export default function AddDamReservoirForm({
               router.push(`/dam/${damId}${reservoir.path}`);
             }
           })
-          .finally(() => setIsLoading(false));
+          .finally(() => {
+            setHazardX(damId); //updates damRisk if exists
+            setIsLoading(false);
+          });
       });
     } else {
       // create (use of the server action... Could alse be done with API.)
@@ -104,11 +109,14 @@ export default function AddDamReservoirForm({
                 router.push(`/dam/${damId}/body`);
               }
             })
-
-            .finally(() => setIsLoading(false));
+            .finally(() => {
+              setHazardX(damId); //updates damRisk if exists
+              setIsLoading(false);
+            });
         });
       }
     }
+    //TODO: update the value in database of hazard_factor_X in damRisk if this and height in damBody exists
   };
 
   const handleDelete = (damId: string, damReservoir: DamReservoir) => {
@@ -116,6 +124,7 @@ export default function AddDamReservoirForm({
       // update a dam witha given ID
       startTransition(() => {
         setIsDeleting(true);
+        setIsLoading(false);
         deleteDamFeature("reservoir", damId)
           .then((data) => {
             if (!data.ok) {
@@ -132,7 +141,10 @@ export default function AddDamReservoirForm({
               router.push(`/dam/${damId}${reservoir.path}`);
             }
           })
-          .finally(() => setIsDeleting(true));
+          .finally(() => {
+            clearHazardX(damId); // makes the hazard factor X null because depends on damBody
+            setIsDeleting(false);
+          });
       });
     }
   };

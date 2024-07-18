@@ -34,6 +34,8 @@ import { deleteDamFeature } from "@/actions/dam/delete-dam-feature";
 
 import { damFormSteps } from "@/data/dam/constants";
 import DamFormButtons from "@/components/dam/dam-form-buttons";
+import { setHazardX } from "@/actions/dam/set-hazard-X";
+import { clearHazardX } from "@/actions/dam/clear-hazard-X";
 
 const body = damFormSteps.sidebarNav[5];
 
@@ -74,7 +76,10 @@ export default function AddDamBodyForm({
               router.push(`/dam/${damId}${body.path}`);
             }
           })
-          .finally(() => setIsLoading(false));
+          .finally(() => {
+            setHazardX(damId); //updates damRisk if exists
+            setIsLoading(false);
+          });
       });
     } else {
       // create (use of the server action... Could alse be done with API.)
@@ -99,7 +104,10 @@ export default function AddDamBodyForm({
               }
             })
 
-            .finally(() => setIsLoading(false));
+            .finally(() => {
+              setHazardX(damId); //updates damRisk if exists
+              setIsLoading(false);
+            });
         });
       }
     }
@@ -126,7 +134,10 @@ export default function AddDamBodyForm({
               router.push(`/dam/${damId}${body.path}`);
             }
           })
-          .finally(() => setIsDeleting(true));
+          .finally(() => {
+            clearHazardX(damId); // makes the hazard factor X null because depends on damBody
+            setIsDeleting(false);
+          });
       });
     }
   };
