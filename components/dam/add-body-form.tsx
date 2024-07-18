@@ -165,8 +165,8 @@ export default function AddDamBodyForm({
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex w-full flex-col items-center justify-center space-y-6">
           <div className="space-y-4">
-            {/* Dam Bodyfeatures*/}
-            <Card className="w-full drop-shadow-lg sm:w-[400px]">
+            {/* Hydropower plant */}
+            <Card className="min-w-[320px] max-w-[500px]">
               <CardHeader>
                 <CardTitle>
                   <div className="flex items-center justify-start space-x-2">

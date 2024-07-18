@@ -28,7 +28,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 // });
 const poppins = Poppins({
   subsets: ["latin"],
-  weight: ["300"],
+  weight: ["400"],
   preload: false,
 });
 export const metadata: Metadata = {

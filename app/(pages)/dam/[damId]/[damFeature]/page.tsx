@@ -158,7 +158,7 @@ export default async function DamFeaturePage({ params }: DamFeatureProps) {
   };
 
   return (
-    <div className="flex justify-center space-x-8">
+    <div className="flex w-full justify-center space-x-3 pt-6">
       <FormStepsNav
         damId={damId}
         damData={damData}

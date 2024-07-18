@@ -377,8 +377,8 @@ export default function AddDamRiskForm({
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <div className="flex w-full flex-col items-center justify-center space-y-6">
           <div className="space-y-4">
-            {/* Risk Class of dam */}
-            <Card className="w-full drop-shadow-lg sm:w-[400px]">
+            {/* Hydropower plant */}
+            <Card className="min-w-[320px] max-w-[500px]">
               <CardHeader>
                 <CardTitle>
                   <div className="flex items-center justify-start space-x-2">
@@ -398,7 +398,7 @@ export default function AddDamRiskForm({
                   >
                     Dam Classification
                   </FormLabel>
-                  <div className="flex flex-col gap-4">
+                  <div className="flex w-full flex-col gap-4">
                     <div className="grid grid-cols-3 gap-4">
                       {/* Class */}
 
@@ -814,8 +814,8 @@ export default function AddDamRiskForm({
                   >
                     Dam Vulnerability (V)
                   </FormLabel>
-                  <div className="flex flex-col gap-4">
-                    <div className="grid w-full grid-cols-2 gap-4">
+                  <div className="flex w-full flex-col gap-4">
+                    <div className="grid grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
                         name="project_construction"
