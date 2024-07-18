@@ -160,7 +160,7 @@ export default function AddDamRiskForm({
                 description: `Success: ${data.message}`,
               });
               form.reset(); // reset the form
-              router.push(`/dam/${damId}$/files`);
+              router.push(`/dam/${damId}${risk.path}`);
             }
           })
           .finally(() => {
