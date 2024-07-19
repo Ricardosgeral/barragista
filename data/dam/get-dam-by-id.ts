@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
+import { cache } from "react";
 
-export const getDamById = async (damId: string) => {
+export const getDamById = cache(async (damId: string) => {
   try {
     const dam = await db.dam.findUnique({
       where: { id: damId },
@@ -25,4 +26,4 @@ export const getDamById = async (damId: string) => {
   } catch (error: any) {
     throw new Error(error);
   }
-};
+});

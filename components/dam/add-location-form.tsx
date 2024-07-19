@@ -376,7 +376,8 @@ export default function AddDamLocationForm({
                 <CardDescription>{location.subtext}</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid w-full grid-cols-2 gap-4">
+                <div className="relative grid w-full grid-cols-2 gap-4">
+                  {/* Country Dropdown */}
                   <FormField
                     control={form.control}
                     name="country"
@@ -397,25 +398,23 @@ export default function AddDamLocationForm({
                               />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent>
-                            {countries.map((country) => {
-                              return (
-                                <SelectItem
-                                  key={country.isoCode}
-                                  value={country.isoCode}
-                                  defaultValue="PT"
-                                >
-                                  {country.name}
-                                </SelectItem>
-                              );
-                            })}
+                          <SelectContent className="absolute z-50 mt-2">
+                            {countries.map((country) => (
+                              <SelectItem
+                                key={country.isoCode}
+                                value={country.isoCode}
+                                defaultValue="PT"
+                              >
+                                {country.name}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
-
                         <FormMessage className="text-xs" />
                       </FormItem>
                     )}
                   />
+                  {/* District Dropdown */}
                   <FormField
                     control={form.control}
                     name="state"
@@ -436,25 +435,22 @@ export default function AddDamLocationForm({
                               />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent>
-                            {states.map((state) => {
-                              return (
-                                <SelectItem
-                                  key={state.isoCode}
-                                  value={state.isoCode}
-                                >
-                                  {state.name}
-                                </SelectItem>
-                              );
-                            })}
+                          <SelectContent className="absolute z-50 mt-2">
+                            {states.map((state) => (
+                              <SelectItem
+                                key={state.isoCode}
+                                value={state.isoCode}
+                              >
+                                {state.name}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
-
                         <FormMessage className="text-xs" />
                       </FormItem>
                     )}
                   />
-
+                  {/* City Dropdown */}
                   <FormField
                     control={form.control}
                     name="city"
@@ -475,21 +471,19 @@ export default function AddDamLocationForm({
                               />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent>
-                            {cities.map((city) => {
-                              return (
-                                <SelectItem key={city.name} value={city.name}>
-                                  {city.name}
-                                </SelectItem>
-                              );
-                            })}
+                          <SelectContent className="absolute z-50 mt-2">
+                            {cities.map((city) => (
+                              <SelectItem key={city.name} value={city.name}>
+                                {city.name}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
-
                         <FormMessage className="text-xs" />
                       </FormItem>
                     )}
                   />
+                  {/* Locality Input */}
                   <FormField
                     control={form.control}
                     name="local"
@@ -507,12 +501,12 @@ export default function AddDamLocationForm({
                     )}
                   />
                 </div>
-                {/* Mapa */}
+                {/* Map Container */}
                 <h3 className="pb-2 pt-4 text-xs text-foreground/50">
                   For accurate location, pick & drag the marker or insert dam
                   Latitude and Longitude. Do not forget to save it.
                 </h3>
-                <div className="bg-white-700 mx-auto h-[320px] w-[98%] space-y-2">
+                <div className="bg-white-700 relative z-0 mx-auto h-[320px] w-[98%] space-y-2">
                   <Map
                     posix={posix}
                     zoom={zoom}
@@ -520,6 +514,7 @@ export default function AddDamLocationForm({
                   />
                 </div>
                 <div className="grid w-full grid-cols-2 gap-4 pt-4">
+                  {/* Latitude Input */}
                   <FormField
                     control={form.control}
                     name="latitude"
@@ -537,7 +532,6 @@ export default function AddDamLocationForm({
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>
-
                         <FormControl>
                           <Input
                             className="w-full rounded border text-base"
@@ -548,7 +542,7 @@ export default function AddDamLocationForm({
                       </FormItem>
                     )}
                   />
-
+                  {/* Longitude Input */}
                   <FormField
                     control={form.control}
                     name="longitude"
@@ -565,7 +559,7 @@ export default function AddDamLocationForm({
                               <p>Decimal degrees (DD) -180 to 180</p>
                             </TooltipContent>
                           </Tooltip>
-                        </TooltipProvider>{" "}
+                        </TooltipProvider>
                         <FormControl>
                           <Input
                             className="w-full rounded border text-base"
@@ -576,13 +570,13 @@ export default function AddDamLocationForm({
                       </FormItem>
                     )}
                   />
+                  {/* Hydrological Basin Dropdown */}
                   <FormField
                     control={form.control}
                     name="hydro_basin"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Hydrological basin</FormLabel>
-
                         {!isCountryPT ? (
                           <FormControl>
                             <Input
@@ -600,7 +594,7 @@ export default function AddDamLocationForm({
                                 <SelectValue placeholder="Select" />
                               </SelectTrigger>
                             </FormControl>
-                            <SelectContent>
+                            <SelectContent className="absolute z-50 mt-2">
                               <SelectGroup>
                                 <SelectLabel>Hydro Basins</SelectLabel>
                                 {hydrologicalBasinPT.map((basin) => (
@@ -619,7 +613,7 @@ export default function AddDamLocationForm({
                       </FormItem>
                     )}
                   />
-
+                  {/* Tributary Stream Input */}
                   <FormField
                     control={form.control}
                     name="water_line"

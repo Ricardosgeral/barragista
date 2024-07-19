@@ -5,7 +5,7 @@ export const DamSchema = z.object({
   name: z
     .string()
     .min(2, "Minimum of 2 caracters")
-    .max(50, "Maximum of 50 caracters"),
+    .max(60, "Maximum of 60 caracters"),
   material: z.nativeEnum(DamMaterial),
   profile: z
     .array(
@@ -34,9 +34,9 @@ export const DamLocationSchema = z.object({
   country: z.string(),
   state: z.string(),
   city: z.string().optional(),
-  local: z.string().max(30, "Maximum of 30 caracters").optional(),
-  hydro_basin: z.string().max(50).optional(),
-  water_line: z.string().max(50).optional(),
+  local: z.string().max(60, "Maximum of 60 caracters").optional(),
+  hydro_basin: z.string().max(60, "Maximum of 60 caracters").optional(),
+  water_line: z.string().max(60, "Maximum of 60 caracters").optional(),
   latitude: z.coerce
     .number({ message: "Latitude in DD required" })
     .min(-90)
@@ -57,10 +57,10 @@ export const DamProjectSchema = z.object({
   owner: z
     .string()
     .min(2, "Minimum of 2 caracters")
-    .max(30, "Maximum of 30 caracters"),
-  promotor: z.string().max(30, "Maximum of 30 caracters").optional(),
-  builder: z.string().max(30, "Maximum of 30 caracters").optional(),
-  designer: z.string().max(30, "Maximum of 30 caracters"),
+    .max(50, "Maximum of 50 caracters"),
+  promotor: z.string().max(50, "Maximum of 50 caracters").optional(),
+  builder: z.string().max(50, "Maximum of 50 caracters").optional(),
+  designer: z.string().max(50, "Maximum of 50 caracters"),
   project_year: z.string().regex(/^\d{4}$/, "YYYY format"),
   completion_year: z.string().regex(/^\d{4}$/, "YYYY format"),
   status: z.string(),
@@ -106,7 +106,10 @@ export const DamFoundationSchema = z.object({
     )
     .min(1, "Select at least one")
     .max(3),
-  foundation_geology: z.string().max(200).optional(),
+  foundation_geology: z
+    .string()
+    .max(1500, "Maximum of 1500 caracters")
+    .optional(),
   foundation_treatment: z
     .array(
       z.object({
@@ -116,55 +119,64 @@ export const DamFoundationSchema = z.object({
     )
     .min(1, "Select at least one")
     .max(5),
-  foundation_notes: z.string().max(200).optional(),
+  foundation_notes: z
+    .string()
+    .max(1500, "Maximum of 1500 caracters")
+    .optional(),
 });
 export const DamDischargeSchema = z.object({
   //BottomDischarge
   has_btd: z.boolean(),
   btd_number: z.coerce.number().min(0).optional(),
-  btd_local: z.string().max(60).optional(),
-  btd_type: z.string().max(60).optional(),
-  btd_section: z.string().max(60).optional(),
+  btd_local: z.string().max(200, "Maximum of 200 caracters").optional(),
+  btd_type: z.string().max(200, "Maximum of 200 caracters").optional(),
+  btd_section: z.string().max(200, "Maximum of 200 caracters").optional(),
   btd_diameter: z.coerce.number().min(0).optional(),
   btd_maxflow: z.coerce.number().min(0).optional(),
-  btd_upstream: z.string().max(60).optional(),
-  btd_downstream: z.string().max(60).optional(),
-  btd_energy: z.string().max(60).optional(),
-  btd_more: z.string().max(100).optional(),
+  btd_upstream: z.string().max(200, "Maximum of 200 caracters").optional(),
+  btd_downstream: z.string().max(200, "Maximum of 200 caracters").optional(),
+  btd_energy: z.string().max(200, "Maximum of 200 caracters").optional(),
+  btd_more: z.string().max(1000, "Maximum of 1000 caracters").optional(),
 });
 export const DamSpillwaySchema = z.object({
   //Spillway
   has_spillway: z.boolean(),
   spillway_number: z.coerce.number().min(0).optional(),
-  spillway_local: z.string().max(30).optional(),
-  spillway_type: z.string().max(30).optional(),
-  spillway_floodgates: z.string().max(30).optional(),
+  spillway_local: z.string().max(200, "Maximum of 200 caracters").optional(),
+  spillway_type: z.string().max(200, "Maximum of 200 caracters").optional(),
+  spillway_floodgates: z
+    .string()
+    .max(200, "Maximum of 200 caracters")
+    .optional(),
   spillway_sill_elevation: z.coerce.number().min(0).optional(),
   spillway_sill_length: z.coerce.number().min(0).optional(),
   spillway_maxflow: z.coerce.number().min(0).optional(),
-  spillway_energy: z.string().max(30).optional(),
-  spillway_more: z.string().max(100).optional(),
+  spillway_energy: z.string().max(200, "Maximum of 200 caracters").optional(),
+  spillway_more: z.string().max(1000, "Maximum of 1000 caracters").optional(),
 });
 
 export const DamEnvironmentalSchema = z.object({
   // Ecological circuit
   has_environ_circuit: z.boolean(),
   environ_local: z.string().max(30).optional(),
-  environ_type_control: z.string().max(30).optional(),
+  environ_type_control: z
+    .string()
+    .max(200, "Maximum of 200 caracters")
+    .optional(),
   environ_max_flow: z.coerce.number().min(0).optional(),
   environ_ref_flow: z.coerce.number().min(0).optional(),
-  environ_more: z.string().max(50).optional(),
+  environ_more: z.string().max(1000, "Maximum of 1000 caracters").optional(),
 });
 
 export const DamHydropowerSchema = z.object({
   //hydropower
   has_hydropower: z.boolean(),
-  hp_local: z.string().max(30).optional(),
+  hp_local: z.string().max(200, "Maximum of 200 caracters").optional(),
   hp_number_groups: z.coerce.number().min(0).optional(),
-  hp_groups_type: z.string().max(30).optional(),
+  hp_groups_type: z.string().max(200, "Maximum of 200 caracters").optional(),
   hp_power: z.coerce.number().min(0).optional(),
   hp_annual_energy: z.coerce.number().min(0).optional(),
-  hp_more: z.string().max(100).optional(),
+  hp_more: z.string().max(1000, "Maximum of 1000 caracters").optional(),
 });
 
 export const DamRiskSchema = z.object({
@@ -173,7 +185,7 @@ export const DamRiskSchema = z.object({
   persons_downstream: z.coerce.number().int().min(0).optional(),
   houses_downstream: z.coerce.number().int().min(0).optional(),
   has_infrastructures: z.boolean().optional(),
-  infrastructures: z.string().max(50).optional(),
+  infrastructures: z.string().max(200, "Maximum of 200 caracters").optional(),
   has_pei: z.boolean().optional(),
   pei: z.string().max(50).optional(),
   hazard_factor_X: z.coerce.number().min(0).optional(),

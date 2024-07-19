@@ -1,4 +1,3 @@
-import { isCuid } from "@/app/utils/isCuid";
 import HeaderBox from "@/components/header-box";
 import { getDamById } from "@/data/dam/get-dam-by-id";
 import { currentUser } from "@/lib/auth";
@@ -16,7 +15,10 @@ export default async function DamDetailsPage({ params }: DamDetailsProps) {
   const damId = params.damId;
 
   if (damId === "new") redirect("/dam/new/identification");
-  if (!isCuid(damId)) redirect("/dam");
+
+  //check if the dam id typed in browser exists in database (case the user uses a cuuid that does not exists)
+  const dam = await getDamById(damId);
+  if (!dam) redirect("/dam");
 
   const damData: Dam | null = await getDamById(damId);
 

@@ -55,11 +55,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import {
-  DamClassificationPT,
-  hazardXFactorPT,
-  potentialDamagePT,
-} from "@/data/dam/dam-classification-PT";
 
 import useDamRiskEffectsPT from "@/hooks/dam/use-damRisk-PT"; // Custom hook
 
@@ -347,27 +342,26 @@ export default function AddDamRiskForm({
                         )}
                       />
                     </div>
-                    <div className="grid w-full grid-cols-2 gap-4">
+                    <div className="grid w-full grid-cols-2 gap-4 py-2">
                       <FormField
                         control={form.control}
                         name="has_infrastructures"
                         render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between space-x-3">
-                            <div className="space-y-0.5">
+                          <FormItem className="">
+                            <div className="">
                               <TooltipProvider>
                                 <Tooltip>
                                   <TooltipTrigger asChild>
-                                    <FormLabel>
-                                      <span className="flex items-center justify-start gap-2">
-                                        Infrastructures
-                                        <LuHelpCircle className="text-xs" />
-                                      </span>
+                                    <FormLabel className="flex gap-x-2 py-2">
+                                      Important infrastructures?
+                                      <LuHelpCircle className="text-xs" />
                                     </FormLabel>
                                   </TooltipTrigger>
                                   <TooltipContent>
                                     <p>
                                       Important or relevant infrastructures
-                                      affected by dam failure
+                                      affected by dam failure. <br />
+                                      If so, you should mention which ones.
                                     </p>
                                   </TooltipContent>
                                 </Tooltip>
@@ -409,9 +403,58 @@ export default function AddDamRiskForm({
                         render={({ field }) => (
                           <FormItem>
                             <div className="flex flex-row items-center gap-2.5">
-                              <FormLabel className="font-bold">
-                                Class*
-                              </FormLabel>
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <FormLabel>
+                                      <span className="flex items-center justify-start gap-2">
+                                        Dam Class
+                                        <LuHelpCircle className="text-xs" />
+                                      </span>
+                                    </FormLabel>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    Dam Hazard Classification and Potential
+                                    Damage <br />
+                                    (updates automatically but can be set
+                                    manually)
+                                    <div className="flex flex-col items-start justify-start pl-5">
+                                      <ul className="list-disc py-3">
+                                        <li className="pt-2 font-bold">
+                                          Class I:
+                                        </li>
+                                        <ul>
+                                          <li> Y ≥ 10 and X ≥ 1000</li>
+                                        </ul>
+                                        <li className="pt-2 font-bold">
+                                          Class II:
+                                        </li>
+                                        <ul>
+                                          <li>Y ≥ 10 and X &lt; 1000, or</li>
+                                          <li>
+                                            0 &lt; Y &lt; 10, regardless of the
+                                            value of X, or
+                                          </li>
+                                          <li>
+                                            Presence of important
+                                            infrastructure, facilities, <br />
+                                            and environmental assets
+                                          </li>
+                                        </ul>
+                                        <li className="pt-2 font-bold">
+                                          Class III:
+                                        </li>
+                                        <ul>
+                                          <li>
+                                            Y = 0, regardless of the value of X
+                                          </li>
+                                        </ul>
+                                      </ul>
+                                    </div>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
+                              <FormLabel className="font-bold"></FormLabel>
                               <Popover>
                                 <PopoverTrigger asChild>
                                   <FormControl>
@@ -496,20 +539,41 @@ export default function AddDamRiskForm({
                     External or Enviornmental Factors (E)
                   </FormLabel>
                   <div className="flex w-full flex-col gap-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid w-full grid-cols-2 gap-4 py-2">
                       <FormField
                         control={form.control}
                         name="sismicity"
                         render={({ field }) => (
                           <FormItem className="w-full">
-                            <FormLabel>
-                              Sismicity, &alpha;<sub>1</sub>
-                            </FormLabel>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <FormLabel className="flex gap-x-2 py-2">
+                                    <p>
+                                      Sismicity, &alpha; <sub> 1 </sub>
+                                    </p>
+                                    <LuHelpCircle className="text-xs" />
+                                  </FormLabel>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="flex space-y-2 text-sm font-thin">
+                                    Based on &beta; - Maximum acceleration
+                                    corresponding <br />
+                                    to the maximum design earthquake <br />
+                                    <br />1 - Very low (β &lt; 0,05g)
+                                    <br /> 2 - Low (0.1g &lt; β &lt; 0.2g)
+                                    <br /> 3 - Average (0.1g &lt; β &lt; 0.2g)
+                                    <br /> 4 - Strong (0.1g &lt; β &lt; 0.2g)
+                                    <br /> 5 - Very strong β &gt; 0.4g
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                             <FormControl>
                               <Input
                                 type="number"
                                 min={0}
-                                max={6}
+                                max={5}
                                 step={1}
                                 className="rounded border text-base"
                                 {...field}
@@ -524,9 +588,29 @@ export default function AddDamRiskForm({
                         name="geo_conditions"
                         render={({ field }) => (
                           <FormItem className="w-full">
-                            <FormLabel>
-                              Geo, &alpha;<sub>2</sub>
-                            </FormLabel>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <FormLabel className="flex gap-x-2 py-2">
+                                    <p>
+                                      Geology/geotech, &alpha; <sub> 2 </sub>
+                                    </p>
+                                    <LuHelpCircle className="text-xs" />
+                                  </FormLabel>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="flex space-y-2 text-sm font-thin">
+                                    Based on Geological and geotechnical
+                                    conditions <br /> <br />1 - Very good
+                                    <br /> 2 - Good
+                                    <br /> 3 - Acceptable
+                                    <br /> 4 - —
+                                    <br /> 5 - Poor
+                                    <br /> 6 - Poor to bad
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                             <FormControl>
                               <Input
                                 type="number"
@@ -546,9 +630,41 @@ export default function AddDamRiskForm({
                         name="design_flow"
                         render={({ field }) => (
                           <FormItem className="w-full">
-                            <FormLabel>
-                              Design flow, &alpha;<sub>3</sub>
-                            </FormLabel>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <FormLabel className="flex gap-x-2 py-2">
+                                    <p>
+                                      Design flood, &alpha; <sub> 3 </sub>
+                                    </p>
+                                    <LuHelpCircle className="text-xs" />
+                                  </FormLabel>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="flex space-y-2 text-sm font-thin">
+                                    Based on &delta; - Percentage reduction of
+                                    <br />
+                                    the freeboard resulting from the damping of
+                                    <br />
+                                    the revised design flood (freeboard: the
+                                    <br />
+                                    difference between the crest elevation and
+                                    <br />
+                                    the maximum flood level) <br /> <br />1 -
+                                    Minimum (&delta; &lt; 5%)
+                                    <br /> 2 - Low (5 &lt; &delta; &lt; 15%, for
+                                    concrete dams)
+                                    <br /> 3 - Low (5 &lt; &delta; &lt; 10%, for
+                                    embankment dams)
+                                    <br /> 4 - Average (15 &lt; &delta; &lt;
+                                    25%, for concrete dams)
+                                    <br /> 5 - Average (10 &lt; &delta; &lt;
+                                    20%, for embankment dams)
+                                    <br /> 6 - High
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                             <FormControl>
                               <Input
                                 type="number"
@@ -568,14 +684,33 @@ export default function AddDamRiskForm({
                         name="reservoir_management"
                         render={({ field }) => (
                           <FormItem className="w-full">
-                            <FormLabel>
-                              Reservoir, &alpha;<sub>4</sub>
-                            </FormLabel>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <FormLabel className="flex gap-x-2 py-2">
+                                    <p>
+                                      Reservoir , &alpha;
+                                      <sub> 4 </sub>
+                                    </p>
+                                    <LuHelpCircle className="text-xs" />
+                                  </FormLabel>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="flex space-y-2 text-sm font-thin">
+                                    Based on the type of management of the dam
+                                    reservoir <br /> <br />1 - Multiyear, annual
+                                    or seasonal
+                                    <br /> 2 - Weekly
+                                    <br /> 3 - Daily and with pumping
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                             <FormControl>
                               <Input
                                 type="number"
                                 min={0}
-                                max={6}
+                                max={3}
                                 step={1}
                                 className="rounded border text-base"
                                 {...field}
@@ -590,14 +725,34 @@ export default function AddDamRiskForm({
                         name="env_harshness"
                         render={({ field }) => (
                           <FormItem className="w-full">
-                            <FormLabel>
-                              Env harshness , &alpha;<sub>5</sub>
-                            </FormLabel>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <FormLabel className="flex gap-x-2 py-2">
+                                    <p>
+                                      Harshness conditions, &alpha;
+                                      <sub> 5 </sub>
+                                    </p>
+                                    <LuHelpCircle className="text-xs" />
+                                  </FormLabel>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="flex text-sm font-thin">
+                                    What is the aggressiveness of environmental
+                                    actions <br /> <br />1 - Minimal
+                                    <br /> 2 - Weak
+                                    <br /> 3 - Average
+                                    <br /> 4 - Strong
+                                    <br /> 5 - Very strong
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                             <FormControl>
                               <Input
                                 type="number"
                                 min={0}
-                                max={6}
+                                max={5}
                                 step={1}
                                 className="rounded border text-base"
                                 {...field}
@@ -658,9 +813,30 @@ export default function AddDamRiskForm({
                         name="project_construction"
                         render={({ field }) => (
                           <FormItem className="w-full">
-                            <FormLabel>
-                              Project, &alpha;<sub>6</sub>
-                            </FormLabel>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <FormLabel className="flex gap-x-2 py-2">
+                                    <p>
+                                      Project/construction, &alpha;
+                                      <sub> 5 </sub>
+                                    </p>
+                                    <LuHelpCircle className="text-xs" />
+                                  </FormLabel>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="flex text-sm font-thin">
+                                    Project and construction methods are <br />
+                                    <br /> 1 - Adequate
+                                    <br /> 2 - —
+                                    <br /> 3 - Acceptable
+                                    <br /> 4 - —
+                                    <br /> 5 - —
+                                    <br /> 6 - Not adequate
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                             <FormControl>
                               <Input
                                 type="number"
@@ -704,9 +880,34 @@ export default function AddDamRiskForm({
                         name="discharge_structures"
                         render={({ field }) => (
                           <FormItem className="w-full">
-                            <FormLabel>
-                              Discharge, &alpha;<sub>8</sub>
-                            </FormLabel>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <FormLabel className="flex gap-x-2 py-2">
+                                    <p>
+                                      Hydraulic structures, &alpha;
+                                      <sub> 5 </sub>
+                                    </p>
+                                    <LuHelpCircle className="text-xs" />
+                                  </FormLabel>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="flex text-sm font-thin">
+                                    The available hydraulic/safety structures
+                                    are
+                                    <br />
+                                    <br /> 1 - Reliable (flood gates without
+                                    gates or without possible submersion)
+                                    <br /> 2 - Reliable (flood gates with gates
+                                    or with possible submersion)
+                                    <br /> 3 - —
+                                    <br /> 4 - —
+                                    <br /> 5 - —
+                                    <br /> 6 - Insufficient or inoperational
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                             <FormControl>
                               <Input
                                 type="number"
@@ -727,9 +928,31 @@ export default function AddDamRiskForm({
                         name="maintenance"
                         render={({ field }) => (
                           <FormItem className="w-full">
-                            <FormLabel>
-                              Maintenace, &alpha;<sub>9</sub>
-                            </FormLabel>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <FormLabel className="flex gap-x-2 py-2">
+                                    <p>
+                                      Maintenance, &alpha;
+                                      <sub> 5 </sub>
+                                    </p>
+                                    <LuHelpCircle className="text-xs" />
+                                  </FormLabel>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="flex text-sm font-thin">
+                                    Preservation and maintenance conditions
+                                    <br />
+                                    <br /> 1 - Very good
+                                    <br /> 2 - Good
+                                    <br /> 3 - Reasonable
+                                    <br /> 4 - —
+                                    <br /> 5 - —
+                                    <br /> 6 - Insufficient
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                             <FormControl>
                               <Input
                                 type="number"
@@ -788,15 +1011,31 @@ export default function AddDamRiskForm({
                   >
                     Potential Damage (D)
                   </FormLabel>
-                  <div className="flex-flex-col-gap-4">
-                    <div className="grid w-full grid-cols-2 gap-4">
+                  <div className="flex w-full flex-col gap-4">
+                    <div className="grid grid-cols-2 gap-4 py-2">
                       <FormField
                         control={form.control}
                         name="has_pei"
                         render={({ field }) => (
-                          <FormItem className="flex flex-row items-center justify-between space-x-3 pb-3">
-                            <div className="space-y-0.5">
-                              <FormLabel>Internal Emergency Plan?</FormLabel>
+                          <FormItem className="">
+                            <div className="">
+                              <TooltipProvider>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <FormLabel className="flex gap-x-2 py-2">
+                                      Internal emergency plan?
+                                      <LuHelpCircle className="text-xs" />
+                                    </FormLabel>
+                                  </TooltipTrigger>
+                                  <TooltipContent>
+                                    <p>
+                                      Check if the dam has an approved plan.
+                                      <br />
+                                      If yes you can include additional info.
+                                    </p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TooltipProvider>
                             </div>
                             <FormControl>
                               <Switch
@@ -833,9 +1072,32 @@ export default function AddDamRiskForm({
                         name="risk_D"
                         render={({ field }) => (
                           <FormItem className="flex flex-row items-baseline space-x-4">
-                            <FormLabel className="flex flex-nowrap font-bold">
-                              Factor D:
-                            </FormLabel>
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <FormLabel>
+                                    <span className="flex items-center justify-start gap-2 font-bold">
+                                      Factor D:
+                                      <LuHelpCircle className="text-xs" />
+                                    </span>
+                                  </FormLabel>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                  <p className="flex text-sm font-thin">
+                                    Potential Damage, based on dam class <br />
+                                    (obtained from data)
+                                    <br />
+                                    <br /> 1 - Class III
+                                    <br /> 2 - Class II (with no residents)
+                                    <br /> 3 - Class II (with residents)
+                                    <br /> 4 - Class I (with IEP)
+                                    <br /> 5 - —
+                                    <br /> 6 - Class I (with no IEP)
+                                  </p>
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
+
                             <FormControl>
                               <Input
                                 readOnly={true}

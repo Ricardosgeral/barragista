@@ -3,7 +3,6 @@ import AddDamProjectForm from "@/components/dam/add-project-form";
 import AddDamHydrologyForm from "@/components/dam/add-hydrology-form";
 
 import { currentUser } from "@/lib/auth";
-import { isCuid } from "@/app/utils/isCuid";
 import { redirect } from "next/navigation";
 import {
   Dam,
@@ -58,10 +57,13 @@ export default async function DamFeaturePage({ params }: DamFeatureProps) {
   const user = await currentUser(); // uses auth from lib for rendering in server components
   if (!user) redirect("/auth/register");
 
-  if (!isCuid(damId) && damId !== "new") redirect("/dam");
+  //check if the dam id typed in browser exists in database (case the user uses a cuuid that does not exists)
+  const dam = await getDamById(damId);
+
+  if (!dam && damId !== "new") redirect("/dam"); //the damId typed does not exist in db
 
   // if there is a recognized id in dam it must exists
-  if (!(isCuid(damId) || damFeature === "identification"))
+  if (!(dam || damFeature === "identification"))
     redirect("/dam/new/identification");
 
   const damData: Dam | null = await getDamById(damId);
