@@ -153,9 +153,10 @@ export default async function DamFeaturePage({ params }: DamFeatureProps) {
       damEnvironmental: damEnvironmentalData ? damEnvironmentalData[0] : null,
     }),
     ...(damFeature === "risk" && {
-      damRisk: damRiskData ? damRiskData[0] : null,
+      damLocation: damLocationData ? damLocationData[0] : null,
       damBody: damBodyData ? damBodyData[0] : null,
       damReservoir: damReservoirData ? damReservoirData[0] : null,
+      damRisk: damRiskData ? damRiskData[0] : null,
     }),
   };
 

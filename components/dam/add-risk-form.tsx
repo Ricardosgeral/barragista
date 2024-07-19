@@ -2,7 +2,13 @@
 
 import { DamRiskSchema } from "@/schemas/dam-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DamBody, DamClass, DamReservoir, DamRisk } from "@prisma/client";
+import {
+  DamLocation,
+  DamBody,
+  DamClass,
+  DamReservoir,
+  DamRisk,
+} from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -62,6 +68,7 @@ const risk = damFormSteps.sidebarNav[11];
 
 interface AddDamRiskFormProps {
   damId: string | null;
+  damLocation: DamLocation | null;
   damRisk: DamRisk | null; //if null will create a dam
   damBody: DamBody | null;
   damReservoir: DamReservoir | null;
@@ -73,6 +80,7 @@ const damClassArray = Object.entries(DamClass).map(([key, value]) => ({
 }));
 export default function AddDamRiskForm({
   damId,
+  damLocation,
   damRisk,
   damBody,
   damReservoir,
@@ -81,6 +89,8 @@ export default function AddDamRiskForm({
   const [isDeleting, setIsDeleting] = useState(false);
 
   const router = useRouter();
+
+  const country = damLocation?.country;
 
   const onSubmit = (values: z.infer<typeof DamRiskSchema>) => {
     setIsLoading(true);
@@ -229,6 +239,7 @@ export default function AddDamRiskForm({
                     className="text-md flex font-extrabold text-yellow-500"
                   >
                     Dam Classification
+                    {country === "PT" && ` Standard: ${country} - RSB(2018)`}
                   </FormLabel>
                   <div className="flex w-full flex-col gap-4">
                     <div className="grid grid-cols-3 gap-4">
@@ -314,7 +325,7 @@ export default function AddDamRiskForm({
                                 <TooltipTrigger asChild>
                                   <FormLabel>
                                     <span className="flex items-center justify-start gap-2">
-                                      Persons
+                                      Residents
                                       <LuHelpCircle className="text-xs" />
                                     </span>
                                   </FormLabel>
@@ -534,6 +545,8 @@ export default function AddDamRiskForm({
                     className="text-md font-extrabold text-yellow-500"
                   >
                     Risk Factors
+                    {country === "PT" &&
+                      `: ${country} - RSB(2018) & Support docs`}
                   </FormLabel>
                   <FormLabel style={{ fontVariant: "small-caps" }} className="">
                     External or Enviornmental Factors (E)

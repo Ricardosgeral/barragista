@@ -256,7 +256,7 @@ export default function AddDamLocationForm({
                 variant: "success",
                 description: `Success: ${data.message}`,
               });
-              router.push(`/dam/${damId}/project`);
+              router.push(`/dam/${damId}/${location.path}`);
             }
           })
           .finally(() => {
