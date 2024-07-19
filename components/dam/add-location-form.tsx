@@ -134,7 +134,6 @@ export default function AddDamLocationForm({
       setIsCountryPT(true);
     } else {
       setIsCountryPT(false);
-      form.setValue("hydro_basin", "");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.watch("country")]);
