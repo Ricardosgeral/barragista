@@ -397,7 +397,7 @@ export default function AddDamLocationForm({
                               />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent className="absolute z-50 mt-2">
+                          <SelectContent className="mt-2">
                             {countries.map((country) => (
                               <SelectItem
                                 key={country.isoCode}
@@ -434,7 +434,7 @@ export default function AddDamLocationForm({
                               />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent className="absolute z-50 mt-2">
+                          <SelectContent className="mt-2">
                             {states.map((state) => (
                               <SelectItem
                                 key={state.isoCode}
@@ -470,7 +470,7 @@ export default function AddDamLocationForm({
                               />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent className="absolute z-50 mt-2">
+                          <SelectContent className="mt-2">
                             {cities.map((city) => (
                               <SelectItem key={city.name} value={city.name}>
                                 {city.name}
@@ -593,7 +593,7 @@ export default function AddDamLocationForm({
                                 <SelectValue placeholder="Select" />
                               </SelectTrigger>
                             </FormControl>
-                            <SelectContent className="absolute z-50 mt-2">
+                            <SelectContent className="mt-2">
                               <SelectGroup>
                                 <SelectLabel>Hydro Basins</SelectLabel>
                                 {hydrologicalBasinPT.map((basin) => (
