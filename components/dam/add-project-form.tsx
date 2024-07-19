@@ -114,7 +114,7 @@ export default function AddDamProjectForm({
 
   const handleDelete = (damId: string, damProject: DamProject) => {
     if (damId && damProject) {
-      // update with a given dam ID
+      // delete with a given dam ID
       startTransition(() => {
         setIsDeleting(true);
         deleteDamFeature("project", damId)
@@ -129,11 +129,13 @@ export default function AddDamProjectForm({
                 variant: "success",
                 description: `Success: ${data.message}`,
               });
-              form.reset(); // reset the form
-              router.push(`/dam/${damId}${project.path}`);
             }
+            router.push(`/dam/${damId}${project.path}`);
           })
-          .finally(() => setIsDeleting(true));
+          .finally(() => {
+            setIsDeleting(false);
+            router.refresh();
+          });
       });
     }
   };
@@ -152,7 +154,7 @@ export default function AddDamProjectForm({
       designer: "",
       project_year: "",
       completion_year: "",
-      status: "operational",
+      status: "",
     }) as z.infer<typeof DamProjectSchema>,
   });
 
@@ -253,6 +255,9 @@ export default function AddDamProjectForm({
                         <FormLabel>Project year*</FormLabel>
                         <FormControl>
                           <Input
+                            type="number"
+                            min={1000}
+                            max={3000}
                             className="w-full rounded border text-base"
                             {...field}
                           />
@@ -270,6 +275,9 @@ export default function AddDamProjectForm({
                         <FormLabel>Completion year*</FormLabel>
                         <FormControl>
                           <Input
+                            type="number"
+                            min={1000}
+                            max={3000}
                             className="w-full rounded border text-base"
                             {...field}
                           />
