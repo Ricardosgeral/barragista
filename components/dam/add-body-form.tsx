@@ -136,7 +136,10 @@ export default function AddDamBodyForm({
           })
           .finally(() => {
             clearHazardX(damId); // makes the hazard factor X null because depends on damBody
-            setIsDeleting(false);
+            setIsDeleting(false); //router.refresh();
+            setTimeout(() => {
+              window.location.reload();
+            }, 100);
           });
       });
     }

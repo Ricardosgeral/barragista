@@ -113,7 +113,12 @@ export default function AddDamFoundationForm({
               }
             })
 
-            .finally(() => setIsLoading(false));
+            .finally(() => {
+              setIsDeleting(false); //router.refresh();
+              setTimeout(() => {
+                window.location.reload();
+              }, 100);
+            });
         });
       }
     }

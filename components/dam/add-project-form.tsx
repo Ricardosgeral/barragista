@@ -55,9 +55,7 @@ export default function AddDamProjectForm({
 }: AddDamProjectFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-
   const router = useRouter();
-
   const onSubmit = (values: z.infer<typeof DamProjectSchema>) => {
     setIsLoading(true);
     if (damProject && damId) {
@@ -134,7 +132,10 @@ export default function AddDamProjectForm({
           })
           .finally(() => {
             setIsDeleting(false);
-            router.refresh();
+            //router.refresh();
+            setTimeout(() => {
+              window.location.reload();
+            }, 100);
           });
       });
     }

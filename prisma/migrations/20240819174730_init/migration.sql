@@ -35,7 +35,7 @@ CREATE TABLE "dam" (
     "damRiskId" TEXT,
     "userId" TEXT,
     "data_creation" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "data_modified" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "data_modified" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "dam_pkey" PRIMARY KEY ("id")
 );
@@ -217,7 +217,7 @@ CREATE TABLE "damHydropower" (
 CREATE TABLE "damRisk" (
     "id" TEXT NOT NULL,
     "class" "DamClass" NOT NULL DEFAULT 'Unknown',
-    "hazard_factor_X" DOUBLE PRECISION DEFAULT 0,
+    "hazard_factor_X" DOUBLE PRECISION DEFAULT 0.0,
     "houses_downstream" INTEGER DEFAULT 0,
     "persons_downstream" INTEGER DEFAULT 0,
     "has_infrastructures" BOOLEAN DEFAULT false,
@@ -255,6 +255,186 @@ CREATE TABLE "damFiles" (
     "damId" TEXT NOT NULL,
 
     CONSTRAINT "damFiles_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Inspection" (
+    "id" TEXT NOT NULL,
+    "label" TEXT NOT NULL,
+    "date_start" TIMESTAMP(3) NOT NULL,
+    "date_end" TIMESTAMP(3) NOT NULL,
+    "weather" TEXT NOT NULL,
+    "weather_prior" TEXT NOT NULL,
+    "reservoir_level" DOUBLE PRECISION NOT NULL,
+    "tailwater_level" DOUBLE PRECISION,
+    "inspection_phase" TEXT NOT NULL,
+    "inspection_type" TEXT NOT NULL,
+    "equipments_reading" BOOLEAN NOT NULL,
+    "notes" TEXT NOT NULL,
+    "summary" TEXT,
+    "dam_id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Inspection_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Person" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "entity" TEXT NOT NULL,
+    "role" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Person_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Section" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "section_level" INTEGER NOT NULL,
+    "section_number" INTEGER NOT NULL,
+    "parentId" TEXT,
+    "notes" TEXT,
+    "inspected" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Section_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Item" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "inspectionId" TEXT NOT NULL,
+    "section_id" TEXT NOT NULL,
+    "notes" TEXT,
+    "inspected" BOOLEAN NOT NULL DEFAULT false,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Item_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Anomaly" (
+    "id" TEXT NOT NULL,
+    "statusId" TEXT NOT NULL,
+    "hint" TEXT,
+    "magnitudeId" TEXT NOT NULL,
+    "perceivedRiskId" TEXT NOT NULL,
+    "item_id" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Anomaly_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "AnomalyStatus" (
+    "id" TEXT NOT NULL,
+    "label" TEXT NOT NULL,
+    "color" TEXT NOT NULL,
+    "hint" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "AnomalyStatus_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "AnomalyPerceivedRisk" (
+    "id" TEXT NOT NULL,
+    "level" TEXT NOT NULL,
+    "color" TEXT NOT NULL,
+    "hint" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "AnomalyPerceivedRisk_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "AnomalyMagnitude" (
+    "id" TEXT NOT NULL,
+    "level" TEXT NOT NULL,
+    "color" TEXT NOT NULL,
+    "hint" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "AnomalyMagnitude_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Photo" (
+    "id" TEXT NOT NULL,
+    "order" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "url" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "inspectionId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Photo_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "ItemOnPhoto" (
+    "item_id" TEXT NOT NULL,
+    "photo_id" TEXT NOT NULL,
+
+    CONSTRAINT "ItemOnPhoto_pkey" PRIMARY KEY ("item_id","photo_id")
+);
+
+-- CreateTable
+CREATE TABLE "PersonOnInspection" (
+    "personId" TEXT NOT NULL,
+    "inspectionId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "PersonOnInspection_pkey" PRIMARY KEY ("personId","inspectionId")
+);
+
+-- CreateTable
+CREATE TABLE "SectionOnInspection" (
+    "sectionId" TEXT NOT NULL,
+    "inspectionId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "SectionOnInspection_pkey" PRIMARY KEY ("sectionId","inspectionId")
+);
+
+-- CreateTable
+CREATE TABLE "Recommendation" (
+    "id" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+    "priority" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Recommendation_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "InspectionOnRecommendation" (
+    "inspectionId" TEXT NOT NULL,
+    "recommendationId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "InspectionOnRecommendation_pkey" PRIMARY KEY ("inspectionId","recommendationId")
 );
 
 -- CreateTable
@@ -403,6 +583,24 @@ CREATE UNIQUE INDEX "damRisk_damId_key" ON "damRisk"("damId");
 CREATE INDEX "damFiles_damId_idx" ON "damFiles"("damId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "AnomalyStatus_label_key" ON "AnomalyStatus"("label");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "AnomalyStatus_color_key" ON "AnomalyStatus"("color");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "AnomalyPerceivedRisk_level_key" ON "AnomalyPerceivedRisk"("level");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "AnomalyPerceivedRisk_color_key" ON "AnomalyPerceivedRisk"("color");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "AnomalyMagnitude_level_key" ON "AnomalyMagnitude"("level");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "AnomalyMagnitude_color_key" ON "AnomalyMagnitude"("color");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
@@ -467,6 +665,60 @@ ALTER TABLE "damRisk" ADD CONSTRAINT "damRisk_damId_fkey" FOREIGN KEY ("damId") 
 
 -- AddForeignKey
 ALTER TABLE "damFiles" ADD CONSTRAINT "damFiles_damId_fkey" FOREIGN KEY ("damId") REFERENCES "dam"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Inspection" ADD CONSTRAINT "Inspection_dam_id_fkey" FOREIGN KEY ("dam_id") REFERENCES "dam"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Inspection" ADD CONSTRAINT "Inspection_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Section" ADD CONSTRAINT "Section_parentId_fkey" FOREIGN KEY ("parentId") REFERENCES "Section"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Item" ADD CONSTRAINT "Item_inspectionId_fkey" FOREIGN KEY ("inspectionId") REFERENCES "Inspection"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Item" ADD CONSTRAINT "Item_section_id_fkey" FOREIGN KEY ("section_id") REFERENCES "Section"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Anomaly" ADD CONSTRAINT "Anomaly_statusId_fkey" FOREIGN KEY ("statusId") REFERENCES "AnomalyStatus"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Anomaly" ADD CONSTRAINT "Anomaly_magnitudeId_fkey" FOREIGN KEY ("magnitudeId") REFERENCES "AnomalyMagnitude"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Anomaly" ADD CONSTRAINT "Anomaly_perceivedRiskId_fkey" FOREIGN KEY ("perceivedRiskId") REFERENCES "AnomalyPerceivedRisk"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Anomaly" ADD CONSTRAINT "Anomaly_item_id_fkey" FOREIGN KEY ("item_id") REFERENCES "Item"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Photo" ADD CONSTRAINT "Photo_inspectionId_fkey" FOREIGN KEY ("inspectionId") REFERENCES "Inspection"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ItemOnPhoto" ADD CONSTRAINT "ItemOnPhoto_item_id_fkey" FOREIGN KEY ("item_id") REFERENCES "Item"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "ItemOnPhoto" ADD CONSTRAINT "ItemOnPhoto_photo_id_fkey" FOREIGN KEY ("photo_id") REFERENCES "Photo"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PersonOnInspection" ADD CONSTRAINT "PersonOnInspection_personId_fkey" FOREIGN KEY ("personId") REFERENCES "Person"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PersonOnInspection" ADD CONSTRAINT "PersonOnInspection_inspectionId_fkey" FOREIGN KEY ("inspectionId") REFERENCES "Inspection"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SectionOnInspection" ADD CONSTRAINT "SectionOnInspection_sectionId_fkey" FOREIGN KEY ("sectionId") REFERENCES "Section"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SectionOnInspection" ADD CONSTRAINT "SectionOnInspection_inspectionId_fkey" FOREIGN KEY ("inspectionId") REFERENCES "Inspection"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "InspectionOnRecommendation" ADD CONSTRAINT "InspectionOnRecommendation_inspectionId_fkey" FOREIGN KEY ("inspectionId") REFERENCES "Inspection"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "InspectionOnRecommendation" ADD CONSTRAINT "InspectionOnRecommendation_recommendationId_fkey" FOREIGN KEY ("recommendationId") REFERENCES "Recommendation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;

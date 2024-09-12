@@ -62,6 +62,7 @@ model Dam {
     damHydropowerId    String?           @unique
     damRisk            DamRisk?
     damRiskId          String?           @unique
+    inspections        Inspection[]
 
     // Non-cascading relation
     damFiles DamFile[]
@@ -70,7 +71,7 @@ model Dam {
     user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
     userId        String?  @map("userId")
     data_creation DateTime @default(now())
-    data_modified DateTime @default(now())
+    data_modified DateTime @updatedAt
 
     // Index for performance optimization
     @@index([damRiskId, damLocationId, damProjectId, damHydrologyId, damReservoirId, damBodyId, damFoundationId, damDischargeId, damSpillwayId, damEnvironmentalId, damHydropowerId, userId])

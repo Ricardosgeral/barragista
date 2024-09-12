@@ -1,0 +1,179 @@
+model Inspection {
+  id                 String                       @id @default(cuid())
+  label              String // Label or title of the visual inspection
+  date_start         DateTime // Start date and time of the inspection
+  date_end           DateTime // End date and time of the inspection
+  weather            String // Weather conditions during the inspection
+  weather_prior      String // Weather conditions prior to the inspection
+  reservoir_level    Float // Reservoir water level during the inspection
+  tailwater_level    Float? // Tailwater level during the inspection
+  inspection_phase   String // Phase of the inspection
+  inspection_type    String // Type of inspection
+  equipments_reading Boolean // Indicates if equipment readings were taken
+  notes              String // Additional notes about the inspection
+  summary            String? // Summary of the inspection
+  dam_id             String
+  dam                Dam                          @relation(fields: [dam_id], references: [id])
+  user_id            String
+  user               User                         @relation(fields: [user_id], references: [id])
+  persons            PersonOnInspection[]
+  photos             Photo[]
+  items              Item[]
+  sections           SectionOnInspection[]
+  recommendations    InspectionOnRecommendation[]
+  createdAt          DateTime                     @default(now())
+  updatedAt          DateTime                     @updatedAt
+}
+
+model Person {
+  id          String               @id @default(cuid())
+  name        String // Name of the person
+  entity      String // Entity or organization the person belongs to
+  role        String // Role of the person in the inspection
+  inspections PersonOnInspection[]
+  createdAt   DateTime             @default(now())
+  updatedAt   DateTime             @updatedAt
+}
+
+model Section {
+  id             String                @id @default(cuid())
+  name           String // Name of the section
+  description    String // Description of the section
+  section_level  Int // Level of the section in the hierarchy
+  section_number Int // Number of the section
+  parentId       String?
+  parent         Section?              @relation("SectionChildren", fields: [parentId], references: [id])
+  children       Section[]             @relation("SectionChildren")
+  items          Item[]
+  inspections    SectionOnInspection[]
+  notes          String? // Additional notes about the section
+  inspected      Boolean               @default(false) // Indicates if the section was inspected
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+}
+
+model Item {
+  id           String        @id @default(cuid())
+  name         String // Name of the item
+  description  String? // Description of the item
+  inspectionId String
+  section_id   String
+  inspection   Inspection    @relation(fields: [inspectionId], references: [id])
+  section      Section       @relation(fields: [section_id], references: [id])
+  anomalies    Anomaly[]
+  notes        String? // Additional notes about the item
+  inspected    Boolean       @default(false) // Indicates if the item was inspected
+  photos       ItemOnPhoto[] // Relationship to associate photos with items
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Anomaly {
+  id              String               @id @default(cuid())
+  statusId        String
+  hint            String?
+  magnitudeId     String
+  perceivedRiskId String
+  item_id         String
+  status          AnomalyStatus        @relation(fields: [statusId], references: [id])
+  magnitude       AnomalyMagnitude     @relation(fields: [magnitudeId], references: [id])
+  perceivedRisk   AnomalyPerceivedRisk @relation(fields: [perceivedRiskId], references: [id])
+  item            Item                 @relation(fields: [item_id], references: [id])
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+}
+
+model AnomalyStatus {
+  id        String    @id @default(cuid())
+  label     String    @unique // Descriptive label of the anomaly status
+  color     String    @unique // Unique color associated with the status
+  hint      String? // Additional hint or description of the status
+  anomalies Anomaly[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model AnomalyPerceivedRisk {
+  id        String    @id @default(cuid())
+  level     String    @unique // Level of perceived risk
+  color     String    @unique // Unique color associated with the risk level
+  hint      String? // Additional hint or description of the risk level
+  anomalies Anomaly[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model AnomalyMagnitude {
+  id        String    @id @default(cuid())
+  level     String    @unique // Level of anomaly magnitude
+  color     String    @unique // Unique color associated with the magnitude level
+  hint      String? // Additional hint or description of the magnitude level
+  anomalies Anomaly[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Photo {
+  id           String        @id @default(cuid())
+  order        Int
+  name         String
+  description  String
+  url          String
+  type         String
+  items        ItemOnPhoto[] // Relationship to associate items with photos
+  inspectionId String
+  inspection   Inspection    @relation(fields: [inspectionId], references: [id])
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model ItemOnPhoto {
+  item_id  String
+  photo_id String
+  item     Item   @relation(fields: [item_id], references: [id])
+  photo    Photo  @relation(fields: [photo_id], references: [id])
+
+  @@id([item_id, photo_id])
+}
+
+model PersonOnInspection {
+  personId     String
+  inspectionId String
+  person       Person     @relation(fields: [personId], references: [id])
+  inspection   Inspection @relation(fields: [inspectionId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@id([personId, inspectionId])
+}
+
+model SectionOnInspection {
+  sectionId    String
+  inspectionId String
+  section      Section    @relation(fields: [sectionId], references: [id])
+  inspection   Inspection @relation(fields: [inspectionId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@id([sectionId, inspectionId])
+}
+
+model Recommendation {
+  id          String                       @id @default(cuid())
+  content     String
+  priority    String
+  inspections InspectionOnRecommendation[]
+  createdAt   DateTime                     @default(now())
+  updatedAt   DateTime                     @updatedAt
+}
+
+model InspectionOnRecommendation {
+  inspectionId     String
+  recommendationId String
+  inspection       Inspection     @relation(fields: [inspectionId], references: [id])
+  recommendation   Recommendation @relation(fields: [recommendationId], references: [id])
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  @@id([inspectionId, recommendationId])
+}

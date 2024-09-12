@@ -10,11 +10,13 @@ model User {
   emailVerified         DateTime?              @map("email_verified")
   image                 String?
   password              String?
+  company               String?
   role                  UserRole               @default(USER)
   accounts              Account[]
   isTwoFactorEnabled    Boolean                @default(false)
   twoFactorConfirmation TwoFactorConfirmation?
   dams                  Dam[]
+  inspections           Inspection[]
 
   @@map("users")
 }

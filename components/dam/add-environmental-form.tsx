@@ -135,7 +135,12 @@ export default function AddDamEnvironmentalForm({
               router.push(`/dam/${damId}${environmental.path}`);
             }
           })
-          .finally(() => setIsDeleting(true));
+          .finally(() => {
+            setIsDeleting(false); //router.refresh();
+            setTimeout(() => {
+              window.location.reload();
+            }, 100);
+          });
       });
     }
   };

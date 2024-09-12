@@ -129,7 +129,12 @@ export default function AddDamSpillwayForm({
               router.push(`/dam/${damId}${spillway.path}`);
             }
           })
-          .finally(() => setIsDeleting(true));
+          .finally(() => {
+            setIsDeleting(false); //router.refresh();
+            setTimeout(() => {
+              window.location.reload();
+            }, 100);
+          });
       });
     }
   };

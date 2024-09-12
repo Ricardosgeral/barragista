@@ -315,9 +315,9 @@ export default function AddDamLocationForm({
             setIsDeleting(true);
             setPosix([39.5, -8]);
             setZoom(6);
-            form.setValue("country", "PT");
-            form.setValue("state", "");
-            form.setValue("city", "");
+            setTimeout(() => {
+              window.location.reload();
+            }, 100);
           });
       });
     }

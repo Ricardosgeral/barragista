@@ -132,7 +132,12 @@ export default function AddDamHydrologyForm({
               router.push(`/dam/${damId}${hydrology.path}`);
             }
           })
-          .finally(() => setIsDeleting(true));
+          .finally(() => {
+            setIsDeleting(false); //router.refresh();
+            setTimeout(() => {
+              window.location.reload();
+            }, 100);
+          });
       });
     }
   };

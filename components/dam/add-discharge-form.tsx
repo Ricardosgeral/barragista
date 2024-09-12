@@ -131,7 +131,12 @@ export default function AddDamDischargeForm({
               router.push(`/dam/${damId}${discharge.path}`);
             }
           })
-          .finally(() => setIsDeleting(true));
+          .finally(() => {
+            setIsDeleting(false); //router.refresh();
+            setTimeout(() => {
+              window.location.reload();
+            }, 100);
+          });
       });
     }
   };

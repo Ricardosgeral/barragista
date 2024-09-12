@@ -136,7 +136,12 @@ export default function AddDamHydropowerForm({
               router.push(`/dam/${damId}${hydropower.path}`);
             }
           })
-          .finally(() => setIsDeleting(true));
+          .finally(() => {
+            setIsDeleting(false); //router.refresh();
+            setTimeout(() => {
+              window.location.reload();
+            }, 100);
+          });
       });
     }
   };

@@ -30,6 +30,7 @@ import AddDamRiskForm from "@/components/dam/add-risk-form";
 import AddDamHydropowerForm from "@/components/dam/add-hydropower-form";
 import { getDamById } from "@/data/dam/get-dam-by-id";
 import { FormStepsNav } from "@/components/dam/form-steps-nav";
+import { cookies } from "next/headers";
 
 const componentMap: { [key: string]: React.ComponentType<any> } = {
   identification: AddDamForm,

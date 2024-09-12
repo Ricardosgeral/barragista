@@ -168,7 +168,10 @@ export default function AddDamRiskForm({
             }
           })
           .finally(() => {
-            setIsDeleting(false);
+            setIsDeleting(false); //router.refresh();
+            setTimeout(() => {
+              window.location.reload();
+            }, 100);
           });
       });
     }
