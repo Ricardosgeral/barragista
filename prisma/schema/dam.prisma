@@ -4,6 +4,8 @@ enum DamMaterial {
     Embankment
     Masonary
     Mixed
+    Steel
+    Wood
     Other
 }
 
@@ -139,9 +141,9 @@ model DamReservoir {
     total_capacity   Float    @default(0)
     useful_capacity  Float?   @default(0)
     dead_volume      Float?   @default(0)
-    fsl              Int?     @default(0)
-    mfl              Int?     @default(0)
-    mol              Int?     @default(0)
+    fsl              Float?   @default(0)
+    mfl              Float?   @default(0)
+    mol              Float?   @default(0)
     data_creation    DateTime @default(now())
     data_modified    DateTime @default(now())
     dam              Dam      @relation(fields: [damId], references: [id], onDelete: Cascade)
